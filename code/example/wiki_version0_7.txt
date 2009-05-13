@@ -1,21 +1,22 @@
 <[autotemplate]
-%usepackage={beamerthemeWarsaw}
+usepackage={beamerthemeWarsaw}
 usepackage=[utf8]{inputenc}
 usepackage=[german]{babel}
 usepackage=[T1]{fontenc}
 title={What's new in 0.7}
-subtitle={nowiki and code}
+subtitle={nowiki, code, autotemplate}
 author={Kai Dietrich}
 [autotemplate]>
 
 == Overview  ==
 ==== What's new in 0.7 ====
-There are 3 major changes in wiki2beamer 0.7
+There are 4 major changes in wiki2beamer 0.7
 # @$\backslash$end\{frame\}@ is no longer detected automatically
 #* @$\backslash$end\{frame\}@ detection causes semantic misinterpretations in various situations
 #* @[frame]>@ is the preferred notation anyway, use it
 # the new @<[nowiki] [nowiki]>@ environment allows you the escape from wiki2beamer completly
 # the new @<[code] [code]>@ environment allows you to write !animated! code listings
+# @autotemplate@ support
 
 == Nowiki-Escaping ==
 ==== @nowiki@-Environment ====
@@ -198,7 +199,96 @@ class HelloWorld {
 [code]>
 }
 
-==== ====
-\centering\Huge
+== Autotemplates ==
+=== Introduction ===
 
-Hurray!
+==== ====
+\centering
+
+Autotemplate-Support
+
+@<[autotemplate] [autotemplate]>@
+
+==== The Problem ====
+For \LaTeX beginners it's quite an obstacle to create the template needed to
+compile wiki2beamers output. Wouldn't it be nice if wiki2beamer could produce
+a complete all-in-one @.tex@ file without the need for a seperate template?
+
+\vspace{1em}
+
+wiki2beamer 0.7 can do exactly that. Let's see how it works\ldots
+
+<[codeframe]>
+==== The Solution ====
+Put a @<[autotemplate] [autotemplate]>@ section at the beginnung of the
+wiki2beamer-file. Wiki2beamer will then put a minimal environment around your
+content with all the usepackages and functionality it needs. It will also
+provide you with a listings style called "basic".
+
+<[code][style=basic,language=TeX,title=\tiny body.txt]
+<\[autotemplate\]
+\[autotemplate\]>
+
+==== first slide ====
+[code]>
+
+Done.
+
+No really, thats it.
+
+Unless ofcourse you want to have usefull content on your first slide.
+=== Syntax ===
+==== key=value Commands ====
+tuning the default template:
+<[code][style=basic,language=TeX,title=\tiny body.txt]
+<\[autotemplate\]
+%some personal information for the titleframe
+title={My Random Talk}
+subtitle={about some random stuff}
+author={James T. Kork}
+usepackage={beamerthemeWarsaw}
+\[autotemplate\]>
+[code]>
+
+The format of the @autotemplate@ environment is a simple @key=value@ format.
+Any unknown key is interpreted as a command, the value is then appended.\\
+@date=\{$\backslash$today\}@ becomes @$\backslash$date\{$\backslash$today\}@.
+
+=== Semantics ===
+==== defaults ====
+wiki2beamer has some some defaults that you can either accept or overwrite.
+The default template looks something like:
+<[code][style=basic,language=TeX,title=\tiny defaults.txt]
+<\[autotemplate\]
+documentclass={beamer}
+usepackage={listings}
+usepackage={color}
+usepackage={wasysym}
+date={\today}
+lstdefinestyle={basic}{...}
+titleframe=True
+\[autotemplate\]>
+[code]>
+The @titleframe@-key is special, it tells wiki2beamer to generate the
+title frame on it's own.
+
+==== key-handling ====
+Keys are handled differently:
+# keys that can only have one value (last one use)
+#* @documentclass@
+#* @titleframe@
+# keys that can have multiple values
+#* all unknown keys
+#* @usepackage@
+
+@usepackage@ is special in a way that only the last
+occurence of the package counts (you can give multiple option-sets ala
+@usepackage=[utf8]\{inputenc\}@\\
+@usepackage=[latin1]\{inputenc\}@\\
+Latin1 will be the option passed to inputenc in the \LaTeX{} output.
+
+==== ====
+\centering\huge
+
+Please spread the word! :-) %
+
