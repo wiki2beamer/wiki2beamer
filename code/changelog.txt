@@ -1,3 +1,10 @@
+Version 0.7 alpha 1 (2009-05-10)
+=======================================
+Frame-close detection for \end{frame} removed as it causes trouble in
+some situations. <[nowiki] [nowiki]> environment added. Support for
+animated code listings with the <[code] [code]> environment.
+Some unittests added. New example for version0_7
+
 Version 0.6 (2009-04-07)
 =======================================
 Frames can be closed "manually" using [frame]>. Thanks to Kai Dietrich

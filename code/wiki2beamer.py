@@ -1,32 +1,61 @@
 #!/usr/bin/env python
 
 ###############################################################################
-# Wiki2Beamer                 Michael Rentzsch (http://www.repc.de)           #
+# wiki2beamer                                                                 #
+#                                                                             #
+# (c) 2007-2008 Michael Rentzsch (http://www.repc.de)                         #
+# (c) 2009 Michael Rentzsch (http://www.repc.de)                              #
+#          Kai Dietrich (mail@cleeus.de)                                      #
 #                                                                             #
 # Create latex beamer sources for multiple frames from a wiki-like code.      #
 # Warning: This is mostly all-in-one-procedure-code -- but it works ;-)       #
 ###############################################################################
 # This program is licensed under the terms of the GPL (see gpl.txt).          #
 #                                                                             #
-# Thanks to Kai Dietrich <mail@cleeus.de> for providing his                   #
-# frame-close-detection patch.                                                #
 ###############################################################################
 
-import sys, re
+import sys
+import re
+import random
+import hashlib
+import string
 
-VERSIONTAG = "0.6"
-
+VERSIONTAG = "0.7 alpha 1"
+__version__= VERSIONTAG
+__author__= "Michael Rentzsch, Kai Dietrich"
 
 def mydebug(message):
     """ print debug message to stderr """
     print >>sys.stderr, message
 
+def syntax_error(message, code):
+    print >>sys.stderr, 'syntax error: %s' % message
+    print >>sys.stderr, '\tcode:\n%s' % code
+    sys.exit(-3)
 
-def transform(string):
-    """ convert/transform one line """
-    global frame_opened, enum_item_level    # nasty thing to do
-    global frame_header, frame_footer, next_frame_footer
+class w2bstate:
+    def __init__(self):
+        self.frame_opened = False
+        self.enum_item_level = ''
+        self.frame_header = ''
+        self.frame_footer = ''
+        self.next_frame_footer = ''
+        self.next_frame_header = ''
+        self.current_line = 0
+        self.last_code_frame = 0
+        return
 
+    def switch_to_next_frame(self):
+        self.frame_header = self.next_frame_header
+        self.frame_footer = self.next_frame_footer
+
+def escape_resub(string):
+    p = re.compile(r"\\")
+    return p.sub(r"\\\\", string)
+
+
+def transform_itemenums(string, state):
+    """handle itemizations/enumerations"""
     preamble = ""   # for enumeration/itemize environment commands
 
     # handle itemizing/enumerations
@@ -38,21 +67,21 @@ def transform(string):
         my_enum_item_level = m.group(1)
 
     # trivial: old level = new level
-    if (my_enum_item_level == enum_item_level):
+    if (my_enum_item_level == state.enum_item_level):
         pass
     else:
         # find common part
         common = -1 
-        while (len(enum_item_level) > common + 1) and \
+        while (len(state.enum_item_level) > common + 1) and \
                 (len(my_enum_item_level) > common + 1) and \
-                (enum_item_level[common+1] == my_enum_item_level[common+1]):
+                (state.enum_item_level[common+1] == my_enum_item_level[common+1]):
             common = common + 1
 
         # close enum_item_level environments from back to front
-        for i in range(len(enum_item_level)-1, common, -1):
-            if (enum_item_level[i] == "*"):
+        for i in range(len(state.enum_item_level)-1, common, -1):
+            if (state.enum_item_level[i] == "*"):
                 preamble = preamble + "\\end{itemize}\n"
-            elif (enum_item_level[i] == "#"):
+            elif (state.enum_item_level[i] == "#"):
                 preamble = preamble + "\\end{enumerate}\n"
         
         # open my_enum_item_level environments from front to back
@@ -61,153 +90,481 @@ def transform(string):
                 preamble = preamble + "\\begin{itemize}\n"
             elif (my_enum_item_level[i] == "#"):
                 preamble = preamble + "\\begin{enumerate}\n"
-    enum_item_level = my_enum_item_level
-
-
+    state.enum_item_level = my_enum_item_level
+    
     # now, substitute item markers
     p = re.compile("^([\*\#]+)(.*)$")
     _string = p.sub(r"  \\item\2", string)
-    string = _string
+    string = preamble + _string
+ 
+    return string
 
-    # header and footer definitions
+def transform_define_foothead(string, state):
+    """ header and footer definitions"""
     p = re.compile("^@FRAMEHEADER=(.*)$", re.VERBOSE)
     m = p.match(string)
     if (m != None):
         #print m.group(1)
-        frame_header = m.group(1)
+        state.next_frame_header = m.group(1)
         string = ""
     p = re.compile("^@FRAMEFOOTER=(.*)$", re.VERBOSE)
     m = p.match(string)
     if (m != None):
         #print m.group(1)
-        next_frame_footer = m.group(1)
+        state.next_frame_footer = m.group(1)
         string = ""
+    return string
 
+def transform_detect_manual_frameclose(string, state):
+    """ detect manual closing of frames """
+    p = re.compile(r"\[\s*frame\s*\]>")
+    if state.frame_opened:
+        if p.match(string) != None:
+            state.frame_opened = False
+    return string
 
-    # detect manual closing of frames
-    p = re.compile(r"(?:^\s*\\end{\s*frame\s*})|(?:^\[\s*frame\s*\]>)")
-    if (frame_opened == 1):
-        if (len(p.findall(string)) > 0):
-            frame_opened = 0
+def get_frame_closing(state):
+    return " %s \n \\end{frame}\n" % state.frame_footer
 
-    # headings (3) to frames
+def transform_codeframe(string, state):
+    frame_closing = escape_resub(get_frame_closing(state))
+
+    p = re.compile(r"^<\[codeframe\]>")
+    if state.frame_opened:
+        _string = p.sub("%s\n" % frame_closing, string)
+    else:
+        _string = p.sub("\n", string)
+
+    if string != _string:
+        state.frame_opened=False
+        state.switch_to_next_frame()
+        state.last_code_frame = state.current_line
+
+    return _string
+ 
+def transform_h4_to_frame(string, state):
+    """headings (3) to frames"""
+    frame_opening = r"\\begin{frame}\2\n \\frametitle{\1}\n %s \n" % escape_resub(state.next_frame_header)
+    frame_closing = escape_resub(get_frame_closing(state))
+    
     p = re.compile("^====\s*(.*?)\s*====(.*)", re.VERBOSE)
-    if (frame_opened == 0):
-        _string = p.sub(r"\\begin{frame}\2\n \\frametitle{\1}\n <---FRAMEHEADER---> \n", string)
+    if not state.frame_opened:
+        _string = p.sub(frame_opening, string)
     else:
-        _string = p.sub(r" <---FRAMEFOOTER---> \n \\end{frame}\n\n\\begin{frame}\2\n \\frametitle{\1}\n <---FRAMEHEADER---> \n", string)
+        _string = p.sub(frame_closing + frame_opening, string)
+
     if (string != _string):
-        frame_opened = 1
+        state.frame_opened = True
+        state.switch_to_next_frame()
 
+    return _string
 
-    # headings (2) to subsections
-    string = _string
+def transform_h3_to_subsec(string, state):
+    """ headings (2) to subsections """
+    frame_closing = escape_resub(get_frame_closing(state))
+    subsec_opening = r"\n\\subsection\2{\1}\n\n"
+
     p = re.compile("^===\s*(.*?)\s*===(.*)", re.VERBOSE)
-    if (frame_opened == 1):
-        _string = p.sub(r" <---FRAMEFOOTER---> \n \\end{frame}\n\\subsection\2{\1}\n\n", string)
+    if state.frame_opened:
+        _string = p.sub(frame_closing + subsec_opening, string)
     else:
-        _string = p.sub(r"\n\\subsection\2{\1}\n\n", string)
+        _string = p.sub(subsec_opening, string)
     if (string != _string):
-        frame_opened = 0
+        state.frame_opened = False
+    
+    return _string
 
-    # headings (1) to sections
-    string = _string
+def transform_h2_to_sec(string, state):
+    """ headings (1) to sections """
+    frame_closing = escape_resub(get_frame_closing(state))
+    sec_opening = r"\n\\section\2{\1}\n\n"
     p = re.compile("^==\s*(.*?)\s*==(.*)", re.VERBOSE)
-    if (frame_opened == 1):
-        _string = p.sub(r" <---FRAMEFOOTER---> \n \\end{frame}\n\n\\section\2{\1}\n\n", string)
+    if state.frame_opened:
+        _string = p.sub(frame_closing + sec_opening, string)
     else:
-        _string = p.sub(r"\n\n\\section\2{\1}\n\n", string)
+        _string = p.sub(sec_opening, string)
     if (string != _string):
-        frame_opened = 0
+        state.frame_opened = False
 
+    return _string
 
-    _string = _string.replace("<---FRAMEHEADER--->", frame_header)
-    _string = _string.replace("<---FRAMEFOOTER--->", frame_footer)
+def transform_replace_headfoot(string, state):
+    string = string.replace("<---FRAMEHEADER--->", state.frame_header)
+    string = string.replace("<---FRAMEFOOTER--->", state.frame_footer)
+    return string
 
-
-    if (_string.find("\\end{frame}") != -1):
-        frame_footer = next_frame_footer
-
-    # latex environments, the users takes full responsibility
-    # for closing ALL opened environments
-    # exampe:
-    # <[block]{block title}
-    # message
-    # [block]>
-
+def transform_environments(string):
+    """
+    latex environments, the users takes full responsibility
+    for closing ALL opened environments
+    exampe:
+    <[block]{block title}
+    message
+    [block]>
+    """
     # -> open
     p = re.compile("^<\[([^{}]*?)\]", re.VERBOSE)
-    _string = p.sub(r"\\begin{\1}", _string)
+    string = p.sub(r"\\begin{\1}", string)
     # -> close
     p = re.compile("^\[([^{}]*?)\]>", re.VERBOSE)
-    _string = p.sub(r"\\end{\1}", _string)
+    string = p.sub(r"\\end{\1}", string)
 
-    # columns
+    return string
+
+def transform_columns(string):
+    """ columns """
     p = re.compile("^\[\[\[(.*?)\]\]\]", re.VERBOSE)
-    _string = p.sub(r"\\column{\1}", _string)
+    string = p.sub(r"\\column{\1}", string)
+    return string
 
-    # bold font
+def transform_boldfont(string):
+    """ bold font """
     p = re.compile("'''(.*?)'''", re.VERBOSE)
-    _string = p.sub(r"\\textbf{\1}", _string) 
+    string = p.sub(r"\\textbf{\1}", string)
+    return string
 
-    # italic font
+def transform_italicfont(string):
+    """ italic font """
     p = re.compile("''(.*?)''", re.VERBOSE)
-    _string = p.sub(r"\\emph{\1}", _string) 
+    string = p.sub(r"\\emph{\1}", string) 
+    return string
 
-    # typewriter font
+def transform_typewriterfont(string):
+    """ typewriter font """
     p = re.compile("@(.*?)@", re.VERBOSE)
-    _string = p.sub(r"\\texttt{\1}", _string) 
+    string = p.sub(r"\\texttt{\1}", string) 
+    return string
 
-    # alerts
+def transform_alerts(string):
+    """ alerts """
     p = re.compile("!(.*?)!", re.VERBOSE)
-    _string = p.sub(r"\\alert{\1}", _string) 
+    string = p.sub(r"\\alert{\1}", string) 
+    return string
 
-    # colors
+def transform_colors(string):
+    """ colors """
     p = re.compile("_([^_\\\\]*?)_([^_]*?[^_\\\\])_", re.VERBOSE)
-    _string = p.sub(r"\\textcolor{\1}{\2}", _string) 
-
-    # footnotes
-    p = re.compile("\(\(\((.*?)\)\)\)", re.VERBOSE)
-    _string = p.sub(r"\\footnote{\1}", _string) 
-
-    # figures/images
-    p = re.compile("\<\<\<(.*?),(.*?)\>\>\>", re.VERBOSE)
-    _string = p.sub(r"\\includegraphics[\2]{\1}", _string) 
-    p = re.compile("\<\<\<(.*?)\>\>\>", re.VERBOSE)
-    _string = p.sub(r"\\includegraphics{\1}", _string) 
-
-
-    # substitutions
-    p = re.compile("(\s)-->(\s)", re.VERBOSE)
-    _string = p.sub(r"\1$\\rightarrow$\2", _string) 
-    p = re.compile("(\s)<--(\s)", re.VERBOSE)
-    _string = p.sub(r"\1$\\leftarrow$\2", _string) 
-    p = re.compile("(\s)==>(\s)", re.VERBOSE)
-    _string = p.sub(r"\1$\\Rightarrow$\2", _string) 
-    p = re.compile("(\s)<==(\s)", re.VERBOSE)
-    _string = p.sub(r"\1$\\Leftarrow$\2", _string) 
-    p = re.compile("(\s):-\)(\s)", re.VERBOSE)
-    _string = p.sub(r"\1\\smiley\2", _string) 
-    p = re.compile("(\s):-\((\s)", re.VERBOSE)
-    _string = p.sub(r"\1\\frownie\2", _string)
-
-
-  
-    # to be continued ...
-
+    string = p.sub(r"\\textcolor{\1}{\2}", string) 
+    return string
    
-    return preamble + _string
+def transform_footnotes(string):
+    """ footnotes """
+    p = re.compile("\(\(\((.*?)\)\)\)", re.VERBOSE)
+    string = p.sub(r"\\footnote{\1}", string) 
+    return string
 
+def transform_graphics(string):
+    """ figures/images """
+    p = re.compile("\<\<\<(.*?),(.*?)\>\>\>", re.VERBOSE)
+    string = p.sub(r"\\includegraphics[\2]{\1}", string) 
+    p = re.compile("\<\<\<(.*?)\>\>\>", re.VERBOSE)
+    string = p.sub(r"\\includegraphics{\1}", string) 
+    return string
+
+def transform_substitutions(string):
+    """ substitutions """
+    p = re.compile("(\s)-->(\s)", re.VERBOSE)
+    string = p.sub(r"\1$\\rightarrow$\2", string) 
+    p = re.compile("(\s)<--(\s)", re.VERBOSE)
+    string = p.sub(r"\1$\\leftarrow$\2", string) 
+    p = re.compile("(\s)==>(\s)", re.VERBOSE)
+    string = p.sub(r"\1$\\Rightarrow$\2", string) 
+    p = re.compile("(\s)<==(\s)", re.VERBOSE)
+    string = p.sub(r"\1$\\Leftarrow$\2", string) 
+    p = re.compile("(\s):-\)(\s)", re.VERBOSE)
+    string = p.sub(r"\1\\smiley\2", string) 
+    p = re.compile("(\s):-\((\s)", re.VERBOSE)
+    string = p.sub(r"\1\\frownie\2", string)
+    return string
+
+
+def transform(string, state):
+    """ convert/transform one line in context of state"""
+
+    string = transform_itemenums(string, state)
+    string = transform_define_foothead(string, state)
+    string = transform_detect_manual_frameclose(string, state)
+    string = transform_codeframe(string, state)
+    string = transform_h4_to_frame(string, state)
+    string = transform_h3_to_subsec(string, state)
+    string = transform_h2_to_sec(string, state)
+    string = transform_replace_headfoot(string, state)
+    
+    string = transform_environments(string)
+    string = transform_columns(string)
+    string = transform_boldfont(string)
+    string = transform_italicfont(string)
+    string = transform_typewriterfont(string)
+    string = transform_alerts(string)
+    string = transform_colors(string)
+    string = transform_graphics(string)
+    string = transform_substitutions(string)
+
+    return string
+
+def expand_code_make_defverb(content, name):
+    return "\\defverbatim[colored]\\%s{\n%s\n}" % (name, content)
+
+def expand_code_make_lstlisting(content, options):
+    return "\\begin{lstlisting}%s%s\\end{lstlisting}" % (options, content)
+
+def expand_code_search_escape_sequences(code):
+    open = 'khuhusi_foobar_duaijd212'
+    close = 'aisdfzgzu_foobar_jjj812'
+    while code.find(open) != -1 or code.find(close) != -1:
+        open.append(chr(random.randint(48,57)))
+        close.append(chr(random.randint(48,57)))
+
+    return (open,close)
+
+def expand_code_tokenize_anims(code):
+    #escape
+    (esc_open, esc_close) = expand_code_search_escape_sequences(code)
+    code = code.replace('\\[', esc_open)
+    code = code.replace('\\]', esc_close)
+
+    p = re.compile(r'\[\[(?:.|\s)*?\]\]|\[(?:.|\s)*?\]')
+    non_anim = p.split(code)
+    anim = p.findall(code)
+    
+    #unescape
+    anim = map(lambda s: s.replace(esc_open, '\\[').replace(esc_close, '\\]'), anim)
+    non_anim = map(lambda s: s.replace(esc_open, '[').replace(esc_close, ']'), non_anim)
+
+    return (anim, non_anim)
+
+def expand_code_parse_overlayspec(overlayspec):
+    overlays = []
+
+    groups = overlayspec.split(',')
+    for group in groups:
+        group = group.strip()
+        if group.find('-')!=-1:
+            nums = group.split('-')
+            if len(nums)<2:
+                syntax_error('overlay specs must be of the form <(%d-%d)|(%d), ...>', overlayspec)
+            else:
+                try:
+                    start = int(nums[0])
+                    stop = int(nums[1])
+                except ValueError:
+                    syntax_error('not an int, overlay specs must be of the form <(%d-%d)|(%d), ...>', overlayspec)
+
+                overlays.extend(range(start,stop+1))
+        else:
+            try:
+                num = int(group)
+            except ValueError:
+                syntax_error('not an int, overlay specs must be of the form <(%d-%d)|(%d), ...>', overlayspec)
+            overlays.append(num)
+    
+    #make unique
+    overlays = list(set(overlays))
+    return overlays
+
+def expand_code_parse_simpleanimspec(animspec):
+    #escape
+    (esc_open, esc_close) = expand_code_search_escape_sequences(animspec)
+    animspec = animspec.replace('\\[', esc_open)
+    animspec = animspec.replace('\\]', esc_close)
+
+    p = re.compile(r'^\[<([0-9,\-]+)>((?:.|\s)*)\]$')
+    m = p.match(animspec)
+    if m != None:
+        overlays = expand_code_parse_overlayspec(m.group(1))
+        code = m.group(2)
+    else:
+        syntax_error('specification does not match [<%d>%s]', animspec)
+
+    #unescape code
+    code = code.replace(esc_open, '[').replace(esc_close, ']')
+    
+    return [(overlay, code) for overlay in overlays]
+
+
+def expand_code_parse_animspec(animspec):
+    if len(animspec)<4 or not animspec.startswith('[['):
+        return ('simple', expand_code_parse_simpleanimspec(animspec))
+    
+    #escape
+    (esc_open, esc_close) = expand_code_search_escape_sequences(animspec)
+    animspec = animspec.replace('\\[', esc_open)
+    animspec = animspec.replace('\\]', esc_close)
+    
+    p = re.compile(r'\[|\]\[|\]')
+    simple_specs = map(lambda s: '[%s]'%s, filter(lambda s: len(s.strip())>0, p.split(animspec)))
+
+    #unescape
+    simple_specs = map(lambda s: s.replace(esc_open, '\\[').replace(esc_close, '\\]'), simple_specs)
+    parsed_simple_specs = map(expand_code_parse_simpleanimspec, simple_specs)
+    #print parsed_simple_specs
+    unified_pss = []
+    for pss in parsed_simple_specs:
+        unified_pss.extend(pss)
+    #print unified_pss
+    return ('double', unified_pss)
+    
+
+def expand_code_getmaxoverlay(parsed_anims):
+    max_overlay = 0
+    for anim in parsed_anims:
+        for spec in anim:
+            if spec[0] > max_overlay:
+                max_overlay = spec[0]
+    return max_overlay
+
+def expand_code_getminoverlay(parsed_anims):
+    min_overlay = sys.maxint
+    for anim in parsed_anims:
+        for spec in anim:
+            if spec[0] < min_overlay:
+                min_overlay = spec[0]
+    if min_overlay == sys.maxint:
+        min_overlay = 0
+    return min_overlay
+
+
+def expand_code_genanims(parsed_animspec, minoverlay, maxoverlay, type):
+    #get maximum length of code
+    maxlen=0
+    if type=='double':
+        for simple_animspec in parsed_animspec:
+            if maxlen < len(simple_animspec[1]):
+                maxlen = len(simple_animspec[1])
+    
+    out = []
+    fill = ''.join([' ' for i in xrange(0, maxlen)])
+    for x in xrange(minoverlay,maxoverlay+1):
+        out.append(fill[:])
+
+    for simple_animspec in parsed_animspec:
+        out[simple_animspec[0]-minoverlay] = simple_animspec[1]
+
+    return out
+
+def expand_code_getname(code):
+    asciihextable = string.maketrans('0123456789abcdef',\
+                                     'abcdefghijklmnop')
+    d = hashlib.md5(code).hexdigest().translate(asciihextable)
+    return d
+
+def expand_code_makeoverprint(names, minoverlay):
+    out = ['\\begin{overprint}\n']
+    for (index, name) in enumerate(names):
+        out.append('  \\onslide<%d>\\%s\n' % (index+minoverlay, name))
+    out.append('\\end{overprint}\n')
+
+    return ''.join(out)
+
+def expand_code_segment(result, codebuffer, state):
+    #treat first line as params for lstlistings
+    lstparams = codebuffer[0]
+    codebuffer[0] = ''
+ 
+    #join lines into one string
+    code = ''.join(codebuffer)
+    #print code
+
+    #tokenize code into anim and non_anim parts
+    (anim, non_anim) = expand_code_tokenize_anims(code)
+    #print anim
+    #print non_anim
+    if len(anim)>0:
+        #generate multiple versions of the anim parts
+        parsed_anims = map(expand_code_parse_animspec, anim)
+        #print parsed_anims
+        max_overlay = expand_code_getmaxoverlay(map(lambda x: x[1], parsed_anims))
+        #if there is unanimated code, use 0 as the starting overlay
+        if len(non_anim)>0:
+            min_overlay = 1
+        else:
+            min_overlay = expand_code_getminoverlay(map(lambda x: x[1], parsed_anims))
+        #print min_overlay
+        #print max_overlay
+        gen_anims = map(lambda x: expand_code_genanims(x[1], min_overlay, max_overlay, x[0]), parsed_anims)
+        #print gen_anims
+        anim_map = {}
+        for i in xrange(0,max_overlay-min_overlay+1):
+            anim_map[i+min_overlay] = map(lambda x: x[i], gen_anims)
+        #print anim_map
+    
+        defverbs = {}
+        names = []
+        for overlay in sorted(anim_map.keys()):
+            #combine non_anim and anim parts
+            anim_map[overlay].append('')
+            zipped = zip(non_anim, anim_map[overlay])
+            mapped = map(lambda x: x[0] + x[1], zipped)
+            code = ''.join(mapped)
+            name = expand_code_getname(code)
+            names.append(name)
+            #generate code for lstlistings
+            defverbs[name]=expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+        
+        #insert the defverb block into result afte the last code-frame marker
+        result[state.last_code_frame] = result[state.last_code_frame] + '\n'.join(defverbs.values()) + '\n'
+
+        #append overprint area to result
+        overprint = expand_code_makeoverprint(names, min_overlay)
+        result.append(overprint)
+    else:
+        #we have no animations and can just put the defverbatim in
+        #remove escapings
+        code = code.replace('\\[', '[').replace('\\]', ']')
+        name = expand_code_getname(code)
+        defverb = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+        result[state.last_code_frame] = result[state.last_code_frame] + '\n' + defverb
+        result.append('\n\\%s\n' % name)
+
+    #print '----'
+    return
+
+def get_nowikimode(line, nowikimode):
+    nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
+    nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
+    
+    if not nowikimode and nowikistartre.match(line)!=None:
+        line = nowikistartre.sub('', line)
+        return (line, True)
+    elif nowikimode and nowikiendre.match(line)!=None:
+        line = nowikiendre.sub('', line)
+        return (line, False)
+    else:
+        return (line, nowikimode)
+
+def get_codemode(line, codemode):
+    codestartre = re.compile(r'^<\[\s*code\s*\]')
+    codeendre = re.compile(r'^\[\s*code\s*\]>')
+
+    if not codemode and codestartre.match(line)!=None:
+        line = codestartre.sub('', line)
+        return (line, True)
+    elif codemode and codeendre.match(line)!=None:
+        line = codeendre.sub('', line)
+        return (line, False)
+    else:
+        return (line, codemode)
 
 def joinLines(lines):
-    """ join lines ending with unescaped percent signs """
+    """ join lines ending with unescaped percent signs, unless inside codemode or nowiki mode """
+    nowikimode = False
+    codemode = False
+
     r = []  # result array
     s = ''  # new line
     for _l in lines:
-        l = _l.rstrip()
-        if (len(l) > 1) and (l[-1] == "%") and (l[-2] != "\\"):
+        (_,nowikimode) = get_nowikimode(_l, nowikimode)
+        if not nowikimode:
+            (_,codemode) = get_codemode(_l, codemode)
+
+        if not codemode:
+            l = _l.rstrip()
+        else:
+            l = _l
+
+        if not (nowikimode or codemode) and (len(l) > 1) and (l[-1] == "%") and (l[-2] != "\\"):
             s = s + l[:-1]
-        elif (len(l) == 1) and (l[-1] == "%"):
+        elif not (nowikimode or codemode) and (len(l) == 1) and (l[-1] == "%"):
             s = s + l[:-1]
         else:
             s = s + l
@@ -216,16 +573,8 @@ def joinLines(lines):
 
     return r
 
-
-def convert2beamer(filename):
-    """ read file, convert to LaTeX, print result """
-    global frame_opened, enum_item_level    # nasty thing to do
-    global frame_header, frame_footer, next_frame_footer
-
-    frame_opened = 0
-    enum_item_level = ""
-    result = []
-
+def read_file_to_lines(filename):
+    """ read file """
     try:
         f = open(filename, "r")
         lines = joinLines(f.readlines())
@@ -234,21 +583,48 @@ def convert2beamer(filename):
         print >>sys.stdout, "Cannot read file: " + filename
         sys.exit(-2)
 
-    frame_header = ""
-    frame_footer = ""
-    next_frame_footer = ""
-       
+    return lines
+
+   
+
+def convert2beamer(lines):
+    """ convert to LaTeX """
+    state = w2bstate()
+    result = []
+    codebuffer = []
+    
+    nowikimode = False
+    codemode = False
     for line in lines:
-        result.append(transform(line))
-    result.append(transform(""))   # close open environments
+        (line, nowikimode) = get_nowikimode(line, nowikimode)
+        if nowikimode and not codemode:
+            result.append(line)
+        else:
+            (line, _codemode) = get_codemode(line, codemode)
+            if _codemode and not codemode: #code mode was turned on
+                codebuffer = []
+            elif not _codemode and codemode: #code mode was turned off
+                expand_code_segment(result, codebuffer, state)
+            codemode = _codemode
 
-    if (frame_opened == 1):
-        _string = "<---FRAMEFOOTER---> \n \\end{frame}\n"
-        _string = _string.replace("<---FRAMEFOOTER--->", frame_footer)
-        result.append(_string)
+            if codemode:
+                codebuffer.append(line)
+            else:
+                state.current_line = len(result)
+                result.append(transform(line, state))
 
-    for r in result:
-        print >>sys.stdout, r
+    result.append(transform("", state))   # close open environments
+
+    if state.frame_opened:
+        result.append(get_frame_closing(state))
+    
+    return result
+
+def print_result(lines):
+    """ print result to stdout """
+    for l in lines:
+        print >>sys.stdout, l
+    return
 
 def main(argv):
     """ check parameters, start file processing """
@@ -262,8 +638,10 @@ def main(argv):
         print >>sys.stdout, "wiki2beamer (http://wiki2beamer.sf.net), version " + VERSIONTAG
         sys.exit(0)
 
-    convert2beamer(filename)
-    
+    lines = read_file_to_lines(filename)
+    lines = convert2beamer(lines)
+    print_result(lines)
 
+    
 if (__name__ == "__main__"):
     main(sys.argv)

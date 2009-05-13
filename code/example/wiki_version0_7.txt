@@ -1,0 +1,194 @@
+== Overview  ==
+==== What's new in 0.7 ====
+There are 3 major changes in wiki2beamer 0.7
+# @$\backslash$end\{frame\}@ is no longer detected automatically
+#* @$\backslash$end\{frame\}@ detection causes semantic misinterpretations in various situations
+#* @[frame]>@ is the preferred notation anyway, use it
+# the new @<[nowiki] [nowiki]>@ environment allows you the escape from wiki2beamer completly
+# the new @<[code] [code]>@ environment allows you to write !animated! code listings
+
+== Nowiki-Escaping ==
+==== @nowiki@-Environment ====
+Sometimes you really don't want wiki2beamer to get in your way.
+That's where @nowiki@ steps in:
+Use it like an environment to disable all wiki2beamer action in between:
+<[nowiki]
+{\tt
+  $<$[nowiki]  \\
+  me@you.com you@me.com \\
+  {}[nowiki]$>$
+}
+[nowiki]>
+
+result without nowiki (notice the changed font):
+
+me@you.com you@me.com
+
+result with nowiki:
+
+<[nowiki]
+me@you.com you@me.com
+[nowiki]>
+
+== Animated Listings ==
+=== Introduction ===
+==== ====
+\centering
+
+Animated Listings:\\
+@<[code] [code]>@
+
+==== The Problem ====
+It's a common problem to put source code listings on beamer slides and talk about them to the
+audience. To support your talk you will often need to pup-up or partially hide some code.
+Doing this in plain \LaTeX{} can be a pain in the ass and a time-consuming task if you don't know
+exactly how to do it from the beginning. Also beamer has some problems with verbatim environments
+inside slides, so if you've ever tried, you will have given up most certainly.
+
+\vspace{1em}
+
+wiki2beamer solves all these problems by putting together the @listings@-package with some clever
+code generation. See what's coming\ldots
+
+=== Syntax ===
+<[codeframe]>
+==== The Basic Syntax ====
+<[code][style=basic,language=java]
+              //marks the following frame
+<\[codeframe\]> //as containing code
+==== Title ==== //usual frame title
+<\[code\]\[key=value,key=value\] //opens a code block
+                       //the key=value list is passed
+                       //directly to lstlistings
+class Fooo {} //some code
+\\[ //\[ and \] have special meanings, to use them
+\\] //in the listing, escape them with a \
+\[code\]> //closes the code block
+[code]>
+
+<[codeframe]>
+==== Syntax For Animations ====
+<[code][style=basic,language=java]
+<\[code\]
+some code that appears from start to end |
+\[<2>some code that only appears on slide 2\] |
+\[<2-4>some code that appears on slides 2, 3 and 4\] |
+\[<2,3>some code that appears on slides 2 and 3\] |
+\[<1-2,4>some code that appears on slides 1, 2 and 4\] |
+\[\[<2>some code      \]\[<4>some other code\]\] |
+     //on slide 1 and 3 the empty space
+     //will be filled with whitespaces
+\[code\]>
+[code]>
+
+<[codeframe]>
+==== Animation Syntax Example in Action ====
+This is the output:
+<[code][style=basic]
+some code that appears from start to end |
+[<2>some code that only appears on slide 2] |
+[<2-4>some code that appears on slides 2, 3 and 4] |
+[<2,3>some code that appears on slides 2 and 3] |
+[<1-2,4>some code that appears on slides 1, 2 and 4] |
+[[<2>some code      ][<4>some other code]] |
+[code]>
+
+<[codeframe]>
+==== Behind the scenes ====
+What wiki2beamer does is:
+* remeber the position of <[codeframe]>
+* generate a sequence of listings from the [code] block
+* give names to the listings
+* put them at the position of <[codeframe]>
+* put references to the listings in an @overprint-onslide@ on the frame
+
+If you want to find out how this looks, take a look at the @.tex@ output of this presentation.
+
+=== Hello World Example ===
+==== Overview ====
+So here's how you create animated listings:
+# @$\backslash$usepackage\{listings\}@
+# write a style definition for @listings@
+# write your code, reference to the style
+# animate it
+
+<[codeframe]>
+==== Defining a style for @listings@ ====
+<[code][style=basic,language=TeX,title=\tiny template.tex]
+\lstdefinestyle{basic}{%
+        captionpos=t,%
+	basicstyle=\footnotesize\ttfamily,%
+	numberstyle=\tiny,%
+	numbers=left,%
+	frame=single,%
+	showspaces=false,%
+	showstringspaces=false,%
+	showtabs=false,%
+	%
+	keywordstyle=\color{blue},%
+	identifierstyle=,%
+	commentstyle=\color{gray},%
+	stringstyle=\color{magenta}%
+}
+[code]>
+
+<[codeframe]>
+==== Writing the code ====
+<[code][style=basic,language=TeX]
+<\[code\]\[style=basic,language=java,title=HelloWorld.java\]
+class HelloWorld {
+    public static void main(String args\\[\\]) {
+        System.out.println("Hello World!");	
+    }
+}
+\[code\]>
+[code]>
+
+<[codeframe]>
+==== Animating the code ====
+<[code][style=basic,language=TeX]
+<\[code\]\[style=basic,language=java,title=HelloWorld.java\]
+class HelloWorld {
+    \[<2-3>public static void main(String args\\[\\]) {\]
+    \[<3>    System.out.println("Hello World!");\]
+    \[<2,3>}\]
+}
+\[code\]>
+[code]>
+
+<[codeframe]>
+==== The result ====
+<[code][style=basic,language=java,title=HelloWorld.java]
+class HelloWorld {
+    [<2-3>public static void main(String args\[\]) {]
+    [<3>    System.out.println("Hello World!");]
+    [<2,3>}]
+}
+[code]>
+
+=== Delaying Animations ===
+
+<[codeframe]>
+==== Showing Animated Code later ====
+Q: The animation always starts on overlay 1. What can I do to start it later?\\
+
+A: Use @$\backslash$uncover<\ldots>\{\}@
+
+\uncover<2->{
+<[code][style=basic,language=java]
+\uncover<2->{
+[<2-3><\[code\]\[style=basic,language=java\]][<3>
+class HelloWorld {
+    public static void main(String args\[\]) {
+        System.out.println("Hello World!");
+    }
+}]
+[<2-3>\[code\]>]
+}
+[code]>
+}
+
+==== ====
+\centering\Huge
+
+Hurray!
