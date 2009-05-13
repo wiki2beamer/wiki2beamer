@@ -1,0 +1,49 @@
+==== Content ====
+
+<[center]
+This document shows how to use pictures/images
+in !!wiki2beamer!! presentations.
+[center]>
+
+
+==== The \LaTeX\ Way ====
+
+As alway, you can use plain \LaTeX\ code to include figures
+\vfill
+
+{\tt $\backslash$includegraphics[\ldots]\{\ldots\} }
+\vfill
+
+<[center]
+	\includegraphics[width=4cm]{knot}
+[center]>
+
+
+==== The wiki2beamer Way: Part1 ====
+
+'''wiki2beamer''' offers another way to include images which will be %
+transformed to a \LaTeX\ @includegraphics@-statement:
+\vfill
+
+{\tt $<$$<$$<$filename$>$$>$$>$ }
+\vfill
+
+
+<[center]
+<<<knot>>>
+[center]>
+
+
+==== The wiki2beamer Way: Part2 ====
+
+You can pass '''parameters''' to the @includegraphics@-command using %
+a comma to separate them from the file name:
+\vfill
+
+{\tt $<$$<$$<$filename,width=4cm,height=3cm$>$$>$$>$ }
+\vfill
+
+
+<[center]
+<<<knot,width=4cm,height=3cm>>>
+[center]>

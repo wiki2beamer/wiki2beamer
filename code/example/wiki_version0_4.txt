@@ -1,0 +1,62 @@
+== Introduction ==[Intro]
+
+==== Example Version 0.4 ====
+
+This example demonstrates the new features of '''wiki2beamer''' version 0.4.
+
+
+== Changes in Version 0.4 ==[Changes]
+
+==== List of Changes ====
+
+* Supports header and footer definitions for all frames
+* Optional description for (sub-) sections (i.\,e. short form)
+
+
+=== Usage of Headers and Footers ===[Headers and Footers]
+
+==== Header and Footer Definition ====[containsverbatim]
+
+Define headers/footers on a single line each:
+
+\vfill
+<[verbatim]
+ @FRAMEHEADER=\begin{center} Top \end{center} \vfill
+ @FRAMEFOOTER=\vfill \begin{center} Bottom \end{center}
+[verbatim]>
+
+\vfill
+* You can use all \LaTeX\ commands in these definitions (no '''wiki2beamer''' commands).
+* For example, one could use a '''textpos''' command to put an element at a defined position on every slide.
+
+
+@FRAMEHEADER=\begin{center}\footnotesize Top\end{center} \vfill
+@FRAMEFOOTER=\vfill \begin{center}\footnotesize Bottom \end{center}
+
+
+==== A Frame ====
+
+Now, your header and footer will be printed on every new slide.
+
+==== A Frame ====
+
+Yes, '''every''' slide.
+
+==== A Frame ====
+
+I mean it, every, '''every''' slide.
+
+
+
+@FRAMEHEADER=
+@FRAMEFOOTER=
+
+==== Deleteting Headers/Footers ====[containsverbatim]
+
+To delete your header and footer definitions, write: % just a comment
+
+<[verbatim]
+ @FRAMEHEADER=
+ @FRAMEFOOTER=
+[verbatim]>
+

@@ -1,0 +1,37 @@
+Version 0.6 (2009-04-07)
+=======================================
+Frames can be closed "manually" using [frame]>. Thanks to Kai Dietrich
+for providing the appropriate code.
+
+
+Version 0.5 (2008-05-02)
+=======================================
+\color bug fixed, now uses \teduixtcolor
+New markup for colors: _red_ example_  (%red% example% does not work any longer)
+
+
+Version 0.4 (2007-07-05)
+=======================================
+Optional section and subsection commands can be used. Two variables can be
+used/set to show content at the top and bottom of every frame.
+Both features are presented in a new example file.
+
+
+Version 0.3 (2007-05-21)
+=======================================
+Frames will now be created as \begin{frame} ... \end{frame} instead of \frame.
+Furthermore, it is possible to add parameters (eg. [fragile]) to frame
+definitions.
+A parameter "--version" has been introduced to show the current version of
+wiki2beamer.
+Graphics can be included with <<<filename>>>.
+Lines can be joined with (unescaped) percent signs (%) as last character of the first line.
+A new example using images
+
+
+Version 0.2 (2007-05-11)
+=======================================
+Wiki-like support for environments has been added.
+Special wiki tags for columns and footnotes.
+Some substitutions (such as ==> to $\Rightarrow$ have been added).
+New (advanced) example

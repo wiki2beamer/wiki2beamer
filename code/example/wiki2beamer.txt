@@ -1,0 +1,138 @@
+== Motivation ==
+
+==== Why use Wiki2Beamer? ====
+
+\LaTeX{} Beamer is a powerful way to create presentations:
+
+* Uses all advantages of \LaTeX, e.g. typesetting of formulas
+* Powerful overlay concept
+* Creates small and platform independent PDF files
+
+ !However, \LaTeX{} Beamer has one big disadvantage:!
+
+
+==== A typical presentation slide ====
+
+* This is a typical presentation slide
+* It consists of some items
+** Which might be cascaded
+** Just like this
+* The \LaTeX{} Beamer source code for this slide looks like this:
+
+
+==== Source code ====
+
+{
+\tt
+\textbf{$\backslash$frame}{$\{$}\\
+{\ \ }\textbf{$\backslash$frametitle}{ $\{$}{A typical presentation slide}{$\}$}\\
+{ \ \\
+}{\ \ }\textbf{$\backslash$begin}{$\{$}{itemize}{$\}$}\\
+{\ \ \ \ }\textbf{$\backslash$item }{This is a typical presentation slide\\
+}{\ \ \ \ }\textbf{$\backslash$item }{It consists of some items\\
+}{\ \ \ \ }\textbf{$\backslash$begin}{$\{$}{itemize}{$\}$}\\
+{\ \ \ \ \ \ }\textbf{$\backslash$item }{Which might be cascaded\\
+}{\ \ \ \ \ \ }\textbf{$\backslash$item }{Just like this\\
+}{\ \ \ \ }\textbf{$\backslash$end}{$\{$}{itemize}{$\}$}\\
+{\ \ \ \ }\textbf{$\backslash$item }{ The }\textbf{$\backslash$LaTeX}{$\{$$\}$ }{Beamer source code for this slide looks like this:\\
+}{\ \ }\textbf{$\backslash$end}{$\{$}{itemize}{$\}$}\\
+{ $\}$}\\
+}
+
+
+==== \LaTeX{} Beamer's disadvantage ====
+
+As you can see, one has to write a lot of \LaTeX{} code for a simple
+slide with a few (structured) items on it. \\[4mm]
+
+That's where '''Wiki2Beamer''' comes into play.
+
+
+==== A typical wiki page ====
+
+Wikis have a very simple syntax. The wiki code for the example slide looks like this: \\[4mm]
+
+{\tt
+  ==== A typical presentation slide ====\\
+ \ \\
+ * This is a typical presentation slide \\
+ * It consists of some items \\
+ ** Which might be cascaded \\
+ ** Just like this \\
+ * The $\backslash$LaTeX{} Beamer source code for this slide looks like this: \\
+}
+
+
+==== The idea behind Wiki2Beamer ====
+
+Wiki2Beamer is a small Python script that takes a wiki-like text file
+and transforms it into \LaTeX{} code for inclusing in a \LaTeX{} Beamer skeleton file.
+
+
+
+== How to use it ==
+
+==== Initial setup ====
+
+# Create a skeleton \LaTeX{} file (see example beamer.tex)
+# Create a text file for your slides in a wiki-based language
+# Run '''wiki2beamer.py''' on your wiki file, write the output to a \LaTeX{} file \\ @python wiki2beamer.py wiki.txt > output.tex@
+# Use pdflatex to create your presentation file
+
+You may want to create a '''make''' script (or something similar) to execute the last two steps.
+
+
+==== Basic syntax: Headings ====
+
+The Wiki2Beamer syntax is very similiar to those of the famous '''Mediawiki''' software which is used for the '''Wikipedia''' project. \\[4mm]
+
+Headings are produced like this: \\[4mm]
+
+{\tt
+  !== section ==! will be translated to $\backslash$section{$\ldots$} \\
+  !=== subsection ===! will be translated to $\backslash$subsection{$\ldots$} \\[2mm]
+  !==== frame ====! will create a new frame
+}
+
+
+==== Basic syntax: Lists ====
+
+Lists can be produced very easily: \\[4mm]
+
+{\tt
+  * This is an unordered list item. \ \\
+  ** This is one, too. \ \\
+   \ \\
+  \# This is an ordered list item. \ \\
+  \#\# This is one, too. \ \\
+   \ \\
+  * Important: \ \\
+  *\# Mixing list types is possible. \ \\
+  *\# Wiki2Beamer will create the necessary environments for you.
+}
+
+
+==== Basic syntax: Formatting ====
+
+Wiki2Beamer includes some simple formatting commands: \\[4mm]
+
+* '''Bold Text:''' enclose text in @\textquotesingle\textquotesingle\textquotesingle@
+* ''Italic Text:'' enclose text in @\textquotesingle\textquotesingle@
+* @Typewriter:@ enclose text in @
+* !Alerts:! enclose text in !
+* _blue_Colors:_ use \_ notation, see project home page \\[4mm]
+
+This example presentation can not show all features that '''wiki2beamer''' offers, have a look at the project website for more information.
+
+
+== Further information ==
+
+==== Further  information ====
+
+Further information can be found on the project home page: \\[4mm]
+
+\begin{center}
+  http://www.repc.de/wiki2beamer \\[4mm]
+\end{center}
+
+Bug reports and feature requests are appreciated.

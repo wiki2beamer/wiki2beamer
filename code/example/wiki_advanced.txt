@@ -1,0 +1,216 @@
+==== Content ====
+
+This example introduces further (and new) concepts of '''wiki2beamer''' (and \LaTeX\ Beamer):
+
+* Overlays
+* Environments
+** Plain \LaTeX{}: Center, %
+%
+%
+Flushright, \ldots
+** \LaTeX{} Beamer: Block, Example, \ldots
+* Columns
+* Substitutions
+* Footnotes
+* Manual Frame Closing
+
+==== Overlays ====
+
+*<1-> Overlays are a very useful concept of the beamer class
+*<2-> They can be used to uncover content step by step
+*<3-> They can be used for list items
+*<4-> Or for any other type of content \\[4mm]
+
+\only<4->{\includegraphics[width=6cm]{rainbow}}
+
+
+==== Overlays in wiki2beamer ====
+
+Here is the source code for the preceding slide -- I guess it should be very much self-explanatory: \\[8mm]
+
+{\tt
+  *<1-> Overlays are very useful concept of the beamer class \\
+  *<2-> They can be used to uncover content step by step \\
+  *<3-> They can be used for list items \\
+  *<4-> Or for any other type of content $\backslash$$\backslash$[4mm] \\
+\ \\
+  $\backslash$only$<$4-$>\{$$\backslash$includegraphics[width=6cm]$\{$rainbow$\}\}$
+}
+
+
+==== Environments ====
+
+* \LaTeX\ comes with a number of different environments:
+** center
+** flushright
+** and many more \\[3mm]
+
+* \LaTeX\ Beamer includes further environments that are quite useful for presentation slides
+** boxes
+** examples
+** theorems
+
+Have a look at the next slide, to see some of the environments in action.
+
+
+==== Environments in action ====
+
+<[center]
+This is centered text.
+[center]>
+
+<[flushright]
+This is right-justified text.
+[flushright]>
+
+<[block]{Hello World.}
+This is boxed text.
+[block]>
+
+<[example]
+This is an example.
+[example]>
+
+
+==== Environments in wiki2beamer ====
+
+You can use plain \LaTeX{} code to create such environments, of course. However, '''wiki2beamer'''
+offers you a shortcut: \\[6mm]
+
+{\tt
+  $<$[center] \\
+  This is centered text. \\ {}
+  [center]$>$ \\[6mm]
+}
+
+Thus, $<$[\ldots] will be tranformed into $\backslash$begin$\{$\ldots$\}$. Please pay attention to these two issues:
+
+* Environment definitions have to start at the first line character
+* The user takes full responsibility for closing !all! opened environments
+
+
+==== Parameters to environments ====
+
+As stated on the preceding slide, '''wiki2beamer''' simply transforms the
+
+<[center]
+{\tt $<$[\ldots] \hspace{5mm} [\ldots]$>$ }
+[center]>
+
+to $\backslash$begin and $\backslash$end commands. \\[6mm]
+
+Hence, it is possible to add different kind of parameters to the environment you want to use. \\[2mm]
+
+<[block]{An example}
+This block was created like this:
+
+{\tt
+  $<$[block]$\{$An example$\}$ \\
+  \ldots \\ {}
+  [\ldots]$>$
+}
+[block]>
+
+
+==== Columns ====
+
+\LaTeX\ Beamer introduced another environment which is handy which presentation slides: !columns!. \\[4mm]
+
+<[columns]
+[[[5cm]]]
+They can be used to place the slide content in a number of different columns. For example, the text could be on the
+left side, as it is the case on this page. And the right side could be used to show an image.
+
+[[[5cm]]]
+\includegraphics[width=4.5cm]{rainbow}
+[columns]>
+
+
+==== Columns in wiki2beamer ====
+
+Use this syntax to create columns in '''wiki2beamer''': \\[4mm]
+
+{\tt
+  $<$[columns] \\ {}
+  [[[5cm]]] \\
+  Text \ldots \\
+\ \\ {}
+  [[[5cm]]] \\
+  $\backslash$includegraphics[width=4.5cm]$\{$rainbow$\}$ \\{}
+  [columns]$>$ \\[4mm]
+}
+
+The length parameter between [[[ and ]]] specifies the column width.
+
+
+
+==== Substitutions ====
+
+'''wiki2beamer''' will transform a few common ASCII symbols to their typographically correct equivalents: \\[4mm]
+
+* -{-}$>$ becomes ! --> ! (\$$\backslash$rightarrow\$)
+* $<$-{-} becomes ! <-- ! (\$$\backslash$leftarrow\$)
+* ==$>$ becomes ! ==> ! (\$$\backslash$Rightarrow\$)
+* $<$== becomes ! <== ! (\$$\backslash$Leftarrow\$)
+* :{-}) becomes ! :-) ! ($\backslash$smiley, requires package wasysym)
+* :{-}( becomes ! :-( ! ($\backslash$frownie, requires package wasysym)
+
+\vspace{3mm}
+These symbols have to be preceeded and followed by at least one whitespace character.
+
+
+==== Footnotes ====
+
+Footnotes(((as you can see here))) are quite useful on some occasions. Using '''wiki2beamer''', they can be
+created like this: \\[6mm]
+
+{\tt
+  Footnotes({(}(as you can see here){)}) are quite useful on some occasions.
+}
+
+
+==== Manual Frame Closing ====
+
+If you want to write \LaTeX\ code outside of the frame environment
+you can manually close the frame (which was opened by {\tt ====}) via:
+
+* '''wiki2beamer''' syntax: {\tt [frame]$>$}
+* \LaTeX\ syntax: {\tt $\backslash$end\{frame\}}
+
+'''wiki2beamer''' detects these when at the beginning of a line and then
+consideres the frame closed.
+
+[frame]>
+
+\defverbatim\somelisting{
+<[verbatim]
+\defverbatim\somelisting{
+Some verbatim code
+as a \defverbatim
+outside of a frame.
+
+Can be referenced
+as \somelisting
+later.
+}
+[verbatim]>
+}
+
+==== Manual Frame Closing ====
+
+This verbatim code was defined via {\tt $\backslash$defverbatim} outside
+the frame and then included via it's name:
+
+\pause
+
+<[block]{Some Listing}
+
+\somelisting
+
+[block]>
+
+==== Finally... ====
+
+<[center]
+\huge The End.
+[center]>
