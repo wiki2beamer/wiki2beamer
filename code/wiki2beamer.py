@@ -20,7 +20,7 @@ import random
 import hashlib
 import string
 
-VERSIONTAG = "0.7 alpha 1"
+VERSIONTAG = "0.7 alpha 2"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
 
@@ -33,6 +33,37 @@ def syntax_error(message, code):
     print >>sys.stderr, '\tcode:\n%s' % code
     sys.exit(-3)
 
+lstbasicstyle=\
+r"""{basic}{
+    captionpos=t,%
+    basicstyle=\footnotesize\ttfamily,%
+    numberstyle=\tiny,%
+    numbers=left,%
+    stepnumber=1,%
+    frame=single,%
+    showspaces=false,%
+    showstringspaces=false,%
+    showtabs=false,%
+    %
+    keywordstyle=\color{blue},%
+    identifierstyle=,%
+    commentstyle=\color{gray},%
+    stringstyle=\color{magenta}%
+}"""
+
+autotemplate = [\
+    ('documentclass', '{beamer}'),\
+    ('usepackage', '{listings}'),\
+    ('usepackage', '{color}'),\
+    ('usepackage', '{wasysym}'),\
+    ('title', '{}'),\
+    ('subtitle', '{}'),\
+    ('author', '{}'),\
+    ('date', '{\\today}'),\
+    ('lstdefinestyle', lstbasicstyle),\
+    ('titleframe', 'True')\
+]
+
 class w2bstate:
     def __init__(self):
         self.frame_opened = False
@@ -43,6 +74,7 @@ class w2bstate:
         self.next_frame_header = ''
         self.current_line = 0
         self.last_code_frame = 0
+        self.autotemplate_opened = False
         return
 
     def switch_to_next_frame(self):
@@ -519,6 +551,149 @@ def expand_code_segment(result, codebuffer, state):
     #print '----'
     return
 
+def get_autotemplate_closing(state):
+    if state.autotemplate_opened:
+        return '\n\end{document}\n'
+    else:
+        return ''
+def parse_bool(string):
+    boolean = False
+
+    if string == 'True' or string == 'true' or string == '1':
+        boolean = True
+    elif string == 'False' or string == 'false' or string =='0':
+        boolean = False
+    else:
+        syntax_error('Boolean expected (True/true/1 or False/false/0)', string)
+
+    return boolean
+
+def parse_autotemplate(autotemplatebuffer):
+    """
+    @param autotemplatebuffer (list)
+        a list of lines found in the autotemplate section
+    @return (list)
+        a list of tuples of the form (string, string) with \command.parameters pairs
+    """
+    autotemplate = []
+
+    for line in autotemplatebuffer:
+        if len(line.lstrip())==0: #ignore empty lines
+            continue
+        if len(line.lstrip())>0 and line.lstrip().startswith('%'): #ignore lines starting with % as comments
+            continue
+
+        tokens = line.split('=', 1)
+        if len(tokens)<2:
+            syntax_error('lines in the autotemplate section have to be of the form key=value', line)
+
+        autotemplate.append((tokens[0], tokens[1]))
+
+    return autotemplate
+
+def parse_usepackage(usepackage):
+    """
+    @param usepackage (str)
+        the unparsed usepackage string in the form [options]{name}
+    @return (tuple)
+        (name(str), options(str))
+    """
+    
+    p = re.compile(r'^\s*(\[.*\])?\s*\{(.*)\}\s*$')
+    m = p.match(usepackage)
+    g = m.groups()
+    if len(g)<2 or len(g)>2:
+        syntax_error('usepackage specifications have to be of the form [%s]{%s}', usepackage)
+    elif g[1]==None and g[1].strip()!='':
+        syntax_error('usepackage specifications have to be of the form [%s]{%s}', usepackage)
+    else:
+        options = g[0]
+        name = g[1].strip()
+        return (name, options)
+
+
+def unify_autotemplates(autotemplates):
+    usepackages = {} #packagename : options
+    documentclass = ''
+    titleframe = False
+
+    merged = []
+    for template in autotemplates:
+        for command in template:
+            if command[0] == 'usepackage':
+                (name, options) = parse_usepackage(command[1])
+                usepackages[name] = options
+            elif command[0] == 'titleframe':
+                titleframe = command[1]
+            elif command[0] == 'documentclass':
+                documentclass = command[1]
+            else:
+                merged.append(command)
+    
+    autotemplate = []
+    autotemplate.append(('documentclass', documentclass))
+    for (name, options) in usepackages.items():
+        if options != None and options.strip() != '':
+            string = '%s{%s}' % (options, name)
+        else:
+            string = '{%s}' % name
+        autotemplate.append(('usepackage', string))
+    autotemplate.append(('titleframe', titleframe))
+
+    autotemplate.extend(merged)
+
+    return autotemplate
+
+def expand_autotemplate_gen_opening(autotemplate):
+    """
+    @param autotemplate (list)
+        the specification of the autotemplate in the form of a list of tuples
+    @return (string)
+        the string the with generated latex code
+    """
+    titleframe = False
+    out = []
+    for item in autotemplate:
+        if item[0]!='titleframe':
+            out.append('\\%s%s' % item)
+        else:
+            titleframe = parse_bool(item[1])
+
+    out.append('\n\\begin{document}\n')
+    if titleframe:
+        out.append('\n\\frame{\\titlepage}\n')
+
+    return '\n'.join(out)
+
+
+def expand_autotemplate_opening(result, templatebuffer, state):
+    my_autotemplate = parse_autotemplate(templatebuffer)
+    the_autotemplate = unify_autotemplates([autotemplate, my_autotemplate])
+
+    opening = expand_autotemplate_gen_opening(the_autotemplate)
+
+    result.append(opening)
+    state.autotemplate_opened = True
+    return
+
+def expand_autotemplate_closing(result, state):
+    closing = get_autotemplate_closing(state)
+    result.append(closing)
+    state.autotemplate_opened=False
+    return
+
+def get_autotemplatemode(line, autotemplatemode):
+    autotemplatestart = re.compile(r'^<\[\s*autotemplate\s*\]')
+    autotemplateend = re.compile(r'^\[\s*autotemplate\s*\]>')
+    if not autotemplatemode and autotemplatestart.match(line)!=None:
+        line = autotemplatestart.sub('', line)
+        return (line, True)
+    elif autotemplatemode and autotemplateend.match(line)!=None:
+        line = autotemplateend.sub('', line)
+        return (line, False)
+    else:
+        return (line, autotemplatemode)
+
 def get_nowikimode(line, nowikimode):
     nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
     nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
@@ -549,7 +724,6 @@ def joinLines(lines):
     """ join lines ending with unescaped percent signs, unless inside codemode or nowiki mode """
     nowikimode = False
     codemode = False
-
     r = []  # result array
     s = ''  # new line
     for _l in lines:
@@ -592,12 +766,14 @@ def convert2beamer(lines):
     state = w2bstate()
     result = []
     codebuffer = []
+    autotemplatebuffer = []
     
     nowikimode = False
     codemode = False
+    autotemplatemode = False
     for line in lines:
         (line, nowikimode) = get_nowikimode(line, nowikimode)
-        if nowikimode and not codemode:
+        if nowikimode:
             result.append(line)
         else:
             (line, _codemode) = get_codemode(line, codemode)
@@ -610,14 +786,25 @@ def convert2beamer(lines):
             if codemode:
                 codebuffer.append(line)
             else:
-                state.current_line = len(result)
-                result.append(transform(line, state))
+                (line, _autotemplatemode) = get_autotemplatemode(line, autotemplatemode)
+                if _autotemplatemode and not autotemplatemode: #autotemplate mode was turned on
+                    autotemplatebuffer = []
+                elif not _autotemplatemode and autotemplatemode: #autotemplate mode was turned off
+                    expand_autotemplate_opening(result, autotemplatebuffer, state)
+                autotemplatemode = _autotemplatemode
+                
+                if autotemplatemode:
+                    autotemplatebuffer.append(line)
+                else:
+                    state.current_line = len(result)
+                    result.append(transform(line, state))
 
     result.append(transform("", state))   # close open environments
 
     if state.frame_opened:
         result.append(get_frame_closing(state))
-    
+    expand_autotemplate_closing(result, state)
+   
     return result
 
 def print_result(lines):

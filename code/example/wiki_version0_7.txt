@@ -1,3 +1,13 @@
+<[autotemplate]
+%usepackage={beamerthemeWarsaw}
+usepackage=[utf8]{inputenc}
+usepackage=[german]{babel}
+usepackage=[T1]{fontenc}
+title={What's new in 0.7}
+subtitle={nowiki and code}
+author={Kai Dietrich}
+[autotemplate]>
+
 == Overview  ==
 ==== What's new in 0.7 ====
 There are 3 major changes in wiki2beamer 0.7
