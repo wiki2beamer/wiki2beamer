@@ -1,3 +1,8 @@
+Version 0.7 alpha 2 (2009-05-14)
+=======================================
+autotemplate support added - no more templates required to create
+wiki2beamer presentations
+
 Version 0.7 alpha 1 (2009-05-10)
 =======================================
 Frame-close detection for \end{frame} removed as it causes trouble in
