@@ -551,11 +551,9 @@ def expand_code_segment(result, codebuffer, state):
     #print '----'
     return
 
-def get_autotemplate_closing(state):
-    if state.autotemplate_opened:
-        return '\n\end{document}\n'
-    else:
-        return ''
+def get_autotemplate_closing():
+    return '\n\end{document}\n'
+
 def parse_bool(string):
     boolean = False
 
@@ -674,12 +672,6 @@ def expand_autotemplate_opening(result, templatebuffer, state):
 
     result.append(opening)
     state.autotemplate_opened = True
-    return
-
-def expand_autotemplate_closing(result, state):
-    closing = get_autotemplate_closing(state)
-    result.append(closing)
-    state.autotemplate_opened=False
     return
 
 def get_autotemplatemode(line, autotemplatemode):
@@ -803,7 +795,8 @@ def convert2beamer(lines):
 
     if state.frame_opened:
         result.append(get_frame_closing(state))
-    expand_autotemplate_closing(result, state)
+    if state.autotemplate_opened:
+        result.append(get_autotemplate_closing())
    
     return result
 
