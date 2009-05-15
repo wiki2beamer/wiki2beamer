@@ -3,12 +3,18 @@
 <refentry>
 <refmeta>
 	<refentrytitle>wiki2beamer</refentrytitle>
+	<author>
+		<personname>Kai Dietrich</personname>
+		<email>mail@cleeus.de</email>
+		<affiliation>wiki2beamer Project</affiliation>
+	</author>
+
 	<manvolnum>1</manvolnum>
 </refmeta>
 
 <refnamediv>
 	<refname>wiki2beamer</refname>
-	<refpurpose>convert wiki-formated text to latex-beamer code</refpurpose>
+	<refpurpose>convert wiki-formatted text to latex-beamer code</refpurpose>
 </refnamediv>
 
 <refsynopsisdiv>
@@ -16,13 +22,14 @@
 		<command>wiki2beamer</command>
 		<group choice="req">
 			<option>--version</option>
-			<arg>FILE</arg>
+			<arg><replaceable>FILE</replaceable></arg>
 		</group>
 	</cmdsynopsis>
 </refsynopsisdiv>
 
 <refsect1><title>Description</title>
-	<para>FILE - the text-file to be processed</para>
+	<epigraph>"Wonderfull until proven crap."</epigraph>
+	<para><replaceable>FILE</replaceable> - the text-file to be processed</para>
 	<para>--version - show version information</para>
 </refsect1>
 
@@ -32,8 +39,93 @@
 </refsect1>
 
 <refsect1><title>Syntax</title>
-	<para>Wiki2beamer has it's own syntax, everything that is unknown will be passed through to the LaTeX output (unless inside special environments).</para>
+	<para>Wiki2beamer has it's own wiki-syntax which is described below.
+	Everything that is unknown will be passed through to the LaTeX output
+	(unless inside special environments).</para>
 <refsect2><title>overall structure</title>
+	<para>A wiki2beamer txt file can consist of two sections: the head and the body.
+	The head is optional and is an autotemplate environment.
+	The body contains the content of the document. If the head (autotemplate) is not given,
+	then only the code for the body will be generated and can be included into a manually crafted
+	LaTeX template file.</para>
+</refsect2>
+<refsect2><title>Environments</title>
+	LaTeX knows many environments, some of which are as simple as \begin{center} \end{center}, others are more complicated.
+	To use these in a more wiki-like fashion, use &lt;[name] to open and [name]&gt; (both at the start of a line) to close environments. It will
+	be simply converted to \begin{name} and end{name}.
+	<warning>
+	No parsing is done. The user is responsible for closing any opened environment.
+	</warning>
+	
+	<refsection><title>Special Environments</title>
+		<para>Unlike standard environments, some environment names are recognized by wiki2beamer.
+		These are: nowiki, code, autotemplate and frame. If wiki2beamer detects one of these it will do some advanced
+		parsing, which can even fail with a syntax error.</para>
+		<refsection><title>1. Autotemplate</title>
+			<para>Autotemplate can be used at the beginning of a beamer .txt file. It will create the required
+			LaTeX headers to compile the content. The basic syntax is:
+			<programlisting>
+			&lt;[autotemplate]
+			key=value
+			key=value
+			...
+			[autotemplate]&gt;
+			</programlisting>
+
+			key=value pairs are converted to \keyvalue in the output (except special keys). This means, everything after the = is just appended to \key.
+			The usual usage will be like:
+			<programlisting>
+			&lt;[autotemplate]
+			usepackage=[utf8]{inputenc}
+			[autotemplate]&gt;
+			</programlisting>
+			which is converted to \usepackage[utf8]{inputenc}. Wiki2beamer uses the following default set of options which you can override:
+			<programlisting>
+			&lt;[autotemplate]
+			documentclass={beamer}
+			usepackage={listings}
+			usepackage={wasysym}
+			usepackage={graphicx}
+			date={\today}
+			lstdefinestyle={basic}{....}
+			titleframe=True
+			[autotemplate]&gt;
+			</programlisting>
+			titleframe is a special key that tells wiki2beamer to create a title frame. To set the title, subtitle and author of the presentation
+			use the keys title, subtitle and author. Overriding of the default options works on</para>
+			<itemizedlist>
+				<listitem>per-key level for: documentclass, titleframe</listitem>
+				<listitem>per-package level for: usepackage</listitem>
+				<listitem>no overriding for: everything else</listitem>
+			</itemizedlist>	
+		</refsection>
+
+		<refsection><title>2. Code</title>
+			<para>Code-environments can be used to display animated code listings. Their syntax is as follows:
+			<programlisting>
+			&lt;[code][key=value,...]
+			...
+			[code]>
+			</programlisting>
+			&lt;[code] opens the environment, [code]&gt; closes it, everything after &lt;[code] is passed
+			to the LaTeX listings package as options for this listing.
+			Inside the code environment, [ and ] must be escaped as \[ and \]. Things between [ and ] are animations.
+			There are two kinds of animations:
+			<itemizedlist>
+				<listitem>[&lt;slidespec&gt;some code] - show "some code" only on specified slides</listitem>
+				<listitem>[[&lt;slidespec&gt;some code][&lt;slidespec&gt;some other code]] - show "some code"
+				on the slides in the first spec, show "some other code" on the slides in the second spec, fill up space
+				on slides without content with spaces</listitem>
+			</itemizedlist>
+			Slide-specs can be of the form:
+			<itemizedlist>
+				<listitem>n - one single frame n</listitem>
+				<listitem>n-m - sequence of frames n to m</listitem>
+				<listitem>spec,spec,... - combine multiple specs into on (e.g. &lt;1-3,5&gt;)</listitem>
+			</itemizedlist>
+			</para>
+		</refsection>
+	</refsection>
 </refsect2>
 </refsect1>
 </refentry>
