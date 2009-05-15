@@ -54,11 +54,8 @@ r"""{basic}{
 autotemplate = [\
     ('documentclass', '{beamer}'),\
     ('usepackage', '{listings}'),\
-    ('usepackage', '{color}'),\
     ('usepackage', '{wasysym}'),\
-    ('title', '{}'),\
-    ('subtitle', '{}'),\
-    ('author', '{}'),\
+    ('usepackage', '{graphicx}'),\
     ('date', '{\\today}'),\
     ('lstdefinestyle', lstbasicstyle),\
     ('titleframe', 'True')\
@@ -73,8 +70,9 @@ class w2bstate:
         self.next_frame_footer = ''
         self.next_frame_header = ''
         self.current_line = 0
-        self.last_code_frame = 0
         self.autotemplate_opened = False
+        self.defverbs = {}
+        self.code_pos = 0
         return
 
     def switch_to_next_frame(self):
@@ -158,22 +156,6 @@ def transform_detect_manual_frameclose(string, state):
 def get_frame_closing(state):
     return " %s \n \\end{frame}\n" % state.frame_footer
 
-def transform_codeframe(string, state):
-    frame_closing = escape_resub(get_frame_closing(state))
-
-    p = re.compile(r"^<\[codeframe\]>")
-    if state.frame_opened:
-        _string = p.sub("%s\n" % frame_closing, string)
-    else:
-        _string = p.sub("\n", string)
-
-    if string != _string:
-        state.frame_opened=False
-        state.switch_to_next_frame()
-        state.last_code_frame = state.current_line
-
-    return _string
- 
 def transform_h4_to_frame(string, state):
     """headings (3) to frames"""
     frame_opening = r"\\begin{frame}\2\n \\frametitle{\1}\n %s \n" % escape_resub(state.next_frame_header)
@@ -316,7 +298,6 @@ def transform(string, state):
     string = transform_itemenums(string, state)
     string = transform_define_foothead(string, state)
     string = transform_detect_manual_frameclose(string, state)
-    string = transform_codeframe(string, state)
     string = transform_h4_to_frame(string, state)
     string = transform_h3_to_subsec(string, state)
     string = transform_h2_to_sec(string, state)
@@ -488,6 +469,19 @@ def expand_code_makeoverprint(names, minoverlay):
 
     return ''.join(out)
 
+def expand_code_get_unique_name(defverbs, code, lstparams):
+    """generate a collision free entry in the defverbs-map and names-list"""
+    name = expand_code_getname(code)
+    expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+    rehash = ''
+    while name in defverbs and defverbs[name] != expanded_code:
+        rehash += char(random.randint(65,90)) #append a character from A-Z to rehash value
+        name = expanded_code_getname(code + rehash)
+        expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+
+    return (name, expanded_code)
+
+   
 def expand_code_segment(result, codebuffer, state):
     #treat first line as params for lstlistings
     lstparams = codebuffer[0]
@@ -520,7 +514,6 @@ def expand_code_segment(result, codebuffer, state):
             anim_map[i+min_overlay] = map(lambda x: x[i], gen_anims)
         #print anim_map
     
-        defverbs = {}
         names = []
         for overlay in sorted(anim_map.keys()):
             #combine non_anim and anim parts
@@ -530,21 +523,12 @@ def expand_code_segment(result, codebuffer, state):
             code = ''.join(mapped)
             
             #generate a collision free entry in the defverbs-map and names-list
-            name = expand_code_getname(code)
-            expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
-            rehash = ''
-            while name in defverbs and defverbs[name] != expanded_code:
-                rehash += char(random.randint(65,90)) #append a character from A-Z to rehash value
-                name = expanded_code_getname(code + rehash)
-                expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+            (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
 
             #now we have a collision free entry, append it
             names.append(name)
-            defverbs[name] = expanded_code
+            state.defverbs[name] = expanded_code
         
-        #insert the defverb block into result afte the last code-frame marker
-        result[state.last_code_frame] = result[state.last_code_frame] + '\n'.join(defverbs.values()) + '\n'
-
         #append overprint area to result
         overprint = expand_code_makeoverprint(names, min_overlay)
         result.append(overprint)
@@ -552,13 +536,16 @@ def expand_code_segment(result, codebuffer, state):
         #we have no animations and can just put the defverbatim in
         #remove escapings
         code = code.replace('\\[', '[').replace('\\]', ']')
-        name = expand_code_getname(code)
-        defverb = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
-        result[state.last_code_frame] = result[state.last_code_frame] + '\n' + defverb
+        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)  
+        state.defverbs[name] = expanded_code
         result.append('\n\\%s\n' % name)
 
     #print '----'
     return
+
+def expand_code_defverbs(result, state):
+        result[state.code_pos] = result[state.code_pos] + '\n'.join(state.defverbs.values()) + '\n'
+        state.defverbs={}
 
 def get_autotemplate_closing():
     return '\n\end{document}\n'
@@ -680,6 +667,8 @@ def expand_autotemplate_opening(result, templatebuffer, state):
     opening = expand_autotemplate_gen_opening(the_autotemplate)
 
     result.append(opening)
+    result.append('')
+    state.code_pos = len(result)
     state.autotemplate_opened = True
     return
 
@@ -765,7 +754,7 @@ def read_file_to_lines(filename):
 def convert2beamer(lines):
     """ convert to LaTeX """
     state = w2bstate()
-    result = []
+    result = [''] #start with one empty line as line 0
     codebuffer = []
     autotemplatebuffer = []
     
@@ -806,7 +795,10 @@ def convert2beamer(lines):
         result.append(get_frame_closing(state))
     if state.autotemplate_opened:
         result.append(get_autotemplate_closing())
-   
+    
+    #insert defverbs somewhere at the beginning
+    expand_code_defverbs(result, state)
+
     return result
 
 def print_result(lines):
