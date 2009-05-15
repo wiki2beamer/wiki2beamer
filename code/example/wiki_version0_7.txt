@@ -62,11 +62,8 @@ wiki2beamer solves all these problems by putting together the @listings@-package
 code generation. See what's coming\ldots
 
 === Syntax ===
-<[codeframe]>
 ==== The Basic Syntax ====
 <[code][style=basic,language=java]
-              //marks the following frame
-<\[codeframe\]> //as containing code
 ==== Title ==== //usual frame title
 <\[code\]\[key=value,key=value\] //opens a code block
                        //the key=value list is passed
@@ -77,7 +74,6 @@ class Fooo {} //some code
 \[code\]> //closes the code block
 [code]>
 
-<[codeframe]>
 ==== Syntax For Animations ====
 <[code][style=basic,language=java]
 <\[code\]
@@ -92,7 +88,6 @@ some code that appears from start to end |
 \[code\]>
 [code]>
 
-<[codeframe]>
 ==== Animation Syntax Example in Action ====
 This is the output:
 <[code][style=basic]
@@ -104,13 +99,11 @@ some code that appears from start to end |
 [[<2>some code      ][<4>some other code]] |
 [code]>
 
-<[codeframe]>
 ==== Behind the scenes ====
 What wiki2beamer does is:
-* remeber the position of <[codeframe]>
 * generate a sequence of listings from the [code] block
 * give names to the listings
-* put them at the position of <[codeframe]>
+* put them at the position before the first frame
 * put references to the listings in an @overprint-onslide@ on the frame
 
 If you want to find out how this looks, take a look at the @.tex@ output of this presentation.
@@ -123,7 +116,6 @@ So here's how you create animated listings:
 # write your code, reference to the style
 # animate it
 
-<[codeframe]>
 ==== Defining a style for @listings@ ====
 <[code][style=basic,language=TeX,title=\tiny template.tex]
 \lstdefinestyle{basic}{%
@@ -143,7 +135,6 @@ So here's how you create animated listings:
 }
 [code]>
 
-<[codeframe]>
 ==== Writing the code ====
 <[code][style=basic,language=TeX]
 <\[code\]\[style=basic,language=java,title=HelloWorld.java\]
@@ -155,7 +146,6 @@ class HelloWorld {
 \[code\]>
 [code]>
 
-<[codeframe]>
 ==== Animating the code ====
 <[code][style=basic,language=TeX]
 <\[code\]\[style=basic,language=java,title=HelloWorld.java\]
@@ -167,7 +157,6 @@ class HelloWorld {
 \[code\]>
 [code]>
 
-<[codeframe]>
 ==== The result ====
 <[code][style=basic,language=java,title=HelloWorld.java]
 class HelloWorld {
@@ -179,7 +168,6 @@ class HelloWorld {
 
 === Delaying Animations ===
 
-<[codeframe]>
 ==== Showing Animated Code later ====
 Q: The animation always starts on overlay 1. What can I do to start it later?\\
 
@@ -218,7 +206,6 @@ a complete all-in-one @.tex@ file without the need for a seperate template?
 
 wiki2beamer 0.7 can do exactly that. Let's see how it works\ldots
 
-<[codeframe]>
 ==== The Solution ====
 Put a @<[autotemplate] [autotemplate]>@ section at the beginnung of the
 wiki2beamer-file. Wiki2beamer will then put a minimal environment around your
