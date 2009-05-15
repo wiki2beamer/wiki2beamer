@@ -528,10 +528,19 @@ def expand_code_segment(result, codebuffer, state):
             zipped = zip(non_anim, anim_map[overlay])
             mapped = map(lambda x: x[0] + x[1], zipped)
             code = ''.join(mapped)
+            
+            #generate a collision free entry in the defverbs-map and names-list
             name = expand_code_getname(code)
+            expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+            rehash = ''
+            while name in defverbs and defverbs[name] != expanded_code:
+                rehash += char(random.randint(65,90)) #append a character from A-Z to rehash value
+                name = expanded_code_getname(code + rehash)
+                expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+
+            #now we have a collision free entry, append it
             names.append(name)
-            #generate code for lstlistings
-            defverbs[name]=expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+            defverbs[name] = expanded_code
         
         #insert the defverb block into result afte the last code-frame marker
         result[state.last_code_frame] = result[state.last_code_frame] + '\n'.join(defverbs.values()) + '\n'
