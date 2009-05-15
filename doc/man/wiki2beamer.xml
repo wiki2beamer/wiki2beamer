@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<refentry>
+<refmeta>
+	<refentrytitle>wiki2beamer</refentrytitle>
+	<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+	<refname>wiki2beamer</refname>
+	<refpurpose>convert wiki-formated text to latex-beamer code</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+	<cmdsynopsis>
+		<command>wiki2beamer</command>
+		<group choice="req">
+			<option>--version</option>
+			<arg>FILE</arg>
+		</group>
+	</cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+	<para>FILE - the text-file to be processed</para>
+	<para>--version - show version information</para>
+</refsect1>
+
+<refsect1><title>Usage</title>
+	<para>usually you want to pipe the output of wiki2beamer into a file:</para>
+	<para><code>wiki2beamer footalk.txt > footalk.tex</code></para>
+</refsect1>
+
+<refsect1><title>Syntax</title>
+	<para>Wiki2beamer has it's own syntax, everything that is unknown will be passed through to the LaTeX output (unless inside special environments).</para>
+<refsect2><title>overall structure</title>
+</refsect2>
+</refsect1>
+</refentry>
+
+
