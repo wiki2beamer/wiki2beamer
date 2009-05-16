@@ -8,6 +8,11 @@
 		<email>mail@cleeus.de</email>
 		<affiliation>wiki2beamer Project</affiliation>
 	</author>
+	<author>
+		<personname>Michael Rentzsch</personname>
+		<email>michael.rentzsch@repc.de</email>
+		<affiliation>wiki2beamer Project</affiliation>
+	</author>
 
 	<manvolnum>1</manvolnum>
 </refmeta>
@@ -28,9 +33,12 @@
 </refsynopsisdiv>
 
 <refsect1><title>Description</title>
-	<epigraph>"Wonderfull until proven crap."</epigraph>
-	<para><replaceable>FILE</replaceable> - the text-file to be processed</para>
-	<para>--version - show version information</para>
+	<variablelist>
+		<varlistentry><term><replaceable>FILE</replaceable></term>
+			<listitem><para>the text-file to be processed</para></listitem></varlistentry>
+		<varlistentry><term>--version</term>
+			<listitem><para>show version information</para></listitem></varlistentry>
+	</variablelist>
 </refsect1>
 
 <refsect1><title>Usage</title>
@@ -49,59 +57,115 @@
 	then only the code for the body will be generated and can be included into a manually crafted
 	LaTeX template file.</para>
 </refsect2>
+<refsect2><title>Structuring the presentation</title>
+	<variablelist>
+		<varlistentry><term>== <replaceable>sectionname</replaceable> ==</term>
+			<listitem><para>opens a section called <replaceable>sectionname</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>== <replaceable>longsectionname</replaceable> ==[<replaceable>shortname</replaceable>]</term>
+			<listitem><para>opens a section called <replaceable>longsectionname</replaceable>, 
+			passing the parameter <replaceable>shortname</replaceable> to latex</para></listitem></varlistentry>
+		<varlistentry><term>=== <replaceable>subsectname</replaceable> ===</term>
+			<listitem><para>opens a subsection called <replaceable>subsectname</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>=== <replaceable>longsubsectname</replaceable> ===[<replaceable>shortname</replaceable>]</term>
+			<listitem><para>opens a subsection called <replaceable>longsubsectname</replaceable>,
+			passing the parameter <replaceable>shortname</replaceable> to latex</para></listitem></varlistentry>
+		<varlistentry><term>==== <replaceable>frametitle</replaceable> ====</term>
+			<listitem><para>opens a frame with the title <replaceable>frametitle</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>==== <replaceable>frametitle</replaceable> ====[<replaceable>param</replaceable>]</term>
+			<listitem><para>opens a frame with the title <replaceable>frametitle</replaceable>,
+			passes frame <replaceable>param</replaceable>eters like t, fragile, verbatim etc. to latex</para></listitem></varlistentry>
+	</variablelist>
+	<para>Sectioning commands work only at the beginnig of a line.</para>
+</refsect2>
+<refsect2><title>Lists (Bullets/Enumerations)</title>
+	<variablelist>
+		<varlistentry><term>* <replaceable>text</replaceable></term>
+			<listitem><para>create a bullet (itemize) with <replaceable>text</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>*&lt;<replaceable>onslide</replaceable>&gt; <replaceable>text</replaceable></term>
+			<listitem><para>create a bullet (itemize) with <replaceable>text</replaceable> that only
+			appears on the specified slides (<replaceable>onslide</replaceable>)</para></listitem></varlistentry>
+		<varlistentry><term># <replaceable>text</replaceable></term>
+			<listitem><para>create a numbered item (enumerate) with <replaceable>text</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>#&lt;<replaceable>onslide</replaceable>&gt; <replaceable>text</replaceable></term>
+			<listitem><para>create a numbered item (enumerate) with <replaceable>text</replaceable> that only
+			appears on the specified slides (<replaceable>onslide</replaceable>)</para></listitem></varlistentry>
+	</variablelist>
+	<para>Cascaded lists, mixed ordered and unorderd items:
+	<programlisting>
+	* This is a crazy list.
+	*# It contains different items.
+	*# In different formats.
+	*** On different levels.
+	***&lt;2-&gt; which are animated
+	*&lt;3-&gt; Quite a lot of fun.
+	**&lt;4-&gt; Isn't it?
+	</programlisting>
+	</para>
+</refsect2>
 <refsect2><title>Environments</title>
 	LaTeX knows many environments, some of which are as simple as \begin{center} \end{center}, others are more complicated.
-	To use these in a more wiki-like fashion, use &lt;[name] to open and [name]&gt; (both at the start of a line) to close environments. It will
+	To use these in a more wiki-like fashion, use &lt;[name] to open and [name]&gt; to close environments. It will
 	be simply converted to \begin{name} and end{name}.
 	<warning>
-	No parsing is done. The user is responsible for closing any opened environment.
+	No parsing is done. The user is responsible for closing any opened environment. Environment-tags are only recognized at the beginning of a line.
 	</warning>
-	
-	<refsection><title>Special Environments</title>
-		<para>Unlike standard environments, some environment names are recognized by wiki2beamer.
-		These are: nowiki, code, autotemplate and frame. If wiki2beamer detects one of these it will do some advanced
-		parsing, which can even fail with a syntax error.</para>
-		<refsection><title>1. Autotemplate</title>
-			<para>Autotemplate can be used at the beginning of a beamer .txt file. It will create the required
-			LaTeX headers to compile the content. The basic syntax is:
-			<programlisting>
-			&lt;[autotemplate]
-			key=value
-			key=value
-			...
-			[autotemplate]&gt;
-			</programlisting>
+</refsect2>	
+<refsect2><title>Special Environments</title>
+	<para>Unlike standard environments, some environment names are recognized by wiki2beamer.
+	These are: nowiki, code, autotemplate and frame. If wiki2beamer detects one of these it will do some advanced
+	parsing, which can even fail with a syntax error.</para>
+</refsect2>
+<refsect2><title>autotemplate</title>
+				<para>Autotemplate can be used at the beginning of a beamer .txt file. It will create the required
+				LaTeX headers to compile the content.</para>
+				<variablelist>
+					<varlistentry><term>&lt;[autotemplate]</term>
+						<listitem><para>opens the autotemplate environment</para></listitem></varlistentry>
+					<varlistentry><term>[autotemplate]&gt;</term>
+						<listitem><para>close the autotemplate environment</para></listitem></varlistentry>
+					<varlistentry><term><replaceable>key</replaceable>=<replaceable>value</replaceable> (inside [autotemplate])</term>
+						<listitem><para>insert a template command \<replaceable>key</replaceable><replaceable>value</replaceable>
+						</para></listitem></varlistentry>
+				</variablelist>
+			
+			
+				<para>key=value pairs are converted to \keyvalue in the output
+				(except special keys) -- everything after = is just appended to \key.
+<programlisting>&lt;[autotemplate]
+usepackage=[utf8]{inputenc}
+[autotemplate]&gt;</programlisting>
+				will be converted to \usepackage[utf8]{inputenc}.</para>
+				<para>There is a built-in set of options:
+<programlisting>&lt;[autotemplate]
+documentclass={beamer}
+usepackage={listings}
+usepackage={wasysym}
+usepackage={graphicx}
+date={\today}
+lstdefinestyle={basic}{....}
+titleframe=True
+[autotemplate]&gt;</programlisting>
+				titleframe is a special key that tells wiki2beamer to create a title frame. To set the title, subtitle and author of the presentation
+				use the keys title, subtitle and author. Overriding of the default options works on</para>
+				<itemizedlist>
+					<listitem>per-key level for: documentclass, titleframe</listitem>
+					<listitem>per-package level for: usepackage</listitem>
+					<listitem>no overriding for: everything else</listitem>
+				</itemizedlist>	
+</refsect2>
+<refsect2><title>code</title>
 
-			key=value pairs are converted to \keyvalue in the output (except special keys). This means, everything after the = is just appended to \key.
-			The usual usage will be like:
-			<programlisting>
-			&lt;[autotemplate]
-			usepackage=[utf8]{inputenc}
-			[autotemplate]&gt;
-			</programlisting>
-			which is converted to \usepackage[utf8]{inputenc}. Wiki2beamer uses the following default set of options which you can override:
-			<programlisting>
-			&lt;[autotemplate]
-			documentclass={beamer}
-			usepackage={listings}
-			usepackage={wasysym}
-			usepackage={graphicx}
-			date={\today}
-			lstdefinestyle={basic}{....}
-			titleframe=True
-			[autotemplate]&gt;
-			</programlisting>
-			titleframe is a special key that tells wiki2beamer to create a title frame. To set the title, subtitle and author of the presentation
-			use the keys title, subtitle and author. Overriding of the default options works on</para>
-			<itemizedlist>
-				<listitem>per-key level for: documentclass, titleframe</listitem>
-				<listitem>per-package level for: usepackage</listitem>
-				<listitem>no overriding for: everything else</listitem>
-			</itemizedlist>	
-		</refsection>
+			<para>Use code-environments to display animated code listings.
+			<variablelist>
+				<varlistentry><term>&lt;[code]</term>
+					<listitem><para>open a code environment</para></listitem></varlistentry>
+				<varlistentry><term>&lt;[code][<replaceable>param</replaceable>]</term>
+					<listitem><para>open a code environment passing <replaceable>param</replaceable>eters
+					to the latex lstlisting environment.</para></listitem></varlistentry>
+				<varlistentry><term>[code]&gt;</term>
+					<listitem><para>close the code environment</para></listitem></varlistentry>
+			</variablelist>
 
-		<refsection><title>2. Code</title>
-			<para>Code-environments can be used to display animated code listings. Their syntax is as follows:
 			<programlisting>
 			&lt;[code][key=value,...]
 			...
@@ -117,16 +181,96 @@
 				on the slides in the first spec, show "some other code" on the slides in the second spec, fill up space
 				on slides without content with spaces</listitem>
 			</itemizedlist>
+			
 			Slide-specs can be of the form:
+			
 			<itemizedlist>
 				<listitem>n - one single frame n</listitem>
 				<listitem>n-m - sequence of frames n to m</listitem>
 				<listitem>spec,spec,... - combine multiple specs into on (e.g. &lt;1-3,5&gt;)</listitem>
 			</itemizedlist>
 			</para>
-		</refsection>
-	</refsection>
 </refsect2>
+<refsect2><title>nowiki</title>
+			<para>Nowiki-Environments completly escape from wiki2beamer replacements. &lt;[nowiki] opens the environment, [nowiki]&gt; closes it.</para>
+</refsect2>
+<refsect2><title>frame</title>
+			<para>The LaTeX-frame environment is where the content of a slide goes.
+			You can manually close a frame-environment which was opened with ==== Frametitle ==== with [frame]&gt;.
+			Wiki2beamer is then aware that the last frame is already closed and doesn't try to close it again.</para>
+</refsect2>
+
+<refsect2><title>Text Formatting</title>
+	<variablelist>
+		<varlistentry><term>'''<replaceable>text</replaceable>'''</term>
+			<listitem><para>typeset <replaceable>text</replaceable> bold</para></listitem></varlistentry>
+		<varlistentry><term>''<replaceable>text</replaceable>''</term>
+			<listitem><para>typeset <replaceable>text</replaceable> italic</para></listitem></varlistentry>
+		<varlistentry><term>@<replaceable>text</replaceable>@</term>
+			<listitem><para>typeset <replaceable>text</replaceable> in typewriter type</para></listitem></varlistentry>
+		<varlistentry><term>!<replaceable>text</replaceable>!</term>
+			<listitem><para>alert <replaceable>text</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>_ <replaceable>color</replaceable> _ <replaceable>text</replaceable> _</term>
+			<listitem><para>make <replaceable>text</replaceable> appear in <replaceable>color</replaceable></para></listitem></varlistentry>
+	</variablelist>
+</refsect2>
+
+<refsect2><title>Columns</title>
+	<variablelist>
+		<varlistentry><term>&lt;[columns]</term>
+			<listitem><para>opens the column environment</para></listitem></varlistentry>
+		<varlistentry><term>[[[ <replaceable>width</replaceable> ]]]</term>
+			<listitem><para>creates a column of <replaceable>width</replaceable>, everything below goes into this column</para></listitem></varlistentry>
+		<varlistentry><term>[columns]&gt;</term>
+			<listitem><para>closes the column environment</para></listitem></varlistentry>
+	</variablelist>
+</refsect2>
+
+<refsect2><title>Graphics</title>
+	<variablelist>
+		<varlistentry><term>&lt;&lt;&lt;<replaceable>pathtofile</replaceable>&gt;&gt;&gt;</term>
+			<listitem><para>include image from <replaceable>pathtofile</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>&lt;&lt;&lt;<replaceable>pathtofile</replaceable>,<replaceable>key=value</replaceable>&gt;&gt;&gt;</term>
+			<listitem><para>include image from <replaceable>pathtofile</replaceable> passing <replaceable>key=value</replaceable>
+			parameters to latex</para></listitem></varlistentry>
+	</variablelist>
+</refsect2>
+
+<refsect2><title>Footnotes</title>
+	<variablelist>
+		<varlistentry><term>(((<replaceable>text</replaceable>)))</term>
+			<listitem><para>create a footnote containing <replaceable>text</replaceable></para></listitem></varlistentry>
+	</variablelist>
+</refsect2>
+
+<refsect2><title>Substitutions</title>
+	<variablelist>
+		<varlistentry><term>--&gt;</term>
+			<listitem><para>becomes $\rightarrow$</para></listitem></varlistentry>
+		<varlistentry><term>==&gt;</term>
+			<listitem><para>becomes $\Rightarrow$</para></listitem></varlistentry>
+		<varlistentry><term>&lt;--</term>
+			<listitem><para>becomes $\leftarrow$</para></listitem></varlistentry>
+		<varlistentry><term>&lt;==</term>
+			<listitem><para>becomes $\Leftarrow$</para></listitem></varlistentry>
+		<varlistentry><term>:-)</term>
+			<listitem><para>becomes \smiley (requires package wasysym)</para></listitem></varlistentry>
+		<varlistentry><term>:-(</term>
+			<listitem><para>becomes \frownie (requires package wasysym)</para></listitem></varlistentry>
+	</variablelist>
+</refsect2>
+
+<refsect2><title>Frame Headers/Footers</title>
+	<para>There are two variables, FRAMEHEADER and FRAMEFOOTER. The content of these will be inserted at the beginning/end of all following slides.</para>
+	<variablelist>
+		<varlistentry><term>@FRAMEHEADER=<replaceable>text</replaceable></term>
+			<listitem><para>set frameheader to <replaceable>text</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>@FRAMEFOOTER=<replaceable>text</replaceable></term>
+			<listitem><para>set framefooter to <replaceable>text</replaceable></para></listitem></varlistentry>
+	</variablelist>
+	<para>Leave <replaceable>text</replaceable> empty to reset frame headers and footers.</para>
+</refsect2>
+
 </refsect1>
 </refentry>
 
