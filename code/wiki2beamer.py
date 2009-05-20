@@ -23,6 +23,18 @@ import string
 VERSIONTAG = "0.7 alpha 2"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
+if sys.version_info >= (2, 5):
+    import hashlib
+else:
+    import md5
+
+def md5hex(string):
+    if sys.version_info >= (2, 5):
+        return hashlib.md5(string).hexdigest()
+    else:
+        dg = md5.md5()
+        dg.update(string)
+        return dg.hexdigest()
 
 def mydebug(message):
     """ print debug message to stderr """
@@ -322,11 +334,11 @@ def expand_code_make_lstlisting(content, options):
     return "\\begin{lstlisting}%s%s\\end{lstlisting}" % (options, content)
 
 def expand_code_search_escape_sequences(code):
-    open = 'khuhusi_foobar_duaijd212'
-    close = 'aisdfzgzu_foobar_jjj812'
+    open = '1'
+    close = '2'
     while code.find(open) != -1 or code.find(close) != -1:
-        open.append(chr(random.randint(48,57)))
-        close.append(chr(random.randint(48,57)))
+        open = open + chr(random.randint(48,57))
+        close = close + chr(random.randint(48,57))
 
     return (open,close)
 
@@ -458,7 +470,7 @@ def expand_code_genanims(parsed_animspec, minoverlay, maxoverlay, type):
 def expand_code_getname(code):
     asciihextable = string.maketrans('0123456789abcdef',\
                                      'abcdefghijklmnop')
-    d = hashlib.md5(code).hexdigest().translate(asciihextable)
+    d = md5hex(code).translate(asciihextable)
     return d
 
 def expand_code_makeoverprint(names, minoverlay):
