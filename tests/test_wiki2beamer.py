@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import sys
 import unittest
+import re
+import random
 
 sys.path.append('../code')
 from wiki2beamer import *
 
 
 class TestBasics(unittest.TestCase):
+
     def test_join_lines_standard(self):
         lines = ['', 'foo%', 'bar']
         joined = joinLines(lines)
@@ -24,6 +27,13 @@ class TestBasics(unittest.TestCase):
         expected = r"foo \\1 bar"
         out = escape_resub(string)
         self.assertEqual(expected,out)
+
+    def test_escape_resub2(self):
+        instr = "abc"
+        substr = r'a\1'
+        p = re.compile(".*(b).*")
+        out = p.sub(escape_resub(substr), instr)
+        self.assertEqual(out, substr)
 
 
 class TestTransform(unittest.TestCase):
@@ -45,6 +55,58 @@ class TestTransform(unittest.TestCase):
     def test_subsection(self):
         self.assertEqual(transform('=== foo ===', self.state), '\n\\subsection{foo}\n\n')
 
+    def test_footnote(self):
+        self.assertEqual(transform('(((foo)))', self.state), '\\footnote{foo}')
+
+class TestExpandCode(unittest.TestCase):
+    def test_search_escape_sequences_basic(self):
+        code = "System435.out.println(\"foo\");123System.ou12t.println234(\"foo\");System.23out.23456println(\"foo\");S237yst28em.out.pr18intln(\"foo\");"
+        (open, close) = expand_code_search_escape_sequences(code)
+        self.assertEqual(code.find(open), -1)
+        self.assertEqual(code.find(close), -1)
+
+    def test_search_escape_sequences_short(self):
+        code = "12"
+        (open, close) = expand_code_search_escape_sequences(code)
+        self.assertEqual(code.find(open), -1)
+        self.assertEqual(code.find(close), -1)
+
+    def test_search_escape_sequences_veryshort(self):
+        code = ""
+        (open, close) = expand_code_search_escape_sequences(code)
+        self.assertEqual(code.find(open), -1)
+        self.assertEqual(code.find(close), -1)
+
+    def test_search_escape_sequences_large(self):
+        code = []
+        for i in xrange(0, 10000):
+            code.append(chr(random.randint(48,57)))
+        code = ''.join(code)
+
+        (open, close) = expand_code_search_escape_sequences(code)
+        self.assertEqual(code.find(open), -1)
+        self.assertEqual(code.find(close), -1)
+
+    def test_expand_code_tokenize_anims(self):
+        items = ['1', '2', '3', '-', ',', '[', ']', '<', '>', 'a', 'b', 'c', 'd', 'e', '}', '{']
+        code = []
+        for i in xrange(0, 100):
+            code.extend(items)
+            random.shuffle(items)
+        
+        out = expand_code_tokenize_anims(''.join(code))
+        self.assert_(len(out[0])>0)
+        self.assert_(len(out[1])>0)
+        for item in out[0]: #anims
+            self.assert_(item.startswith('[') and item.endswith(']'))
+        for item in out[1]: #non-anims
+            self.assert_(not (item.startswith('[') and item.endswith(']')))
+    
+    def test_expand_code_tokenize_anims_empty(self):
+        out = expand_code_tokenize_anims('')
+        self.assertEqual(out[0], [])
+        self.assertEqual(out[1], [''])
+
 class TestConvert2Beamer(unittest.TestCase):
     def setUp(self):
         return
@@ -56,7 +118,7 @@ class TestConvert2Beamer(unittest.TestCase):
         lines = ['<[nowiki ]%',\
                 '==== foo ====',\
                 '[ nowiki]>moo']
-        expected = ['%',\
+        expected = ['\n', '%',\
                 '==== foo ====',\
                 'moo',\
                 '']
@@ -65,67 +127,67 @@ class TestConvert2Beamer(unittest.TestCase):
      
     def test_not_nowiki(self):
         lines = [' <[nowiki]', '== foo ==']
-        expected = [' <[nowiki]', '\n\section{foo}\n\n', '']
+        expected = ['\n', ' <[nowiki]', '\n\section{foo}\n\n', '']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
     
     def test_frame_open_close(self):
         lines = ['==== foo ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
     def test_frame_open_close_again(self):
         lines = ['==== foo ====', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
     def test_frame_close_detect(self):
         lines = ['==== foo ====', '[ frame ]>', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '\\end{ frame }', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '\\end{ frame }', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
 
     def test_itemize(self):
         lines = ['* foo', '* bar', '** foobar']
-        expected = ['\\begin{itemize}\n  \\item foo', '  \\item bar', '\\begin{itemize}\n  \\item foobar', '\\end{itemize}\n\\end{itemize}\n']
+        expected = ['\n', '\\begin{itemize}\n  \\item foo', '  \\item bar', '\\begin{itemize}\n  \\item foobar', '\\end{itemize}\n\\end{itemize}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
     def test_enumerate(self):
         lines = ['# one', '# two', '## onetwo']
-        expected = ['\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
+        expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
     def test_itemenum(self):
         lines = ['# one', '#* onefoo', '#* onebar', '## oneone', '#*# onefooone']
-        expected = ['\\begin{enumerate}\n  \\item one', '\\begin{itemize}\n  \\item onefoo', '  \\item onebar', '\\end{itemize}\n\\begin{enumerate}\n  \\item oneone', '\\end{enumerate}\n\\begin{itemize}\n\\begin{enumerate}\n  \\item onefooone', '\\end{enumerate}\n\\end{itemize}\n\\end{enumerate}\n']
+        expected = ['\n', '\\begin{enumerate}\n  \\item one', '\\begin{itemize}\n  \\item onefoo', '  \\item onebar', '\\end{itemize}\n\\begin{enumerate}\n  \\item oneone', '\\end{enumerate}\n\\begin{itemize}\n\\begin{enumerate}\n  \\item onefooone', '\\end{enumerate}\n\\end{itemize}\n\\end{enumerate}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
     def test_header(self):
         lines = ['==== foo ====', '@FRAMEHEADER=bar', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n bar \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n bar \n', '', '  \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
     def test_footer(self):
         lines = ['==== foo ====', '@FRAMEFOOTER=bar', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
     def test_subexp_footer(self):
         lines = ['==== foo ====', '@FRAMEFOOTER=\\buge bar\\3', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' \\buge bar\\3 \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' \\buge bar\\3 \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
     def test_section_footer(self):
         lines = ['==== foo ====', '@FRAMEFOOTER=bar', '== foosec ==', '==== bar ====']
-        expected = ['\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\n\\section{foosec}\n\n', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\n\\section{foosec}\n\n', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
     

@@ -23,11 +23,13 @@ import string
 VERSIONTAG = "0.7 alpha 2"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
+
+#python 2.4 compatability
 if sys.version_info >= (2, 5):
     import hashlib
 else:
     import md5
-
+#python 2.4 compatability
 def md5hex(string):
     if sys.version_info >= (2, 5):
         return hashlib.md5(string).hexdigest()
@@ -322,6 +324,7 @@ def transform(string, state):
     string = transform_typewriterfont(string)
     string = transform_alerts(string)
     string = transform_colors(string)
+    string = transform_footnotes(string)
     string = transform_graphics(string)
     string = transform_substitutions(string)
 
