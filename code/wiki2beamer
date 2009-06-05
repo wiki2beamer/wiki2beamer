@@ -10,7 +10,8 @@
 # Create latex beamer sources for multiple frames from a wiki-like code.      #
 # Warning: This is mostly all-in-one-procedure-code -- but it works ;-)       #
 ###############################################################################
-# This program is licensed under the terms of the GPL (see gpl.txt).          #
+#                                                                             #
+# This program is licensed under the terms of the GPL (see LICENSE file).     #
 #                                                                             #
 ###############################################################################
 

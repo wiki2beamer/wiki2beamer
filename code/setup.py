@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+# This program is part of wiki2beamer and licensed under the terms of the GPL v2
+
 from distutils.core import setup
 
 setup(name='wiki2beamer',
