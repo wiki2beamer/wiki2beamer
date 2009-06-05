@@ -1,35 +1,35 @@
 build: beamer advanced graphics version0_4 version0_7
 
 beamer:
-	@python ../wiki2beamer.py wiki2beamer.txt > wiki2beamer.tex && \
+	@python ../../code/wiki2beamer wiki2beamer.txt > wiki2beamer.tex && \
 	echo "Running pdflatex" && \
 	pdflatex beamer.tex && \
 	pdflatex beamer.tex && \
 	echo "Now, take a look at beamer.pdf"
 
 advanced:
-	@python ../wiki2beamer.py wiki_advanced.txt > wiki_advanced.tex && \
+	@python ../../code/wiki2beamer wiki_advanced.txt > wiki_advanced.tex && \
 	echo "Running pdflatex" && \
 	pdflatex advanced.tex && \
 	pdflatex advanced.tex && \
 	echo "Now, take a look at advanced.pdf"
 
 graphics:
-	@python ../wiki2beamer.py wiki_graphics.txt > wiki_graphics.tex && \
+	@python ../../code/wiki2beamer wiki_graphics.txt > wiki_graphics.tex && \
 	echo "Running pdflatex" && \
 	pdflatex graphics.tex && \
 	pdflatex graphics.tex && \
 	echo "Now, take a look at graphics.pdf"
 
 version0_4:
-	@python ../wiki2beamer.py wiki_version0_4.txt > wiki_version0_4.tex && \
+	@python ../../code/wiki2beamer wiki_version0_4.txt > wiki_version0_4.tex && \
 	echo "Running pdflatex" && \
 	pdflatex version0_4.tex && \
 	pdflatex version0_4.tex && \
 	echo "Now, take a look at version0_4.pdf"
 
 version0_7:
-	@python ../wiki2beamer.py wiki_version0_7.txt > wiki_version0_7.tex && \
+	@python ../../code/wiki2beamer wiki_version0_7.txt > wiki_version0_7.tex && \
 	echo "Running pdflatex" && \
 	pdflatex wiki_version0_7.tex && \
 	pdflatex wiki_version0_7.tex && \
