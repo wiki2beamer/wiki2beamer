@@ -174,8 +174,7 @@ created like this: \\[6mm]
 If you want to write \LaTeX\ code outside of the frame environment
 you can manually close the frame (which was opened by {\tt ====}) via:
 
-* '''wiki2beamer''' syntax: {\tt [frame]$>$}
-* \LaTeX\ syntax: {\tt $\backslash$end\{frame\}}
+'''wiki2beamer''' syntax: {\tt [frame]$>$}
 
 '''wiki2beamer''' detects these when at the beginning of a line and then
 consideres the frame closed.

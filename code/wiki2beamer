@@ -21,7 +21,7 @@ import random
 import hashlib
 import string
 
-VERSIONTAG = "0.7 alpha 2"
+VERSIONTAG = "0.7"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
 

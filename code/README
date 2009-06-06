@@ -1,10 +1,10 @@
 Wiki2Beamer
-http://www.repc.de/wiki2beamer
+http://wiki2beamer.sourceforge.net/
 
 ----------------------------------------------------------------------
 Create latex beamer sources for multiple frames from a wiki-like code.
 
-Current version: 0.7 alpha 2
+Current version: 0.7
 Authors:
 	Michael Rentzsch (http://www.repc.de)
 	Kai Dietrich (mail@cleeus.de)

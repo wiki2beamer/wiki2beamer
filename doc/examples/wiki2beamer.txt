@@ -132,7 +132,7 @@ This example presentation can not show all features that '''wiki2beamer''' offer
 Further information can be found on the project home page: \\[4mm]
 
 \begin{center}
-  http://www.repc.de/wiki2beamer \\[4mm]
+  http://wiki2beamer.sourceforge.net \\[4mm]
 \end{center}
 
 Bug reports and feature requests are appreciated.

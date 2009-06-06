@@ -1,3 +1,9 @@
+Version 0.7 (2009-06-06)
+=======================================
+manpage added, package structure cleaned up, footnote-bug fixed,
+<[codeframe]> tags removed, rehashing for animated code listings
+added (no more collisions possible), Python 2.4 compatibility fixes added.
+
 Version 0.7 alpha 2 (2009-05-14)
 =======================================
 autotemplate support added - no more templates required to create
