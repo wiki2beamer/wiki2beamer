@@ -1,4 +1,19 @@
 #!/usr/bin/env python
+
+#     This file is part of wiki2beamer.
+# wiki2beamer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# wiki2beamer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with wiki2beamer.  If not, see <http://www.gnu.org/licenses/>.
+
 import sys
 import unittest
 import re
@@ -57,6 +72,9 @@ class TestTransform(unittest.TestCase):
 
     def test_footnote(self):
         self.assertEqual(transform('(((foo)))', self.state), '\\footnote{foo}')
+
+    def test_columns(self):
+        self.assertEqual(transform('[[[6cm]]]', self.state), '\\column{6cm}')
 
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):
@@ -191,5 +209,10 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
     
+    def test_itemizeclose_column(self):
+        lines = ['* foo', '[[[6cm]]]']
+        expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n', '\\columns{6cm}']
+        out = convert2beamer(lines)
+        self.assertEqual(out,expected)
 if __name__=="__main__":
     unittest.main()
