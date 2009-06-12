@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     This file is part of wiki2beamer.
- wiki2beamer is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 2 of the License, or
- (at your option) any later version.
-
- wiki2beamer is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with wiki2beamer.  If not, see <http://www.gnu.org/licenses/>.
+  Copyright (C)  2009  Kai Dietrich, Michael Rentzsch
+  
+  Permission is granted to copy, distribute and/or modify this document
+  under the terms of the GNU Free Documentation License, Version 1.3
+  or any later version published by the Free Software Foundation;
+  
+  You should have received a copy of the GNU Free Documentation License
+  along with this document.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <refentry>
@@ -289,7 +284,22 @@ titleframe=True
 </refsect1>
 
 <refsect1><title>License</title>
-	<para>This man page is part of wiki2beamer and released under the terms of the GNU General Public License v2 or (at your option) any later.</para>
+	<para>Copyright (C)  2009 Kai Dietrich, Michael Rentzsch.</para>
+	<refsect2><title>Documentation License</title>
+		<para>
+		Permission is granted to copy, distribute and/or modify this document
+		under the terms of the GNU Free Documentation License, Version 1.3
+		or any later version published by the Free Software Foundation;
+		</para>
+	</refsect2>
+	<refsect2><title>Code License</title>
+		<para>
+		wiki2beamer is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 2 of the License, or
+		(at your option) any later version.
+		</para>
+	</refsect2>
 </refsect1>
 </refentry>
 
