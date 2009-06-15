@@ -27,7 +27,6 @@
 import sys
 import re
 import random
-import hashlib
 import string
 
 VERSIONTAG = "0.7"
