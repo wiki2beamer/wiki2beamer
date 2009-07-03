@@ -22,7 +22,6 @@ import random
 sys.path.append('../code')
 from wiki2beamer import *
 
-
 class TestBasics(unittest.TestCase):
 
     def test_join_lines_standard(self):
@@ -211,8 +210,9 @@ class TestConvert2Beamer(unittest.TestCase):
     
     def test_itemizeclose_column(self):
         lines = ['* foo', '[[[6cm]]]']
-        expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n', '\\columns{6cm}']
+        expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 if __name__=="__main__":
+    print "Testing wiki2beamer version %s" % (VERSIONTAG)
     unittest.main()
