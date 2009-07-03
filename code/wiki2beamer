@@ -29,7 +29,7 @@ import re
 import random
 import string
 
-VERSIONTAG = "0.7"
+VERSIONTAG = "0.8"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
 
@@ -318,7 +318,7 @@ def transform_substitutions(string):
 def transform(string, state):
     """ convert/transform one line in context of state"""
 
-    string = transform_itemenums(string, state)
+    #string = transform_itemenums(string, state)
     string = transform_define_foothead(string, state)
     string = transform_detect_manual_frameclose(string, state)
     string = transform_h4_to_frame(string, state)
@@ -336,6 +336,8 @@ def transform(string, state):
     string = transform_footnotes(string)
     string = transform_graphics(string)
     string = transform_substitutions(string)
+
+    string = transform_itemenums(string, state)
 
     return string
 
@@ -776,7 +778,7 @@ def read_file_to_lines(filename):
    
 
 def convert2beamer(lines):
-    """ convert to LaTeX """
+    """ convert to LaTeX beamer"""
     state = w2bstate()
     result = [''] #start with one empty line as line 0
     codebuffer = []
@@ -836,7 +838,7 @@ def main(argv):
     try:
         filename = argv[1]
     except IndexError:
-        print >>sys.stderr, "usage: wiki2beamer.py input.txt > output.tex"
+        print >>sys.stderr, "usage: wiki2beamer input.txt > output.tex"
         sys.exit(-1)
 
     if filename == '--version':
