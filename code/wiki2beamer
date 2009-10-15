@@ -326,6 +326,18 @@ def transform_vspacestar(string):
     string = p.sub(r"\n\\vspace*{\1}\n", string)
     return string
 
+def transform_uncover(string):
+    """uncover"""
+    p = re.compile("\+<(.*)>\s*{(.*)") # +<1-2>{.... -> \uncover<1-2>{....
+    string = p.sub(r"\uncover<\1>{\2", string)
+    return string
+
+def transform_only(string):
+    """only"""
+    p = re.compile("-<(.*)>\s*{(.*)") # -<1-2>{.... -> \only<1-2>{....
+    string = p.sub(r"\only<\1>{\2", string)
+    return string
+
 def transform(string, state):
     """ convert/transform one line in context of state"""
 
@@ -349,6 +361,8 @@ def transform(string, state):
     string = transform_substitutions(string)
     string = transform_vspacestar(string)
     string = transform_vspace(string)
+    string = transform_uncover(string)
+    string = transform_only(string)
 
     string = transform_itemenums(string, state)
 

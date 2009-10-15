@@ -85,6 +85,15 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(transform('--*3em--foo', self.state), '--*3em--foo')
         self.assertEqual(transform(' --*3em-- ', self.state), '\n\\vspace*{3em}\n')
 
+    def test_uncover(self):
+        self.assertEqual(transform('+<2-> {foo}', self.state), '\uncover<2->{foo}')
+        self.assertEqual(transform(' +<2->{\nfoo', self.state), ' \uncover<2->{\nfoo')
+
+    def test_only(self):
+        self.assertEqual(transform('-<2-> {foo}', self.state), '\only<2->{foo}')
+        self.assertEqual(transform(' -<2->{\nfoo', self.state), ' \only<2->{\nfoo')
+
+
 
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):

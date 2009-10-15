@@ -271,6 +271,20 @@ titleframe=True
 			same as above, but insert a \vspace* (a forced vspace)
 			</para></listitem>
 		</varlistentry>
+		<varlistentry>
+			<term>+&lt;<replaceable>overlay</replaceable>&gt;{<replaceable>content</replaceable>}</term>
+			<listitem><para>
+			\uncover the <replaceable>content</replaceable> on the given <replaceable>overlay
+			</replaceable> subframes. They will allready take up the space, they need to be displayed, so the geometry of the frame doesn't change when the element pops up.
+			</para></listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>-&lt;<replaceable>overlay</replaceable>&gt;{<replaceable>content</replaceable>}</term>
+			<listitem><para>
+			\only show the <replaceable>content</replaceable> on the given <replaceable>overlay
+			</replaceable> subframes. They will not take up the space they need to be displayed, so the geometry of the frame changes when the element pops up.
+			</para></listitem>
+		</varlistentry>
 	</variablelist>
 </refsect2>
 
