@@ -75,6 +75,17 @@ class TestTransform(unittest.TestCase):
     def test_columns(self):
         self.assertEqual(transform('[[[6cm]]]', self.state), '\\column{6cm}')
 
+    def test_vspace(self):
+        self.assertEqual(transform('--3em--', self.state), '\n\\vspace{3em}\n')
+        self.assertEqual(transform('--3em--foo', self.state), '--3em--foo')
+        self.assertEqual(transform(' --3em-- ', self.state), '\n\\vspace{3em}\n')
+
+    def test_vspacestar(self):
+        self.assertEqual(transform('--*3em--', self.state), '\n\\vspace*{3em}\n')
+        self.assertEqual(transform('--*3em--foo', self.state), '--*3em--foo')
+        self.assertEqual(transform(' --*3em-- ', self.state), '\n\\vspace*{3em}\n')
+
+
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):
         code = "System435.out.println(\"foo\");123System.ou12t.println234(\"foo\");System.23out.23456println(\"foo\");S237yst28em.out.pr18intln(\"foo\");"

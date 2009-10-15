@@ -314,6 +314,17 @@ def transform_substitutions(string):
     string = p.sub(r"\1\\frownie\2", string)
     return string
 
+def transform_vspace(string):
+    """vspace"""
+    p = re.compile("^\s*--(.*)--\s*$")
+    string = p.sub(r"\n\\vspace{\1}\n", string)
+    return string
+
+def transform_vspacestar(string):
+    """vspace*"""
+    p = re.compile("^\s*--\*(.*)--\s*$")
+    string = p.sub(r"\n\\vspace*{\1}\n", string)
+    return string
 
 def transform(string, state):
     """ convert/transform one line in context of state"""
@@ -325,7 +336,7 @@ def transform(string, state):
     string = transform_h3_to_subsec(string, state)
     string = transform_h2_to_sec(string, state)
     string = transform_replace_headfoot(string, state)
-    
+
     string = transform_environments(string)
     string = transform_columns(string)
     string = transform_boldfont(string)
@@ -336,6 +347,8 @@ def transform(string, state):
     string = transform_footnotes(string)
     string = transform_graphics(string)
     string = transform_substitutions(string)
+    string = transform_vspacestar(string)
+    string = transform_vspace(string)
 
     string = transform_itemenums(string, state)
 

@@ -259,6 +259,21 @@ titleframe=True
 	</variablelist>
 </refsect2>
 
+<refsect2><title>Layout</title>
+	<variablelist>
+		<varlistentry><term>--<replaceable>length</replaceable>--</term>
+			<listitem><para>when found at start of line, with nothing afterwards,
+			insert a \vspace{<replaceable>length</replaceable>} (vertical space of length
+			<replaceable>length</replaceable>)</para></listitem>
+		</varlistentry>
+		<varlistentry><term>--*<replaceable>length</replaceable>--</term>
+			<listitem><para>
+			same as above, but insert a \vspace* (a forced vspace)
+			</para></listitem>
+		</varlistentry>
+	</variablelist>
+</refsect2>
+
 <refsect2><title>Substitutions</title>
 	<variablelist>
 		<varlistentry><term>--&gt;</term>
