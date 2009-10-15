@@ -84,6 +84,12 @@
 		<varlistentry><term>==== <replaceable>frametitle</replaceable> ====[<replaceable>param</replaceable>]</term>
 			<listitem><para>opens a frame with the title <replaceable>frametitle</replaceable>,
 			passes frame <replaceable>param</replaceable>eters like t, fragile, verbatim etc. to latex</para></listitem></varlistentry>
+		<varlistentry><term>!==== <replaceable>frametitle</replaceable> ====[<replaceable>param</replaceable>]</term>
+			<listitem><para>the ! added in front of a frame, selects a frame for exclusive generation. It makes wiki2beamer
+			skip all frames that are not selected to be generated. You can select multible frames. This can speed up the
+			edit-compile-view cycle massively.
+			</para></listitem>
+		</varlistentry>
 	</variablelist>
 	<para>Sectioning commands work only at the beginnig of a line.</para>
 </refsect2>

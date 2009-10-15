@@ -213,6 +213,38 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
+
+class TestSelectedFramesMode(unittest.TestCase):
+    def setUp(self):
+        return
+
+    def tearDown(self):
+        return
+    
+    def test_selected_frames_simple(self):
+        lines = ['!==== foo ====', 'mooo']
+        expected = ['!==== foo ====', 'mooo']
+        out = filter_selected_lines(lines)
+        self.assertEqual(out,expected)
+    
+    def test_unselected_frames_simple(self):
+        lines = ['==== foo ====', 'moo']
+        expected = []
+        out = filter_selected_lines(lines)
+        self.assertEqual(out,expected)
+
+    def test_selected_frames_mixed(self):
+        lines = ['==== unselected ====', 'foo', '', '!==== selected ====', 'moo', '==== unselected2 ====', 'moo', '!==== selected2 ====', 'moo']
+        expected = ['!==== selected ====', 'moo', '!==== selected2 ====', 'moo']
+        out = filter_selected_lines(lines)
+        self.assertEqual(out,expected)
+
+    def test_selected_frames_autotemplate(self):
+        lines = ['<[autotemplate]', '[autotemplate]>', '!==== selected ====', 'foo', '', '==== unselected ====']
+        expected = ['<[autotemplate]', '[autotemplate]>', '!==== selected ====', 'foo', '']
+        out = filter_selected_lines(lines)
+        self.assertEqual(out,expected)
+
 if __name__=="__main__":
     print "Testing wiki2beamer version %s" % (VERSIONTAG)
     unittest.main()
