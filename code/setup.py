@@ -17,7 +17,7 @@
 from distutils.core import setup
 
 setup(name='wiki2beamer',
-    version='0.81',
+    version='0.8.1',
     scripts=['wiki2beamer'],
     description='Create LaTeX-beamer presentations with a wiki syntax',
     author='Michael Rentzsch, Kai Dietrich',

@@ -29,7 +29,7 @@ import re
 import random
 import string
 
-VERSIONTAG = "0.81"
+VERSIONTAG = "0.8.1"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich"
 

@@ -1,4 +1,4 @@
-Version 0.81 (2009-09-16)
+Version 0.8.1 (2009-09-16)
 =======================================
 Added new syntax abbreviations for \uncover, \only, \vspace and \vspace*,
 added frame marking (!) for selective compilation of few frames.
