@@ -92,7 +92,12 @@ class TestTransform(unittest.TestCase):
     def test_only(self):
         self.assertEqual(transform('-<2-> {foo}', self.state), '\only<2->{foo}')
         self.assertEqual(transform(' -<2->{\nfoo', self.state), ' \only<2->{\nfoo')
-
+    
+    def test_uncover_intext(self):
+        self.assertEqual(transform('foo +<2->{moo} bar', self.state), 'foo \uncover<2->{moo} bar')
+        self.assertEqual(transform(\
+            'foo +<2-3>  {\\begin{enumerate} \\end{enumerate}}', self.state),\
+            'foo \\uncover<2-3>{\\begin{enumerate} \\end{enumerate}}')
 
 
 class TestExpandCode(unittest.TestCase):
