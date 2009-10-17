@@ -5,20 +5,25 @@ parser wiki2beamer:
 	token SPACE:		"[ \\t]+"
 	token NEWLINE:		"[\\n\\r]+"
 	token NUM:		"[0-9]+"
-	token OVERLAY_SPEC_SEP:	"-"
 	token WORD:		"[a-zA-Z]+"
 	token PUNCTUATION:	"[,\\.\\?!:;\"'`´]+"
-	token LATEX_COMMAND_NAME: "\\\\([a-z]+)"
+	token MINUS:		"-"
+	token COMMA:		","
+	token LATEX_COMMAND_NAME: "\\\\([a-zA-Z]+)"
 	token BRACKET_CURLY_L:	"{"
 	token BRACKET_CURLY_R:	"}"
 	token BRACKET_ANGLE_L:	"<"
 	token BRACKET_ANGLE_R:	">"
 	token BRACKET_SQUARE_L:	"\\["
 	token BRACKET_SQUARE_R:	"\\]"
-
+	token W2B_H2_L:		"=="
+	token W2B_H2_R:		"=="
+	token W2B_H3_L:		"==="
+	token W2B_H3_R:		"==="
 	token W2B_H4_L:		"===="
 	token W2B_H4_R:		"===="
 	token W2B_ENDFRAME:	"\\[frame\\]>"
+	token OVERLAY_SPEC_SIMPLE: "[0-9-,]+"
 
 	rule document:
 		{{ prepend = None }}
@@ -30,23 +35,49 @@ parser wiki2beamer:
 	rule w2b_docbody:
 		{{ result = [] }}
 		(
-			w2b_frame	{{ result.append(w2b_frame) }}
+			w2b_section	{{ result.append(w2b_section) }}
+		|	w2b_subsection	{{ result.append(w2b_subsection) }}
+		|	w2b_frame	{{ result.append(w2b_frame) }}
 		|	w2b_nonframe	{{ result.append(w2b_nonframe) }}
 		)*
 		{{ return ('W2B_DOCBODY', result) }}
+	
+	rule w2b_section:
+		W2B_H2_L w2b_sectionheader_latex W2B_H2_R NEWLINE
+			{{ return ('W2B_SECTION', w2b_sectionheader_latex) }}
+	
 
+	rule w2b_subsection:
+		W2B_H3_L w2b_subsectionheader_latex W2B_H3_R NEWLINE
+			{{ return ('W2B_SUBSECTION', w2b_subsectionheader_latex) }}
+		
 	rule w2b_frame:
 		w2b_frameheader
 		latex
 		{{ return ('W2B_FRAME', w2b_frameheader, latex) }}
 
 	rule w2b_frameheader:
-		W2B_H4_L SPACE WORD SPACE W2B_H4_R NEWLINE
-			{{return ('W2B_FRAMEHEADER', (W2B_H4_L, WORD, W2B_H4_R)) }}
-	
+		W2B_H4_L w2b_frameheader_latex W2B_H4_R NEWLINE
+			{{return ('W2B_FRAMEHEADER', (W2B_H4_L, w2b_frameheader_latex, W2B_H4_R)) }}
+
 	rule w2b_nonframe:
 		W2B_ENDFRAME NEWLINE
 		latex {{ return ('W2B_NONFRAME', latex) }}
+
+	rule w2b_sectionheader_latex:
+		{{ result = [] }}
+		( latex_entity {{ result.append(latex_entity) }} )*
+		{{ return ('LATEX', result) }}
+
+	rule w2b_subsectionheader_latex:
+		{{ result = [] }}
+		( latex_entity {{ result.append(latex_entity) }} )*
+		{{ return ('LATEX', result) }}
+
+	rule w2b_frameheader_latex:
+		{{ result = [] }}
+		( latex_entity {{ result.append(latex_entity) }} )*
+		{{ return ('LATEX', result) }}
 
 	rule latex:
 		{{ result = [] }}
@@ -55,10 +86,10 @@ parser wiki2beamer:
 
 	rule latex_entity:
 			WORD	{{return ('WORD', WORD)}}
-		|	PUNCTUATION {{return ('PUNCTUATION', PUNCTUATION)}}
 		|	SPACE	{{return ('SPACE', SPACE)}}
-		|	NEWLINE	{{return ('NEWLINE', NEWLINE)}}
+		|	PUNCTUATION {{return ('PUNCTUATION', PUNCTUATION)}}
 		|	latex_command	{{return latex_command}}
+		|	NEWLINE	{{return ('NEWLINE', NEWLINE)}}
 
 	rule latex_command:
 		{{ result = [] }}
@@ -76,19 +107,18 @@ parser wiki2beamer:
 
 	rule latex_param_curly_brackets:
 		BRACKET_CURLY_L latex BRACKET_CURLY_R
-			{{ return ('LATEX_PARAM_CURLY_BRACKETS', (BRACKET_CURLY_L, latex, BRACKET_CURLY_R)) }}
+			{{ return ('LATEX_PARAM_CURLY_BRACKETS', latex) }}
 
 	rule latex_param_square_brackets:
 		BRACKET_SQUARE_L latex BRACKET_SQUARE_R
-			{{ return ('LATEX_PARAM_SQUARE_BRACKETS', (BRACKET_SQUARE_L, latex, BRACKET_SQUARE_R)) }}
+			{{ return ('LATEX_PARAM_SQUARE_BRACKETS', latex) }}
 	
 	rule latex_param_angle_brackets:
 		BRACKET_ANGLE_L overlay_spec BRACKET_ANGLE_R
-			{{ return ('LATEX_PARAM_ANGLE_BRACKETS', (BRACKET_ANGLE_L, overlay_spec, BRACKET_ANGLE_R)) }}
+			{{ return ('LATEX_PARAM_ANGLE_BRACKETS', overlay_spec ) }}
 	
 	rule overlay_spec:
-		{{ result = [None,None] }}
-		[NUM {{result[0]=int(NUM)}}] OVERLAY_SPEC_SEP [NUM {{result[2]=int(NUM)}}]
-		{{ return ('OVERLAY_SPEC', (result[0], result[1])) }}
+		OVERLAY_SPEC_SIMPLE
+		{{ return ('OVERLAY_SPEC', OVERLAY_SPEC_SIMPLE) }}
 
 		

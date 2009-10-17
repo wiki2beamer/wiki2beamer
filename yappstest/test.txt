@@ -1,4 +1,14 @@
-==== lalala ====
+==== title ====
+
+== section ==
+
+== a section ==
+
+=== a subsection ===
+
+==== \uncover<2->{a frametitle} ====
+
+inframe
 
 [frame]>
 
