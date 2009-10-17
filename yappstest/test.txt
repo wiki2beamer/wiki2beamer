@@ -1,0 +1,21 @@
+==== lalala ====
+
+[frame]>
+
+outofframe
+
+==== footitle ====
+
+moo
+
+\uncover<2->{
+	\begin{itemize}
+		\item foo
+		\item bar
+	\end{itemize}
+}
+
+==== mootitle ====
+
+blabliblub
+
