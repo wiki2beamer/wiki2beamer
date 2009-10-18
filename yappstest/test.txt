@@ -1,31 +1,5 @@
-==== title ====
 
-== section ==
 
-== a section ==
+--2em--
 
-=== a subsection ===
-
-==== \uncover<2->{a frametitle} ====
-
-inframe
-
-[frame]>
-
-outofframe
-
-==== footitle ====
-
-moo
-
-\uncover<2->{
-	\begin{itemize}
-		\item foo
-		\item bar
-	\end{itemize}
-}
-
-==== mootitle ====
-
-blabliblub
 
