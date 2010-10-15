@@ -81,7 +81,8 @@ class TestTransform(unittest.TestCase):
                           ('TEST@', 'TEST@'),
                           ('@TEST@TEST@', '\\texttt{TEST}TEST@'),
                           ('@TEST@ test @TEST@',
-                              '\\texttt{TEST} test \\texttt{TEST}')]
+                              '\\texttt{TEST} test \\texttt{TEST}'),
+                          ('\@TEST\@', '@TEST@')]
         for input_, expected in input_expected:
             self.assertEqual(transform(input_, self.state), expected)
 
