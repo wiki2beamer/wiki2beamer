@@ -268,9 +268,36 @@ def transform_italicfont(string):
 
 def transform_typewriterfont(string):
     """ typewriter font """
-    p = re.compile("@(.*?)@", re.VERBOSE)
-    string = p.sub(r"\\texttt{\1}", string) 
-    return string
+    # implemented as a state-machine
+    output, typewriter = [], []
+    seen_at, seen_escape = False, False
+    for char in string:
+        if seen_escape:
+            if char == '@':
+                output.append('@')
+            else:
+                output.append('\\' + char)
+            seen_escape = False
+        elif char == "\\":
+            seen_escape = True
+        elif char == '@':
+            if seen_at:
+                seen_at = False
+                output, typewriter = typewriter, output
+                output.append('\\texttt{')
+                output += typewriter
+                output.append('}')
+                typewriter = []
+            else:
+                seen_at = True
+                output, typewriter = typewriter, output
+        else:
+            output.append(char)
+    if seen_at:
+        output, typewriter = typewriter, output
+        output.append('@')
+        output += typewriter
+    return "".join(output)
 
 def transform_alerts(string):
     """ alerts """
