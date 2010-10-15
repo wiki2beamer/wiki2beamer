@@ -304,9 +304,7 @@ def transform_typewriterfont(string):
 
 def transform_alerts(string):
     """ alerts """
-    p = re.compile("!(.*?)!", re.VERBOSE)
-    string = p.sub(r"\\alert{\1}", string) 
-    return string
+    return _transform_mini_parser('!', 'alert', string)
 
 def transform_colors(string):
     """ colors """
