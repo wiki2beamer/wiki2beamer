@@ -266,25 +266,24 @@ def transform_italicfont(string):
     string = p.sub(r"\\emph{\1}", string) 
     return string
 
-def transform_typewriterfont(string):
-    """ typewriter font """
+def _transform_mini_parser(character, replacement, string):
     # implemented as a state-machine
     output, typewriter = [], []
     seen_at, seen_escape = False, False
     for char in string:
         if seen_escape:
-            if char == '@':
-                output.append('@')
+            if char == character:
+                output.append(character)
             else:
                 output.append('\\' + char)
             seen_escape = False
         elif char == "\\":
             seen_escape = True
-        elif char == '@':
+        elif char == character:
             if seen_at:
                 seen_at = False
                 output, typewriter = typewriter, output
-                output.append('\\texttt{')
+                output.append('\\'+replacement+'{')
                 output += typewriter
                 output.append('}')
                 typewriter = []
@@ -295,9 +294,13 @@ def transform_typewriterfont(string):
             output.append(char)
     if seen_at:
         output, typewriter = typewriter, output
-        output.append('@')
+        output.append(character)
         output += typewriter
     return "".join(output)
+
+def transform_typewriterfont(string):
+    """ typewriter font """
+    return _transform_mini_parser('@', 'texttt', string)
 
 def transform_alerts(string):
     """ alerts """
