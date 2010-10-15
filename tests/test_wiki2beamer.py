@@ -75,6 +75,16 @@ class TestTransform(unittest.TestCase):
     def test_columns(self):
         self.assertEqual(transform('[[[6cm]]]', self.state), '\\column{6cm}')
 
+    def test_typewriter(self):
+        input_expected = [('@TEST@', '\\texttt{TEST}'),
+                          ('@TEST', '@TEST'),
+                          ('TEST@', 'TEST@'),
+                          ('@TEST@TEST@', '\\texttt{TEST}TEST@'),
+                          ('@TEST@ test @TEST@',
+                              '\\texttt{TEST} test \\texttt{TEST}')]
+        for input_, expected in input_expected:
+            self.assertEqual(transform(input_, self.state), expected)
+
     def test_vspace(self):
         self.assertEqual(transform('--3em--', self.state), '\n\\vspace{3em}\n')
         self.assertEqual(transform('--3em--foo', self.state), '--3em--foo')
