@@ -90,6 +90,21 @@ class TestTransform(unittest.TestCase):
         for input_, expected in input_expected:
             self.assertEqual(transform(input_, self.state), expected)
 
+    def test_alert(self):
+        input_expected = [('!TEST!', '\\alert{TEST}'),
+                          ('!TEST', '!TEST'),
+                          ('TEST!', 'TEST!'),
+                          ('!TEST!TEST!', '\\alert{TEST}TEST!'),
+                          ('!TEST! test !TEST!',
+                              '\\alert{TEST} test \\alert{TEST}'),
+                          ('\!TEST\!', '!TEST!'),
+                          ('\\TEST', '\\TEST'),
+                          ('!TEST\!TEST!', '\\alert{TEST!TEST}'),
+                          ('\!TEST !TEST! TEST\!',
+                              '!TEST \\alert{TEST} TEST!')]
+        for input_, expected in input_expected:
+            self.assertEqual(transform(input_, self.state), expected)
+
     def test_vspace(self):
         self.assertEqual(transform('--3em--', self.state), '\n\\vspace{3em}\n')
         self.assertEqual(transform('--3em--foo', self.state), '--3em--foo')
