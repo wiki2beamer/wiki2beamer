@@ -940,14 +940,17 @@ def main(argv):
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
     opts, args = parser.parse_args()
 
-    if len(args) == 0:
+    if not sys.stdin.isatty():
+        lines = sys.stdin.readlines()
+    elif len(args) == 0:
         parser.error("You supplied no files to convert!")
     else:
+        lines = list()
         for file_ in args:
-            lines = read_file_to_lines(file_)
-        lines = convert2beamer(lines)
-        print_result(lines)
+            lines += read_file_to_lines(file_)
+    lines = convert2beamer(lines)
+    print_result(lines)
 
-    
+
 if (__name__ == "__main__"):
     main(sys.argv)
