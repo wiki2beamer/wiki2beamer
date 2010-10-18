@@ -934,7 +934,7 @@ def print_result(lines):
 
 def main(argv):
     """ check parameters, start file processing """
-    usage = "%prog wiki2beamer input.txt > output.tex"
+    usage = "%prog wiki2beamer [input1.txt [input2.txt ...]] > output.tex"
     version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
 
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
