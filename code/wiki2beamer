@@ -28,6 +28,7 @@ import sys
 import re
 import random
 import string
+import optparse
 
 VERSIONTAG = "0.8.1"
 __version__= VERSIONTAG
@@ -933,19 +934,18 @@ def print_result(lines):
 
 def main(argv):
     """ check parameters, start file processing """
-    try:
-        filename = argv[1]
-    except IndexError:
-        print >>sys.stderr, "usage: wiki2beamer input.txt > output.tex"
-        sys.exit(-1)
+    usage = "%prog wiki2beamer input.txt > output.tex"
+    version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
 
-    if filename == '--version':
-        print >>sys.stdout, "wiki2beamer (http://wiki2beamer.sf.net), version " + VERSIONTAG
-        sys.exit(0)
+    parser = optparse.OptionParser(usage="\n  " + usage, version=version)
+    opts, args = parser.parse_args()
 
-    lines = read_file_to_lines(filename)
-    lines = convert2beamer(lines)
-    print_result(lines)
+    if len(args) == 0:
+        parser.error("You supplied no files to convert!")
+    else:
+        lines = read_file_to_lines(args[0])
+        lines = convert2beamer(lines)
+        print_result(lines)
 
     
 if (__name__ == "__main__"):
