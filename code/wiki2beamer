@@ -943,7 +943,8 @@ def main(argv):
     if len(args) == 0:
         parser.error("You supplied no files to convert!")
     else:
-        lines = read_file_to_lines(args[0])
+        for file_ in args:
+            lines = read_file_to_lines(file_)
         lines = convert2beamer(lines)
         print_result(lines)
 
