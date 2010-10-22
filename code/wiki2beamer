@@ -881,21 +881,28 @@ def include_file(line):
         filename = p.sub(r"\1", line)
         return read_file_to_lines(filename)
     else:
-        return [line]
+        return None
 
 def include_files(lines):
+    stack = lines[::-1]
     output = []
     nowikimode = False
-    for line in lines:
+    while stack:
+        next_ = stack.pop()
         if nowikimode:
-            if nowikiendre.match(line):
+            if nowikiendre.match(next_):
                 nowikimode = False
-            output.append(line)
-        elif nowikistartre.match(line):
-            output.append(line)
+            output.append(next_)
+        elif nowikistartre.match(next_):
+            output.append(next_)
             nowikimode = True
         else:
-            output += include_file(line)
+            file_lines = include_file(next_)
+            if not file_lines:
+                output.append(next_)
+            else:
+                file_lines.reverse()
+                stack += file_lines
     return output
 
 def convert2beamer_full(lines):
