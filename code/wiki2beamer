@@ -874,6 +874,14 @@ def convert2beamer_selected(lines):
     out = convert2beamer_full(selected_lines)
     return out
 
+def include_file(line):
+    p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
+    if p.match(line):
+        filename = p.sub(r"\1", line)
+        return read_file_to_lines(filename)
+    else:
+        return [line]
+
 def convert2beamer_full(lines):
     """ convert to LaTeX beamer"""
     state = w2bstate()
