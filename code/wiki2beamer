@@ -84,6 +84,9 @@ autotemplate = [\
     ('titleframe', 'True')\
 ]
 
+nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
+nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
+
 class w2bstate:
     def __init__(self):
         self.frame_opened = False
@@ -738,8 +741,6 @@ def get_autotemplatemode(line, autotemplatemode):
         return (line, autotemplatemode)
 
 def get_nowikimode(line, nowikimode):
-    nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
-    nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
     
     if not nowikimode and nowikistartre.match(line)!=None:
         line = nowikistartre.sub('', line)
@@ -881,6 +882,21 @@ def include_file(line):
         return read_file_to_lines(filename)
     else:
         return [line]
+
+def include_files(lines):
+    output = []
+    nowikimode = False
+    for line in lines:
+        if nowikimode:
+            if nowikiendre.match(line):
+                nowikimode = False
+            output.append(line)
+        elif nowikistartre.match(line):
+            output.append(line)
+            nowikimode = True
+        else:
+            output += include_file(line)
+    return output
 
 def convert2beamer_full(lines):
     """ convert to LaTeX beamer"""
