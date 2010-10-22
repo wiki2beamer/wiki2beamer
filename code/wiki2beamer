@@ -904,7 +904,11 @@ def convert2beamer_full(lines):
     result = [''] #start with one empty line as line 0
     codebuffer = []
     autotemplatebuffer = []
-    
+
+    # handle any file inclusions first
+    # nested inclusions not possible (yet)
+    lines = include_files(lines)
+
     nowikimode = False
     codemode = False
     autotemplatemode = False
