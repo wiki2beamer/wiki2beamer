@@ -288,22 +288,31 @@ class TestIncludeFile(unittest.TestCase):
     def tearDown(self):
         return
 
-    def test_include_file(self):
+    def test_include_file_works(self):
         expected = ['test file content']
         line = ">>>test_file<<<"
         out = include_file(line)
         self.assertEqual(expected, out)
-
+    
+    def test_include_file_honors_nowiki(self):
         lines = ['<[nowiki]',
                  '>>>test_file<<<',
                  '[nowiki]>']
         out = include_files(lines)
         self.assertEqual(lines, out)
 
+    def test_include_file_recursion_works(self):
         expected = ['content from test_file2',
                   'test file content']
         line = ">>>test_file2<<<"
         out = include_files([line])
+        self.assertEqual(expected, out)
+
+    def test_include_file_recursively_honors_nowiki(self):
+        line = ">>>test_file3<<<"
+        expected = ['content from test_file3', '<[nowiki]', '>>>test_file<<<', '[nowiki]>']
+        out = include_files([line])
+        self.assertEqual(expected, out)
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
