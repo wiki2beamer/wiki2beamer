@@ -281,7 +281,7 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
-class TestIncludeFile(unittest.TestCase):
+class TestFileInclusion(unittest.TestCase):
     def setUp(self):
         return
     
@@ -298,20 +298,20 @@ class TestIncludeFile(unittest.TestCase):
         lines = ['<[nowiki]',
                  '>>>test_file<<<',
                  '[nowiki]>']
-        out = include_files(lines)
+        out = include_file_recursive(lines)
         self.assertEqual(lines, out)
 
-    def test_include_file_recursion_works(self):
+    def test_include_file_recursive_works(self):
         expected = ['content from test_file2',
                   'test file content']
         line = ">>>test_file2<<<"
-        out = include_files([line])
+        out = include_file_recursive([line])
         self.assertEqual(expected, out)
 
-    def test_include_file_recursively_honors_nowiki(self):
+    def test_include_file_recursive_honors_nowiki(self):
         line = ">>>test_file3<<<"
         expected = ['content from test_file3', '<[nowiki]', '>>>test_file<<<', '[nowiki]>']
-        out = include_files([line])
+        out = include_file_recursive([line])
         self.assertEqual(expected, out)
 
 class TestSelectedFramesMode(unittest.TestCase):
