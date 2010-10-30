@@ -18,6 +18,7 @@ import sys
 import unittest
 import re
 import random
+import threading
 
 sys.path.append('../code')
 from wiki2beamer import *
@@ -313,6 +314,19 @@ class TestFileInclusion(unittest.TestCase):
         expected = ['content from test_file3', '<[nowiki]', '>>>test_file<<<', '[nowiki]>']
         out = include_file_recursive([line])
         self.assertEqual(expected, out)
+    
+    def test_include_file_recursive_detects_loop(self):
+        line = ">>>test_file_loop<<<"
+        expected = ["test_file_loop content"]
+        
+        include_worker = threading.Thread(target=include_file_recursive,args=([line],))
+
+        include_worker.start()
+
+        #wait 1 second, if the thread is still working after 1s we certainly have an infinite loop
+        include_worker.join(1.0)
+        self.assertFalse( include_worker.is_alive() )
+        
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
