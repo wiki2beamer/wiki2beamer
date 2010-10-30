@@ -85,6 +85,9 @@ autotemplate = [\
     ('titleframe', 'True')\
 ]
 
+nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
+nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
+
 class w2bstate:
     def __init__(self):
         self.frame_opened = False
@@ -267,17 +270,45 @@ def transform_italicfont(string):
     string = p.sub(r"\\emph{\1}", string) 
     return string
 
+def _transform_mini_parser(character, replacement, string):
+    # implemented as a state-machine
+    output, typewriter = [], []
+    seen_at, seen_escape = False, False
+    for char in string:
+        if seen_escape:
+            if char == character:
+                output.append(character)
+            else:
+                output.append('\\' + char)
+            seen_escape = False
+        elif char == "\\":
+            seen_escape = True
+        elif char == character:
+            if seen_at:
+                seen_at = False
+                output, typewriter = typewriter, output
+                output.append('\\'+replacement+'{')
+                output += typewriter
+                output.append('}')
+                typewriter = []
+            else:
+                seen_at = True
+                output, typewriter = typewriter, output
+        else:
+            output.append(char)
+    if seen_at:
+        output, typewriter = typewriter, output
+        output.append(character)
+        output += typewriter
+    return "".join(output)
+
 def transform_typewriterfont(string):
     """ typewriter font """
-    p = re.compile("@(.*?)@", re.VERBOSE)
-    string = p.sub(r"\\texttt{\1}", string) 
-    return string
+    return _transform_mini_parser('@', 'texttt', string)
 
 def transform_alerts(string):
     """ alerts """
-    p = re.compile("!(.*?)!", re.VERBOSE)
-    string = p.sub(r"\\alert{\1}", string) 
-    return string
+    return _transform_mini_parser('!', 'alert', string)
 
 def transform_colors(string):
     """ colors """
@@ -739,8 +770,6 @@ def get_autotemplatemode(line, autotemplatemode):
         return (line, autotemplatemode)
 
 def get_nowikimode(line, nowikimode):
-    nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
-    nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
     
     if not nowikimode and nowikistartre.match(line)!=None:
         line = nowikistartre.sub('', line)
@@ -875,13 +904,47 @@ def convert2beamer_selected(lines):
     out = convert2beamer_full(selected_lines)
     return out
 
+def include_file(line):
+    p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
+    if p.match(line):
+        filename = p.sub(r"\1", line)
+        return read_file_to_lines(filename)
+    else:
+        return None
+
+def include_files(lines):
+    stack = lines[::-1]
+    output = []
+    nowikimode = False
+    while stack:
+        next_ = stack.pop()
+        if nowikimode:
+            if nowikiendre.match(next_):
+                nowikimode = False
+            output.append(next_)
+        elif nowikistartre.match(next_):
+            output.append(next_)
+            nowikimode = True
+        else:
+            file_lines = include_file(next_)
+            if not file_lines:
+                output.append(next_)
+            else:
+                file_lines.reverse()
+                stack += file_lines
+    return output
+
 def convert2beamer_full(lines):
     """ convert to LaTeX beamer"""
     state = w2bstate()
     result = [''] #start with one empty line as line 0
     codebuffer = []
     autotemplatebuffer = []
-    
+
+    # handle any file inclusions first
+    # nested inclusions not possible (yet)
+    lines = include_files(lines)
+
     nowikimode = False
     codemode = False
     autotemplatemode = False

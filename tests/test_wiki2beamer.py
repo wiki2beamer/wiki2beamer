@@ -75,6 +75,36 @@ class TestTransform(unittest.TestCase):
     def test_columns(self):
         self.assertEqual(transform('[[[6cm]]]', self.state), '\\column{6cm}')
 
+    def test_typewriter(self):
+        input_expected = [('@TEST@', '\\texttt{TEST}'),
+                          ('@TEST', '@TEST'),
+                          ('TEST@', 'TEST@'),
+                          ('@TEST@TEST@', '\\texttt{TEST}TEST@'),
+                          ('@TEST@ test @TEST@',
+                              '\\texttt{TEST} test \\texttt{TEST}'),
+                          ('\@TEST\@', '@TEST@'),
+                          ('\\TEST', '\\TEST'),
+                          ('@TEST\@TEST@', '\\texttt{TEST@TEST}'),
+                          ('\@TEST @TEST@ TEST\@',
+                              '@TEST \\texttt{TEST} TEST@')]
+        for input_, expected in input_expected:
+            self.assertEqual(transform(input_, self.state), expected)
+
+    def test_alert(self):
+        input_expected = [('!TEST!', '\\alert{TEST}'),
+                          ('!TEST', '!TEST'),
+                          ('TEST!', 'TEST!'),
+                          ('!TEST!TEST!', '\\alert{TEST}TEST!'),
+                          ('!TEST! test !TEST!',
+                              '\\alert{TEST} test \\alert{TEST}'),
+                          ('\!TEST\!', '!TEST!'),
+                          ('\\TEST', '\\TEST'),
+                          ('!TEST\!TEST!', '\\alert{TEST!TEST}'),
+                          ('\!TEST !TEST! TEST\!',
+                              '!TEST \\alert{TEST} TEST!')]
+        for input_, expected in input_expected:
+            self.assertEqual(transform(input_, self.state), expected)
+
     def test_vspace(self):
         self.assertEqual(transform('--3em--', self.state), '\n\\vspace{3em}\n')
         self.assertEqual(transform('--3em--foo', self.state), '--3em--foo')
@@ -238,6 +268,23 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
+
+    def test_include_file(self):
+        expected = ['test file content']
+        line = ">>>test_file<<<"
+        out = include_file(line)
+        self.assertEqual(expected, out)
+
+        lines = ['<[nowiki]',
+                 '>>>test_file<<<',
+                 '[nowiki]>']
+        out = include_files(lines)
+        self.assertEqual(lines, out)
+
+        expected = ['content from test_file2',
+                  'test file content']
+        line = ">>>test_file2<<<"
+        out = include_files([line])
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
