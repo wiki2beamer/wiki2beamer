@@ -35,9 +35,9 @@
 <refsynopsisdiv>
 	<cmdsynopsis>
 		<command>wiki2beamer</command>
-		<group choice="req">
+		<group choice="opt">
 			<option>--version</option>
-			<arg><replaceable>FILE</replaceable></arg>
+			<arg rep="repeat"><replaceable>FILE</replaceable></arg>
 		</group>
 	</cmdsynopsis>
 </refsynopsisdiv>
@@ -45,20 +45,24 @@
 <refsect1><title>Description</title>
 	<variablelist>
 		<varlistentry><term><replaceable>FILE</replaceable></term>
-			<listitem><para>the text-file to be processed</para></listitem></varlistentry>
+			<listitem><para>the text-file(s) to be processed</para></listitem></varlistentry>
 		<varlistentry><term>--version</term>
 			<listitem><para>show version information</para></listitem></varlistentry>
 	</variablelist>
 </refsect1>
 
 <refsect1><title>Usage</title>
-	<para>usually you want to pipe the output of wiki2beamer into a file:</para>
+	<para>Usually you want to pipe the output of wiki2beamer into a file:</para>
 	<para><code>wiki2beamer footalk.txt > footalk.tex</code></para>
+	<para>
+		If called without any input file, wiki2beamer reads input from STDIN. If called with multiple
+		input files, wiki2beamer reads and processes them in order with their content beeing simply concatenated. 
+	</para>
 </refsect1>
 
 <refsect1><title>Syntax</title>
-	<para>Wiki2beamer has it's own wiki-syntax which is described below.
-	Everything that is unknown will be passed through to the LaTeX output
+	<para>Wiki2beamer has it's own wiki-syntax which (evolved without much of a concept ;) and) is described below.
+	Everything that is unknown to wiki2beamer will be passed through to the LaTeX output
 	(unless inside special environments).</para>
 <refsect2><title>overall structure</title>
 	<para>A wiki2beamer txt file can consist of two sections: the head and the body.
@@ -67,6 +71,23 @@
 	then only the code for the body will be generated and can be included into a manually crafted
 	LaTeX template file.</para>
 </refsect2>
+<refsect2><title>Managing input</title>
+	<para>You can split input to wiki2beamer into multiple files. This helps to keep things appart and avoids conflicts.
+	There are two ways to split input. The first is to use multiple input files which wiki2beamer will read and process in order as
+	if they were one concatenated file. The second is to use the &gt;&gt;&gt;include&lt;&lt;&lt; syntax.
+	</para>
+	<variablelist>
+		<varlistentry><term>&gt;&gt;&gt;<replaceable>includefile</replaceable>&lt;&lt;&lt;</term>
+			<listitem>
+			<para>
+			Include the file named <replaceable>includefile</replaceable> at this line. Works recursively.
+			Doesn't work inside [nowiki]-environments (see below).
+			</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</refsect2>
+
 <refsect2><title>Structuring the presentation</title>
 	<variablelist>
 		<varlistentry><term>== <replaceable>sectionname</replaceable> ==</term>
@@ -223,9 +244,9 @@ titleframe=True
 		<varlistentry><term>''<replaceable>text</replaceable>''</term>
 			<listitem><para>typeset <replaceable>text</replaceable> italic</para></listitem></varlistentry>
 		<varlistentry><term>@<replaceable>text</replaceable>@</term>
-			<listitem><para>typeset <replaceable>text</replaceable> in typewriter type</para></listitem></varlistentry>
+			<listitem><para>typeset <replaceable>text</replaceable> in typewriter type, to ignore an @, escape it as \@</para></listitem></varlistentry>
 		<varlistentry><term>!<replaceable>text</replaceable>!</term>
-			<listitem><para>alert <replaceable>text</replaceable></para></listitem></varlistentry>
+			<listitem><para>alert <replaceable>text</replaceable>, to ignore and !, escape it as \!</para></listitem></varlistentry>
 		<varlistentry><term>_ <replaceable>color</replaceable> _ <replaceable>text</replaceable> _</term>
 			<listitem><para>make <replaceable>text</replaceable> appear in <replaceable>color</replaceable></para></listitem></varlistentry>
 	</variablelist>
