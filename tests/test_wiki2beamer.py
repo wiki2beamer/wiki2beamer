@@ -268,6 +268,25 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
+    
+    def test_include_file_inside_code(self):
+        lines = ['<[code]', '>>>test_file<<<', '[code]>']
+        expected = ['\\defverbatim[colored]\\mhifagamigghjgmmckbhaimjjhbfemio{\n\\begin{lstlisting}test file content\\end{lstlisting}\n}\n', '\n\\mhifagamigghjgmmckbhaimjjhbfemio\n', '', '']
+        out = convert2beamer(lines)
+        self.assertEqual(out,expected)
+
+    def test_include_file_inside_code_inside_nowiki(self):
+        lines = ['<[code]', '<[nowiki]', '>>>test_file<<<', '[nowiki]>', '[code]>']
+        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '', '>>>test_file<<<', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '', '']
+        out = convert2beamer(lines)
+        self.assertEqual(out,expected)
+
+class TestIncludeFile(unittest.TestCase):
+    def setUp(self):
+        return
+    
+    def tearDown(self):
+        return
 
     def test_include_file(self):
         expected = ['test file content']
