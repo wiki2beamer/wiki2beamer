@@ -912,7 +912,7 @@ def include_file(line):
     else:
         return None
 
-def include_files(lines):
+def include_file_recursive(lines):
     stack = lines[::-1]
     output = []
     nowikimode = False
@@ -943,7 +943,7 @@ def convert2beamer_full(lines):
 
     # handle any file inclusions first
     # nested inclusions not possible (yet)
-    lines = include_files(lines)
+    lines = include_file_recursive(lines)
 
     nowikimode = False
     codemode = False
