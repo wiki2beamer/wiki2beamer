@@ -927,6 +927,14 @@ def convert2beamer_selected(lines):
     return out
 
 def include_file(line):
+    """ Extract filename to include.
+
+    @param line string
+        a line that might include an inclusion
+    @return string or None
+        if the line contains an inclusion, return the filename,
+        otherwise return None
+    """
     p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
     if p.match(line):
         filename = p.sub(r"\1", line)
