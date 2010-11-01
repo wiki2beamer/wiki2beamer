@@ -311,14 +311,12 @@ class TestFileInclusion(unittest.TestCase):
     def test_include_file_recursive_works(self):
         expected = ['content from test_file2',
                   'test file content']
-        line = ">>>test_file2<<<"
-        out = include_file_recursive([line])
+        out = include_file_recursive('test_file2')
         self.assertEqual(expected, out)
 
     def test_include_file_recursive_honors_nowiki(self):
-        line = ">>>test_file3<<<"
         expected = ['content from test_file3', '<[nowiki]', '>>>test_file<<<', '[nowiki]>']
-        out = include_file_recursive([line])
+        out = include_file_recursive('test_file3')
         self.assertEqual(expected, out)
     
     def test_include_file_recursive_detects_loop(self):
