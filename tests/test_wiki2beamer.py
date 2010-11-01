@@ -284,9 +284,22 @@ class TestConvert2Beamer(unittest.TestCase):
 
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
+        files = {'test_file': ['test file content'],
+                 'test_file2':['content from test_file2',
+                               '>>>test_file<<<'],
+                 'test_file3':['content from test_file3',
+                               '<[nowiki]',
+                               '>>>test_file<<<',
+                               '[nowiki]>'],
+                 'test_file_loop':['test_file_loop content',
+                               '>>>test_file_loop<<<']
+                }
+        for file_, lines in files.items():
+            add_lines_to_cache(file_, lines)
         return
     
     def tearDown(self):
+        clear_file_cache()
         return
 
     def test_include_file_works(self):
