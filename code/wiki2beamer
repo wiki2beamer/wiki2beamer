@@ -1056,14 +1056,18 @@ def main(argv):
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
     opts, args = parser.parse_args()
 
+    input_files = []
     if not sys.stdin.isatty():
-        lines = joinLines(sys.stdin.readlines())
+        _file_cache['stdin'] = joinLines(sys.stdin.readlines())
+        input_files.append('stdin')
     elif len(args) == 0:
         parser.error("You supplied no files to convert!")
-    else:
-        lines = list()
-        for file_ in args:
-            lines += read_file_to_lines(file_)
+
+    input_files += args
+    lines = []
+    for file_ in input_files:
+        lines += include_files(file_)
+
     lines = convert2beamer(lines)
     print_result(lines)
 
