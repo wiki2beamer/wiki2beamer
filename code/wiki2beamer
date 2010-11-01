@@ -88,6 +88,28 @@ autotemplate = [\
 nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
 nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
 
+# lazy initialisation cache for file content
+_file_cache = dict()
+
+def add_lines_to_cache(filename, lines):
+    if filename in _file_cache:
+        pass
+    else:
+        _file_cache[filename] = lines
+
+
+def get_lines_from_cache(filename):
+    if filename in _file_cache:
+        return _file_cache[filename]
+    else:
+        lines = read_file_to_lines(filename)
+        _file_cache[filename] = lines
+        return lines
+
+def clear_file_cache():
+    _file_cache = {}
+
+
 class w2bstate:
     def __init__(self):
         self.frame_opened = False
