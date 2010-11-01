@@ -942,7 +942,7 @@ def include_file(line):
     else:
         return None
 
-def include_files(base):
+def include_file_recursive(base):
     stack = []
     output = []
     def recurse(file_):
@@ -957,7 +957,7 @@ def include_files(base):
                 output.append(line)
                 nowikimode = True
             else:
-                include = include_filename(line)
+                include = include_file(line)
                 if include is not None:
                     if include in stack:
                         raise Exception('loop detected')
@@ -967,28 +967,6 @@ def include_files(base):
                     output.append(line)
         stack.pop()
     recurse(base)
-    return output
-
-def include_file_recursive(lines):
-    stack = lines[::-1]
-    output = []
-    nowikimode = False
-    while stack:
-        next_ = stack.pop()
-        if nowikimode:
-            if nowikiendre.match(next_):
-                nowikimode = False
-            output.append(next_)
-        elif nowikistartre.match(next_):
-            output.append(next_)
-            nowikimode = True
-        else:
-            file_lines = include_file(next_)
-            if not file_lines:
-                output.append(next_)
-            else:
-                file_lines.reverse()
-                stack += file_lines
     return output
 
 def convert2beamer_full(lines):
@@ -1066,7 +1044,7 @@ def main(argv):
     input_files += args
     lines = []
     for file_ in input_files:
-        lines += include_files(file_)
+        lines += include_file_recursive(file_)
 
     lines = convert2beamer(lines)
     print_result(lines)
