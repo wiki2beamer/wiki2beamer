@@ -930,14 +930,6 @@ def include_file(line):
     p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
     if p.match(line):
         filename = p.sub(r"\1", line)
-        return read_file_to_lines(filename)
-    else:
-        return None
-
-def include_filename(line):
-    p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
-    if p.match(line):
-        filename = p.sub(r"\1", line)
         return filename
     else:
         return None
