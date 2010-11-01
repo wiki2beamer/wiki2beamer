@@ -307,13 +307,6 @@ class TestFileInclusion(unittest.TestCase):
         line = ">>>test_file<<<"
         out = include_file(line)
         self.assertEqual(expected, out)
-    
-    def test_include_file_honors_nowiki(self):
-        lines = ['<[nowiki]',
-                 '>>>test_file<<<',
-                 '[nowiki]>']
-        out = include_file_recursive(lines)
-        self.assertEqual(lines, out)
 
     def test_include_file_recursive_works(self):
         expected = ['content from test_file2',
