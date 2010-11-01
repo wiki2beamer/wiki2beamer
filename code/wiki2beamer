@@ -912,6 +912,14 @@ def include_file(line):
     else:
         return None
 
+def include_filename(line):
+    p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
+    if p.match(line):
+        filename = p.sub(r"\1", line)
+        return filename
+    else:
+        return None
+
 def include_file_recursive(lines):
     stack = lines[::-1]
     output = []
