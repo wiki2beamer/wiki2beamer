@@ -303,7 +303,7 @@ class TestFileInclusion(unittest.TestCase):
         return
 
     def test_include_file_works(self):
-        expected = ['test file content']
+        expected = 'test_file'
         line = ">>>test_file<<<"
         out = include_file(line)
         self.assertEqual(expected, out)
