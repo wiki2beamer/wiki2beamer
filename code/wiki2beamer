@@ -948,7 +948,7 @@ def include_files(base):
     def recurse(file_):
         stack.append(file_)
         nowikimode = False
-        for line in read_file_to_lines(file_):
+        for line in get_lines_from_cache(file_):
             if nowikimode:
                 if nowikiendre.match(line):
                     nowikimode = False
