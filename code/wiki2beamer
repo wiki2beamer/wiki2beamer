@@ -976,10 +976,6 @@ def convert2beamer_full(lines):
     codebuffer = []
     autotemplatebuffer = []
 
-    # handle any file inclusions first
-    # nested inclusions not possible (yet)
-    lines = include_file_recursive(lines)
-
     nowikimode = False
     codemode = False
     autotemplatemode = False
