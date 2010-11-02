@@ -920,6 +920,33 @@ def include_filename(line):
     else:
         return None
 
+def include_files(base):
+    stack = []
+    output = []
+    def recurse(file_):
+        stack.append(file_)
+        nowikimode = False
+        for line in read_file_to_lines(file_):
+            if nowikimode:
+                if nowikiendre.match(line):
+                    nowikimode = False
+                output.append(line)
+            elif nowikistartre.match(line):
+                output.append(line)
+                nowikimode = True
+            else:
+                include = include_filename(line)
+                if include is not None:
+                    if include in stack:
+                        raise Exception('loop detected')
+                    else:
+                        recurse(include)
+                else:
+                    output.append(line)
+        stack.pop()
+    recurse(base)
+    return output
+
 def include_file_recursive(lines):
     stack = lines[::-1]
     output = []
