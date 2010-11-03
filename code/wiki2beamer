@@ -57,6 +57,9 @@ def syntax_error(message, code):
     print >>sys.stderr, '\tcode:\n%s' % code
     sys.exit(-3)
 
+class IncludeLoopException(Exception):
+    pass
+
 lstbasicstyle=\
 r"""{basic}{
     captionpos=t,%
@@ -960,7 +963,9 @@ def include_file_recursive(base):
                 include = include_file(line)
                 if include is not None:
                     if include in stack:
-                        raise Exception('loop detected')
+                        raise IncludeLoopException('Loop detected while trying '
+                                "to include: '%s'.\n" % include +
+                                'Stack: '+ "->".join(stack))
                     else:
                         recurse(include)
                 else:
@@ -1044,7 +1049,10 @@ def main(argv):
     input_files += args
     lines = []
     for file_ in input_files:
-        lines += include_file_recursive(file_)
+        try:
+            lines += include_file_recursive(file_)
+        except Exception, e:
+            syntax_error(e, -4)
 
     lines = convert2beamer(lines)
     print_result(lines)
