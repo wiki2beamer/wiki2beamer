@@ -1,36 +1,5 @@
-==== title ====
-
-* firstitem
-** subitem
-*# counted
 
 
-== section ==
-
-== a section ==
-
-=== a subsection ===
-
-==== \uncover<2->{a frametitle} ====
-
-inframe
-
-[frame]>
-
-outofframe
-
-==== footitle ====
-
-moo
-
-\uncover<2->{
-	\begin{itemize}
-		\item foo
-		\item bar
-	\end{itemize}
-}
-
-==== mootitle ====
-
-blabliblub
+* listitem1
+*# subitem2
 
