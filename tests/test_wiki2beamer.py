@@ -18,7 +18,6 @@ import sys
 import unittest
 import re
 import random
-import threading
 
 sys.path.append('../code')
 from wiki2beamer import *
@@ -270,9 +269,9 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
     
-    def test_include_file_inside_code(self):
+    def test_include_file_disabled_inside_code(self):
         lines = ['<[code]', '>>>test_file<<<', '[code]>']
-        expected = ['\\defverbatim[colored]\\mhifagamigghjgmmckbhaimjjhbfemio{\n\\begin{lstlisting}test file content\\end{lstlisting}\n}\n', '\n\\mhifagamigghjgmmckbhaimjjhbfemio\n', '', '']
+        expected = ['\\defverbatim[colored]\\mfkjiamnpineejahopjoapckhioohfpa{\n\\begin{lstlisting}>>>test_file<<<\\end{lstlisting}\n}\n', '\n\\mfkjiamnpineejahopjoapckhioohfpa\n', '', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
