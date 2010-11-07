@@ -17,10 +17,10 @@
 from distutils.core import setup
 
 setup(name='wiki2beamer',
-    version='0.8.1',
+    version='0.9.0',
     scripts=['wiki2beamer'],
     description='Create LaTeX-beamer presentations with a wiki syntax',
-    author='Michael Rentzsch, Kai Dietrich',
+    author='Michael Rentzsch, Kai Dietrich and others',
     author_email='mmichael.rentzsch@repc.de, mail@cleeus.de',
     url='http://wiki2beamer.sourceforge.net/'
 )
