@@ -99,10 +99,9 @@ nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
 _file_cache = dict()
 
 def add_lines_to_cache(filename, lines):
-    if filename in _file_cache:
-        pass
-    else:
+    if not filename in _file_cache:
         _file_cache[filename] = lines
+    return
 
 
 def get_lines_from_cache(filename):
@@ -112,9 +111,11 @@ def get_lines_from_cache(filename):
         lines = read_file_to_lines(filename)
         _file_cache[filename] = lines
         return lines
+    return
 
 def clear_file_cache():
     _file_cache = {}
+    return
 
 
 class w2bstate:
@@ -134,6 +135,7 @@ class w2bstate:
     def switch_to_next_frame(self):
         self.frame_header = self.next_frame_header
         self.frame_footer = self.next_frame_footer
+        return
 
 def escape_resub(string):
     p = re.compile(r"\\")
