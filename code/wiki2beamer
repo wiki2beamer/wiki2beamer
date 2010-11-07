@@ -61,6 +61,9 @@ def syntax_error(message, code):
     print >>sys.stderr, '\tcode:\n%s' % code
     sys.exit(-3)
 
+class IncludeLoopException(Exception):
+    pass
+
 lstbasicstyle=\
 r"""{basic}{
     captionpos=t,%
@@ -91,6 +94,28 @@ autotemplate = [\
 
 nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
 nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
+
+# lazy initialisation cache for file content
+_file_cache = dict()
+
+def add_lines_to_cache(filename, lines):
+    if filename in _file_cache:
+        pass
+    else:
+        _file_cache[filename] = lines
+
+
+def get_lines_from_cache(filename):
+    if filename in _file_cache:
+        return _file_cache[filename]
+    else:
+        lines = read_file_to_lines(filename)
+        _file_cache[filename] = lines
+        return lines
+
+def clear_file_cache():
+    _file_cache = {}
+
 
 class w2bstate:
     def __init__(self):
@@ -909,33 +934,48 @@ def convert2beamer_selected(lines):
     return out
 
 def include_file(line):
+    """ Extract filename to include.
+
+    @param line string
+        a line that might include an inclusion
+    @return string or None
+        if the line contains an inclusion, return the filename,
+        otherwise return None
+    """
     p = re.compile("\>\>\>(.*?)\<\<\<", re.VERBOSE)
     if p.match(line):
         filename = p.sub(r"\1", line)
-        return read_file_to_lines(filename)
+        return filename
     else:
         return None
 
-def include_file_recursive(lines):
-    stack = lines[::-1]
+def include_file_recursive(base):
+    stack = []
     output = []
-    nowikimode = False
-    while stack:
-        next_ = stack.pop()
-        if nowikimode:
-            if nowikiendre.match(next_):
-                nowikimode = False
-            output.append(next_)
-        elif nowikistartre.match(next_):
-            output.append(next_)
-            nowikimode = True
-        else:
-            file_lines = include_file(next_)
-            if not file_lines:
-                output.append(next_)
+    def recurse(file_):
+        stack.append(file_)
+        nowikimode = False
+        for line in get_lines_from_cache(file_):
+            if nowikimode:
+                if nowikiendre.match(line):
+                    nowikimode = False
+                output.append(line)
+            elif nowikistartre.match(line):
+                output.append(line)
+                nowikimode = True
             else:
-                file_lines.reverse()
-                stack += file_lines
+                include = include_file(line)
+                if include is not None:
+                    if include in stack:
+                        raise IncludeLoopException('Loop detected while trying '
+                                "to include: '%s'.\n" % include +
+                                'Stack: '+ "->".join(stack))
+                    else:
+                        recurse(include)
+                else:
+                    output.append(line)
+        stack.pop()
+    recurse(base)
     return output
 
 def convert2beamer_full(lines):
@@ -944,10 +984,6 @@ def convert2beamer_full(lines):
     result = [''] #start with one empty line as line 0
     codebuffer = []
     autotemplatebuffer = []
-
-    # handle any file inclusions first
-    # nested inclusions not possible (yet)
-    lines = include_file_recursive(lines)
 
     nowikimode = False
     codemode = False
@@ -1007,14 +1043,21 @@ def main(argv):
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
     opts, args = parser.parse_args()
 
+    input_files = []
     if not sys.stdin.isatty():
-        lines = joinLines(sys.stdin.readlines())
+        _file_cache['stdin'] = joinLines(sys.stdin.readlines())
+        input_files.append('stdin')
     elif len(args) == 0:
         parser.error("You supplied no files to convert!")
-    else:
-        lines = list()
-        for file_ in args:
-            lines += read_file_to_lines(file_)
+
+    input_files += args
+    lines = []
+    for file_ in input_files:
+        try:
+            lines += include_file_recursive(file_)
+        except Exception, e:
+            syntax_error(e, -4)
+
     lines = convert2beamer(lines)
     print_result(lines)
 

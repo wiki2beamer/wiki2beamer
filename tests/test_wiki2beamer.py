@@ -284,49 +284,44 @@ class TestConvert2Beamer(unittest.TestCase):
 
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
+        files = {'test_file': ['test file content'],
+                 'test_file2':['content from test_file2',
+                               '>>>test_file<<<'],
+                 'test_file3':['content from test_file3',
+                               '<[nowiki]',
+                               '>>>test_file<<<',
+                               '[nowiki]>'],
+                 'test_file_loop':['test_file_loop content',
+                               '>>>test_file_loop<<<']
+                }
+        for file_, lines in files.items():
+            add_lines_to_cache(file_, lines)
         return
     
     def tearDown(self):
+        clear_file_cache()
         return
 
     def test_include_file_works(self):
-        expected = ['test file content']
+        expected = 'test_file'
         line = ">>>test_file<<<"
         out = include_file(line)
         self.assertEqual(expected, out)
-    
-    def test_include_file_honors_nowiki(self):
-        lines = ['<[nowiki]',
-                 '>>>test_file<<<',
-                 '[nowiki]>']
-        out = include_file_recursive(lines)
-        self.assertEqual(lines, out)
 
     def test_include_file_recursive_works(self):
         expected = ['content from test_file2',
                   'test file content']
-        line = ">>>test_file2<<<"
-        out = include_file_recursive([line])
+        out = include_file_recursive('test_file2')
         self.assertEqual(expected, out)
 
     def test_include_file_recursive_honors_nowiki(self):
-        line = ">>>test_file3<<<"
         expected = ['content from test_file3', '<[nowiki]', '>>>test_file<<<', '[nowiki]>']
-        out = include_file_recursive([line])
+        out = include_file_recursive('test_file3')
         self.assertEqual(expected, out)
-    
+
     def test_include_file_recursive_detects_loop(self):
-        line = ">>>test_file_loop<<<"
         expected = ["test_file_loop content"]
-        
-        include_worker = threading.Thread(target=include_file_recursive,args=([line],))
-
-        include_worker.start()
-
-        #wait 1 second, if the thread is still working after 1s we certainly have an infinite loop
-        include_worker.join(1.0)
-        self.assertFalse( include_worker.is_alive() )
-        
+        self.assertRaises(Exception, include_file_recursive, 'test_file_loop')
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
