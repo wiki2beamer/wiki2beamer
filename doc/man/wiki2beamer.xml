@@ -36,7 +36,7 @@
 	<cmdsynopsis>
 		<command>wiki2beamer</command>
 		<group choice="opt">
-			<option>--version</option>
+			<option><replaceable>OPTION</replaceable></option>
 			<arg rep="repeat"><replaceable>FILE</replaceable></arg>
 		</group>
 	</cmdsynopsis>
@@ -46,6 +46,8 @@
 	<variablelist>
 		<varlistentry><term><replaceable>FILE</replaceable></term>
 			<listitem><para>the text-file(s) to be processed</para></listitem></varlistentry>
+		<varlistentry><term><option>-h</option> <option>--help</option></term>
+			<listitem><para>show a short usage help</para></listitem></varlistentry>
 		<varlistentry><term>--version</term>
 			<listitem><para>show version information</para></listitem></varlistentry>
 	</variablelist>
@@ -57,6 +59,9 @@
 	<para>
 		If called without any input file, wiki2beamer reads input from STDIN. If called with multiple
 		input files, wiki2beamer reads and processes them in order with their content beeing simply concatenated. 
+	</para>
+	<para>
+		If an error occurs, wiki2beamer returns a return code other then 0.
 	</para>
 </refsect1>
 
@@ -80,8 +85,9 @@
 		<varlistentry><term>&gt;&gt;&gt;<replaceable>includefile</replaceable>&lt;&lt;&lt;</term>
 			<listitem>
 			<para>
-			Include the file named <replaceable>includefile</replaceable> at this line. Works recursively.
-			Doesn't work inside [nowiki]-environments (see below).
+			Include the file named <replaceable>includefile</replaceable> at this line. Works recursively. Endless recursion
+			will be detected and treated as an error. Including files doesn't work inside [nowiki] and [code] environments
+			(see below).
 			</para>
 			</listitem>
 		</varlistentry>
