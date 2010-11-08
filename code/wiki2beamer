@@ -94,6 +94,8 @@ autotemplate = [\
 
 nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
 nowikiendre = re.compile(r'^\[\s*nowiki\s*\]>')
+codestartre = re.compile(r'^<\[\s*code\s*\]')
+codeendre = re.compile(r'^\[\s*code\s*\]>')
 
 # lazy initialisation cache for file content
 _file_cache = dict()
@@ -812,9 +814,6 @@ def get_nowikimode(line, nowikimode):
         return (line, nowikimode)
 
 def get_codemode(line, codemode):
-    codestartre = re.compile(r'^<\[\s*code\s*\]')
-    codeendre = re.compile(r'^\[\s*code\s*\]>')
-
     if not codemode and codestartre.match(line)!=None:
         line = codestartre.sub('', line)
         return (line, True)
@@ -957,14 +956,20 @@ def include_file_recursive(base):
     def recurse(file_):
         stack.append(file_)
         nowikimode = False
+        codemode = False
         for line in get_lines_from_cache(file_):
-            if nowikimode:
+            if nowikimode or codemode:
                 if nowikiendre.match(line):
                     nowikimode = False
+                elif codestartre.match(line):
+                    codemode = False
                 output.append(line)
             elif nowikistartre.match(line):
                 output.append(line)
                 nowikimode = True
+            elif codestartre.match(line):
+                output.append(line)
+                codemode = True
             else:
                 include = include_file(line)
                 if include is not None:
