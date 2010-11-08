@@ -1,9 +1,14 @@
+Version 0.9.0 (2010-11-08)
+=======================================
+Improved commandline parsing and handling multiple input files
+Added escaping of @ and ! as \@ and \!
+Added file inclusion with >>>includefile<<<
+
 Version 0.8.1 (2009-09-16)
 =======================================
 Added new syntax abbreviations for \uncover, \only, \vspace and \vspace*,
 added frame marking (!) for selective compilation of few frames.
 See man-page for syntax details.
-
 
 Version 0.8 (2009-07-03)
 =======================================
