@@ -214,7 +214,7 @@ def transform_detect_manual_frameclose(string, state):
     return string
 
 def get_frame_closing(state):
-    return " %s \n \\end{frame}\n" % state.frame_footer
+    return " %s \n\\end{frame}\n" % state.frame_footer
 
 def transform_h4_to_frame(string, state):
     """headings (3) to frames"""
