@@ -268,8 +268,16 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
-    
 
+    def test_fragile(self):
+        lines = ['==== foo ====[fragile]', 'foo']
+        expected = ['\n',
+                    '\\begin{frame}[fragile]\n \\frametitle{foo}\n  \n',
+                    'foo',
+                    '',
+                    '  \n\\end{frame}\n']
+        out = convert2beamer(lines)
+        self.assertEqual(out, expected)
 
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
