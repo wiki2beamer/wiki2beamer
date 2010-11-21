@@ -205,18 +205,18 @@ class TestConvert2Beamer(unittest.TestCase):
     
     def test_frame_open_close(self):
         lines = ['==== foo ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
     def test_frame_open_close_again(self):
         lines = ['==== foo ====', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '  \n\\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
     def test_frame_close_detect(self):
         lines = ['==== foo ====', '[ frame ]>', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '\\end{ frame }', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '\\end{ frame }', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', '  \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
@@ -241,13 +241,13 @@ class TestConvert2Beamer(unittest.TestCase):
 
     def test_header(self):
         lines = ['==== foo ====', '@FRAMEHEADER=bar', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n bar \n', '', '  \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n bar \n', '', '  \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
     def test_footer(self):
         lines = ['==== foo ====', '@FRAMEFOOTER=bar', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
@@ -259,7 +259,7 @@ class TestConvert2Beamer(unittest.TestCase):
 
     def test_section_footer(self):
         lines = ['==== foo ====', '@FRAMEFOOTER=bar', '== foosec ==', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\n\\section{foosec}\n\n', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n \\end{frame}\n']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n\n\\section{foosec}\n\n', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
     
