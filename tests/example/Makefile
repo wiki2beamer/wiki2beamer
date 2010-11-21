@@ -1,6 +1,6 @@
 .PHONY : all clean tex pdf view
 
-all: tex pdf view
+all: tex pdf
 
 tex: example.tex
 

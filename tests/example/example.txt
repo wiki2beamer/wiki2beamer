@@ -40,12 +40,62 @@ python wiki2beamer example.txt > example.tex
 [code]>
 
 
-=== Structure and Frames ===
+=== The big picture ===
 
-==== The document ====
-To create a working latex beamer presentation .tex file, you have to begin
-your
+==== The big picture ====
+A latex beamer document consists (like any latex document) of some introductory
+style definitions and the document body. In plain latex it looks like this:
 
+<[code][style=basic]
+\documentclass{beamer}
+    %do some style-magic here
+\begin{document}
+    %insert your presentation here (body)
+\end{document}
+[code]>
+wiki2beamer can produce both: only the body content of the presentation or a complete document.
+
+==== body-only ====
+If you want full control over all the fancy stuff you can do with latex, you
+can use wiki2beamer to generate a .tex that that you can include with
+@\textbackslash input\{filename.tex\}@.
+
+<[code][style=basic]
+\documentclass{beamer}
+\begin{document}
+    \input{w2b-output.tex}
+\end{document}
+[code]>
+
+This is the default mode of operation.
+
+==== autotemplate ====
+If you want wiki2beamer to generate a complete document with header, you can
+use the autotemplate feature. It's a special environment in wiki2beamer
+syntax and must be the first element in the input file. It has a simple
+@key=\{value\}@ syntax. For a full reference see the man page.
+
+<[code][style=basic]
+<\[autotemplate\]
+title={The Title}
+author={Mr. Foo Bar}
+date={1970-01-01}
+titleframe=False
+\[autotemplate\]>
+[code]>
+
+If the autotemplate environment is used, a default titleframe is generated. If
+you want that disabled, you can switch it with the titleframe option.
+
+=== Structure and frames ===
+
+=== Lists ===
+
+=== Text markup ===
+
+=== Environments ===
+
+=== Escaping ===
 
 === Headers and Footers ===
 
@@ -69,7 +119,9 @@ This is the text of the frame
 
 == Advanced usage ==
 
+=== Special environments ===
 
+=== Misc ===
 
 ==== fragile frames ====
 For some features to work (eg. verbatim content), latex beamer needs a frame
@@ -80,8 +132,9 @@ marked as fragile. In plain \LaTeX this would look like:
 \end{frame}
 [code]>
 
-This can be realized with wiki2beamer by simply appending a \[fragile\] to the
+This can be realized with wiki2beamer by simply appending a @[fragile]@ tag to the
 frame header:
+
 <[code][style=basic]
 ==== a fragile frame ====\[fragile\]
 ...
