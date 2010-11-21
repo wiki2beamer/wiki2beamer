@@ -36,7 +36,7 @@ wiki2beamer example.txt > example.tex
 On Windows you would have to call the python interpreter with the wiki2beamer
 script:
 <[code][style=basic]
-C:\Users\john\talk\python wiki2beamer example.txt > example.tex
+python wiki2beamer example.txt > example.tex
 [code]>
 
 
@@ -47,7 +47,29 @@ To create a working latex beamer presentation .tex file, you have to begin
 your
 
 
+=== Headers and Footers ===
+
+==== Headers and Footers ====
+Sometimes you want to repeat some latex code at the header and footer of your
+presentation frames (e.g. to show logos or names). To make this easier you can
+fill two special storage field @\@FRAMEHEADER=@ and @\@FRAMEFOOTER=@ with some
+latex code. wiki2beamer will append or prepend this right after the frame
+opening or frame closing in the resulting latex code.
+
+@FRAMEHEADER=\begin{flushright}This is a generated FRAMEHEADER\end{flushright}
+@FRAMEFOOTER=\vfill \begin{flushright}This is a generated FRAMEFOOTER\end{flushright}
+
+==== Frame with generated header/footer ====
+
+This is the text of the frame
+
+%deleting header and footer
+@FRAMEHEADER=
+@FRAMEFOOTER=
+
 == Advanced usage ==
+
+
 
 ==== fragile frames ====
 For some features to work (eg. verbatim content), latex beamer needs a frame
