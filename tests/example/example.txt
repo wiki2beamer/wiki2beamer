@@ -1,0 +1,50 @@
+<[autotemplate]
+title={The wiki2beamer example}
+[autotemplate]>
+
+== Introduction ==
+
+==== Welcome ====
+
+Welcome to the wiki2beamer example presentation. We will do our best to
+document and demonstrate all features of wiki2beamer in this file. It is not
+meant to be a reference though, that will be the man page wiki2beamer(1).
+
+==== Design goals ====
+
+Wiki2beamer was written to make typesetting presentations with \LaTeX and
+beamer easier. \LaTeX beamer can create beautiful presentations but it's
+a very verbose language and most of the simple task like simple frames or
+bullet lists take an awfull amount of code. This of scares away beginners and
+fellow colleagues from even starting with the tool. This is where wiki2beamer
+steps in. It's designed to make the start easier and not remove any of the
+powers of \LaTeX.
+
+== Basic usage ==
+
+=== Commandline ===
+==== Commandline usage ====
+Wiki2beamer is written in python and known to work on python 2.3 up to 2.6.
+You can use it on Windows too, if you have the python interpreter installed
+properly.
+
+On *nix environments you would simple use it like this:
+<[code]
+wiki2beamer example.txt > example.tex
+[code]>
+
+On Windows you would have to call the python interpreter with the wiki2beamer
+script:
+<[code]
+C:\Users\john\talk\python wiki2beamer example.txt > example.tex
+[code]>
+
+
+=== Structure and Frames ===
+
+==== The document ====
+To create a working latex beamer presentation .tex file, you have to begin
+your
+
+
+== Advanced usage ==
