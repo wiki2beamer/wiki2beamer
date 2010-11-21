@@ -252,8 +252,8 @@ class TestConvert2Beamer(unittest.TestCase):
         self.assertEqual(out,expected)
 
     def test_subexp_footer(self):
-        lines = ['==== foo ====', '@FRAMEFOOTER=\\buge bar\\3', '==== bar ====']
-        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n \\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' \\buge bar\\3 \n \\end{frame}\n']
+        lines = ['==== foo ====', '@FRAMEFOOTER=\\huge bar 3', '==== bar ====']
+        expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' \\huge bar 3 \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
 
