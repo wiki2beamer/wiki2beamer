@@ -16,4 +16,4 @@ example.pdf: example.tex Makefile
 	pdflatex example.tex
 
 clean:
-	rm example.aux example.log example.nav example.out example.pdf example.snm example.tex example.toc
+	rm example.aux example.log example.nav example.out example.pdf example.snm example.tex example.toc example.vrb

@@ -29,13 +29,13 @@ You can use it on Windows too, if you have the python interpreter installed
 properly.
 
 On *nix environments you would simple use it like this:
-<[code]
+<[code][style=basic]
 wiki2beamer example.txt > example.tex
 [code]>
 
 On Windows you would have to call the python interpreter with the wiki2beamer
 script:
-<[code]
+<[code][style=basic]
 C:\Users\john\talk\python wiki2beamer example.txt > example.tex
 [code]>
 
@@ -48,3 +48,27 @@ your
 
 
 == Advanced usage ==
+
+==== fragile frames ====
+For some features to work (eg. verbatim content), latex beamer needs a frame
+marked as fragile. In plain \LaTeX this would look like:
+<[code][style=basic]
+\begin{frame}\[fragile\]
+...
+\end{frame}
+[code]>
+
+This can be realized with wiki2beamer by simply appending a \[fragile\] to the
+frame header:
+<[code][style=basic]
+==== a fragile frame ====\[fragile\]
+...
+[code]>
+
+==== a fragile frame ====[fragile]
+this is a fragile frame
+
+
+
+
+
