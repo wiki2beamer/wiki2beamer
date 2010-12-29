@@ -14,8 +14,9 @@ meant to be a reference though, that will be the man page wiki2beamer(1).
 
 Wiki2beamer was written to make typesetting presentations with \LaTeX and
 beamer easier. \LaTeX beamer can create beautiful presentations but it's
-a very verbose language and most of the simple task like simple frames or
-bullet lists take an awfull amount of code. This often scares away beginners and
+a very verbose language and most of the simple tasks like using frames or
+bullet lists take an awfull amount of code that looks really complicated.
+This often scares away beginners and
 fellow colleagues from even starting with \LaTeX. This is where wiki2beamer
 steps in. It's designed to make the start easier and not remove any of the
 powers of the language.
@@ -125,42 +126,6 @@ appears. Frames can also be closed with an optional @[frame]>@ marking
 [frame]>
 
 % now you can put your fancy LaTeX code here (outside of a frame)
-
-==== Frame options ====
-
-LaTeX supports giving arguments to opening frames. It looks like:
-<[code][style=basic]
-\begin{frame}\[someoption\]
-[code]>
-
-Such options can be added in wiki2beamer by appending them to the frame
-opening:
-<[code][style=basic]
-==== frametitle ====\[someoption]
-[code]>
-
-One example are fragile frames.
-
-==== Fragile frames ====
-For some features to work (eg. verbatim content), latex beamer needs a frame
-marked as fragile. In plain \LaTeX this would look like:
-<[code][style=basic]
-\begin{frame}\[fragile\]
-...
-\end{frame}
-[code]>
-
-This can be realized with wiki2beamer by simply appending a @[fragile]@ tag to the
-frame header:
-
-<[code][style=basic]
-==== a fragile frame ====\[fragile\]
-...
-[code]>
-
-==== a fragile frame ====[fragile]
-This is such a fragile frame with some \verb-V#rb/\t|m t<xt- .
-
 
 === Lists ===
 
@@ -330,6 +295,96 @@ You can also use footnotes on your slides(((This is such a footnote.))).
 
 === Escaping ===
 
+=== Layout ===
+
+==== Vertical Space ====
+
+You can insert vertical space between two paragraphs with the
+
+<[center]
+<[nowiki]
+\texttt{--length--}
+[nowiki]>
+[center]>
+
+notation where ''length'' can be a valid latex length expression (e.g. @1cm@, @1pt@, @1em@ or even
+@0.2\textbackslash textwidth@). This space will be squeezed by latex when the
+page is full. To really force LaTeX to insert a space, use the
+alternative
+
+<[center]
+<[nowiki]
+\texttt{--*length--}
+[nowiki]>
+[center]>
+
+notation.
+
+
+
+==== Columns ====
+Latex beamer can devide the current frame into collumns.
+In wiki2beamer this can be done with the following notation:
+<[code][style=basic]
+<\[columns\]
+
+\[\[\[width\]\]\]
+this is the first column
+
+\[\[\[width\]\]\]
+this is the second column
+
+\[columns\]>
+[code]>
+
+where ''width'' is a valid latex length expression.
+
+==== Columns example ====
+<[code][style=basic]
+\centering
+Text above the columns
+
+<\[columns\]
+
+\[\[\[0.4\textwidth\]\]\]
+this is:
+* the first column
+* with a list
+
+\[\[\[0.4\textwidth\]\]\]
+this is:
+* the second column
+* with another list
+
+\[columns\]>
+
+\centering
+Text below the columns
+[code]>
+
+
+==== Columns example (output) ====
+\centering
+Text above the columns.
+
+<[columns]
+
+[[[0.4\textwidth]]]
+this is:
+* the first column
+* with a list
+
+[[[0.4\textwidth]]]
+this is:
+* the second column
+* with another list
+
+[columns]>
+
+\centering
+Text below the columns.
+
+
 === Headers and Footers ===
 
 ==== Headers and Footers ====
@@ -382,15 +437,46 @@ documentation.
 
 == Advanced usage ==
 
-=== Special environments ===
+==== Advanced usage ====
 
-==== nowiki ====
+<[center]
+Tricks for the adept.
+[center]>
 
-==== code ====
+==== Frame options ====
 
+LaTeX supports giving arguments to opening frames. It looks like:
+<[code][style=basic]
+\begin{frame}\[someoption\]
+[code]>
 
-=== Misc ===
+Such options can be added in wiki2beamer by appending them to the frame
+opening:
+<[code][style=basic]
+==== frametitle ====\[someoption]
+[code]>
 
+One example are fragile frames.
+
+==== Fragile frames ====
+For some features to work (eg. verbatim content), latex beamer needs a frame
+marked as fragile. In plain \LaTeX this would look like:
+<[code][style=basic]
+\begin{frame}\[fragile\]
+...
+\end{frame}
+[code]>
+
+This can be realized with wiki2beamer by simply appending a @[fragile]@ tag to the
+frame header:
+
+<[code][style=basic]
+==== a fragile frame ====\[fragile\]
+...
+[code]>
+
+==== a fragile frame ====[fragile]
+This is such a fragile frame with some \verb-V#rb/\t|m t<xt- .
 
 
 
