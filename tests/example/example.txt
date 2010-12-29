@@ -15,10 +15,10 @@ meant to be a reference though, that will be the man page wiki2beamer(1).
 Wiki2beamer was written to make typesetting presentations with \LaTeX and
 beamer easier. \LaTeX beamer can create beautiful presentations but it's
 a very verbose language and most of the simple task like simple frames or
-bullet lists take an awfull amount of code. This of scares away beginners and
-fellow colleagues from even starting with the tool. This is where wiki2beamer
+bullet lists take an awfull amount of code. This often scares away beginners and
+fellow colleagues from even starting with \LaTeX. This is where wiki2beamer
 steps in. It's designed to make the start easier and not remove any of the
-powers of \LaTeX.
+powers of the language.
 
 == Basic usage ==
 
@@ -89,9 +89,242 @@ you want that disabled, you can switch it with the titleframe option.
 
 === Structure and frames ===
 
+==== Strucuture and frames ====
+
+As most wiki-dialects, wiki2beamer supports the famous
+
+<[center]
+@==== title ====@
+[center]>
+
+syntax. When these markings start at the beginning of a line, wiki2beamer
+expands them to open a frame.
+
+==== Structure and frames ====
+
+The following heading markups exist:
+
+--1em--
+
+@== title ==@ --> opens a section
+
+--1em--
+
+@=== title ===@ --> opens a subsection
+
+--1em--
+
+@==== title ====@ --> opens a frame
+
+--1em--
+
+Frames will be closed automatically when a new sectioning or frame markup
+appears. Frames can also be closed with an optional @[frame]>@ marking
+(usually only needed to write advanced LaTeX code between frames).
+
+[frame]>
+
+% now you can put your fancy LaTeX code here (outside of a frame)
+
+==== Frame options ====
+
+LaTeX supports giving arguments to opening frames. It looks like:
+<[code][style=basic]
+\begin{frame}\[someoption\]
+[code]>
+
+Such options can be added in wiki2beamer by appending them to the frame
+opening:
+<[code][style=basic]
+==== frametitle ====\[someoption]
+[code]>
+
+One example are fragile frames.
+
+==== Fragile frames ====
+For some features to work (eg. verbatim content), latex beamer needs a frame
+marked as fragile. In plain \LaTeX this would look like:
+<[code][style=basic]
+\begin{frame}\[fragile\]
+...
+\end{frame}
+[code]>
+
+This can be realized with wiki2beamer by simply appending a @[fragile]@ tag to the
+frame header:
+
+<[code][style=basic]
+==== a fragile frame ====\[fragile\]
+...
+[code]>
+
+==== a fragile frame ====[fragile]
+This is such a fragile frame with some \verb-V#rb/\t|m t<xt- .
+
+
 === Lists ===
 
+==== Lists ====
+
+Probably one of the most used text elements in presentations
+are:
+* bullet
+* lists
+and
+# numbered
+# lists
+
+==== Bullet Lists ====
+
+Bullet lists can be created by prepending one or many @*@ before a line
+<[code][style=basic]
+* A simple bullet list
+* with two items
+[code]>
+
+Bullet list can also be multi-level:
+<[code][style=basic]
+* A more complex bullet list
+** with a sublist
+** and another sublist
+*** here
+[code]>
+
+==== Bullet Lists (output) ====
+
+* A simple bullet list
+* with two items
+
+* A more complex bullet list
+** with a sublist
+** and another sublist
+*** here
+
+
+==== Numbered Lists ====
+
+The same works for numbered lists
+<[code][style=basic]
+# first item
+# second item
+## with two subitems
+## and onother
+### subsubitem
+# third item
+[code]>
+
+==== Numbered Lists (output) ==== 
+
+# first item
+# second item
+## with two subitems
+## and onother
+### subsubitem
+# third item
+
+==== Mixed Lists ====
+
+Numbered and bullet lists can be mixed:
+<[code][style=basic]
+# first item
+#* with a sub-list
+#*# one numbered subsub-item
+#*# another numbered subsub-item
+#* and a lone bullet
+# second item
+[code]>
+
+==== Mixed Lists (output) ====
+
+# first item
+#* with a sub-list
+#*# one numbered subsub-item
+#*# another numbered subsub-item
+#* and a lone bullet
+# second item
+
 === Text markup ===
+
+==== Text markup ====
+
+Text can be formatted with some markups. Some markups can be escaped with a
+\textbackslash.
+
+\begin{tabular}{|l|l|l|}
+\hline
+markup & output & escaping \\\hline
+\hline
+<[nowiki]
+\texttt{'''bold text'''}
+[nowiki]>
+	& '''bold text''' & \\\hline
+<[nowiki]
+\texttt{''italic text''}
+[nowiki]>
+	& ''italic text'' & \\\hline
+
+<[nowiki]
+\texttt{@teletype text@}
+[nowiki]>
+	& @teletype text@ & \textbackslash@ \\\hline
+
+<[nowiki]
+\texttt{!alerted text!}
+[nowiki]>
+	& !alerted text! & \textbackslash! \\\hline
+
+<[nowiki]
+\texttt{\_color\_colored text\_}
+[nowiki]>
+	& _blue_blue text_ & \\\hline
+\end{tabular}
+
+==== Text substitutions ====
+
+There are some simple text replacements you can use:
+
+--2em--
+
+\begin{tabular}{|l|l|l|}
+\hline
+markup & output & escaping \\\hline
+\hline
+<[nowiki]
+\texttt{-->}
+[nowiki]>
+	& --> & \\\hline
+<[nowiki]
+\texttt{<--}
+[nowiki]>
+	& <-- & \\\hline
+<[nowiki]
+\texttt{==>}
+[nowiki]>
+	& ==> & \\\hline
+<[nowiki]
+\texttt{<==}
+[nowiki]>
+	& <== & \\\hline
+<[nowiki]
+\texttt{:-)}
+[nowiki]>
+	& :-) & \\\hline
+<[nowiki]
+\texttt{:-(}
+[nowiki]>
+	& :-( & \\\hline
+\end{tabular}
+
+
+==== Footnotes ====
+
+You can also use footnotes on your slides(((This is such a footnote.))).
+
+--2em--
+
+<[code][style=basic]
+...your slides(((This is such a footnote.))).
+[code]>
 
 === Environments ===
 
@@ -117,31 +350,46 @@ This is the text of the frame
 @FRAMEHEADER=
 @FRAMEFOOTER=
 
+== Graphics ==
+==== Including graphics ====
+LaTeX can include graphics with the @\textbackslash includegraphics@ command.
+To ease the use, wiki2beamer provides a simple syntax.
+
+simple:
+<[code][style=basic]
+<<<graphicsfile.png>>>
+[code]>
+
+advanced:
+<[code][style=basic]
+<<<graphicsfile.png,option=foo>>>
+[code]>
+
+For a documentation of available options, take a look at the graphix package
+documentation.
+
+==== Graphics example ====
+
+<[code][style=basic]
+<<<db-rg1024.png,height=0.5\textheight>>>
+[code]>
+
+==== Graphics example (output) ====
+
+<<<db-rg1024.png,height=0.5\textheight>>>
+
+== Animation ==
+
 == Advanced usage ==
 
 === Special environments ===
 
+==== nowiki ====
+
+==== code ====
+
+
 === Misc ===
-
-==== fragile frames ====
-For some features to work (eg. verbatim content), latex beamer needs a frame
-marked as fragile. In plain \LaTeX this would look like:
-<[code][style=basic]
-\begin{frame}\[fragile\]
-...
-\end{frame}
-[code]>
-
-This can be realized with wiki2beamer by simply appending a @[fragile]@ tag to the
-frame header:
-
-<[code][style=basic]
-==== a fragile frame ====\[fragile\]
-...
-[code]>
-
-==== a fragile frame ====[fragile]
-this is a fragile frame
 
 
 
