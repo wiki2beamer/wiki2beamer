@@ -293,7 +293,81 @@ You can also use footnotes on your slides(((This is such a footnote.))).
 
 === Environments ===
 
+==== Environments ====
+One of the basic building blocks of LaTeX syntax are environments. In plain
+LaTeX you open, give options and close them with the following notation:
+<[code][style=basic]
+\begin{someenv}\[option=foo\]
+...
+\end{someenv}
+[code]>
+
+wiki2beamer provides a shorter syntax that looks like this:
+<[code][style=basic]
+<\[someenv\]\[option=foo\]
+...
+\[someenv\]>
+[code]>
+
+==== Environment example ====
+
+Some of the most used environments probably is:
+
+--1em--
+
+<[nowiki]
+\texttt{
+<[center]
+some centered text
+[center]>
+}
+[nowiki]>
+
+--1em--
+
+output:
+
+--1em--
+
+<[center]
+some centered text
+[center]>
+
+==== LaTeX vs. wiki2beamer environments ====
+
+The default case is that wiki2beamer doesn't care about the name of the
+environment and just passes it on to LaTeX.
+For these default environments wiki2beamer doesn't track
+open and close tags.
+--1em--
+There are a few exceptions where wiki2beamer knows and parses the
+environments:
+* @[nowiki]@ (escaping from wiki2beamer)
+* @[code]@ (code listings)
+* @[autotemplate]@ (autotemplate header)
+
+
 === Escaping ===
+
+==== Escaping from wiki2beamer ====
+
+Everything wiki2beamer doesn't know, it doesn't touch. But what if it knows
+something that you want it to leave untouched?
+
+For some of the most common notations we already have escaping with a
+\textbackslash. If there isn't an escape, you can use the generic
+@[nowiki]@ environment.
+
+<[code][style=basic]
+<\[nowiki\] '''text that isn't bold''' \[nowiki\]>
+[code]>
+
+==== Escaping (output) ====
+
+\texttt{ <[nowiki] '''text that isn't bold''' [nowiki]> }
+
+=== Code ===
+
 
 === Layout ===
 
@@ -443,6 +517,8 @@ documentation.
 Tricks for the adept.
 [center]>
 
+=== Frame options ===
+
 ==== Frame options ====
 
 LaTeX supports giving arguments to opening frames. It looks like:
@@ -479,5 +555,15 @@ frame header:
 This is such a fragile frame with some \verb-V#rb/\t|m t<xt- .
 
 
+=== Short section names ===[short sectioning]
 
+==== Short section names ====
+
+The same notation that applies for frame options
+can be used with sections. This is used to asign a short name of the section
+for the table of contents.
+
+<[code][style=basic,basicstyle=\tiny\ttfamily]
+=== some section name that is mich too long ===\[long section name\]
+[code]>
 
