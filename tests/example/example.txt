@@ -581,7 +581,7 @@ To animate a wiki2beamer list, just add a spec after the @*@ or @\#@
 characters:
 
 <[code][style=basic]
-* allways there (layer 1-4)
+* always there (layer 1-4)
 *<2> only on layer 2
 *<2-3> on layer 2-3
 *<2,4> on layer 2 and 4
@@ -589,7 +589,7 @@ characters:
 
 ==== Animating lists (output) ====
 
-* allways there (layer 1-4)
+* always there (layer 1-4)
 *<2> only on layer 2
 *<2-3> on layer 2-3
 *<2,4> on layer 2 and 4
@@ -653,6 +653,32 @@ above
 -<2>{only on 2}
 
 below
+
+
+==== animating graphics ====
+
+Animating graphics is nothing special.
+Here is the example:
+
+<[code][style=basic]
++<1>{
+	<<<db-rg1024.png,width=0.4\textwidth>>>
+}
++<2>{
+	<<<db-rg1024.png,width=0.4\textwidth>>>
+}
+[code]>
+
+==== animating graphics (output) ====
+
+<[center]
++<1>{
+	<<<db-rg1024.png,width=0.4\textwidth>>>
+}
++<2>{
+	<<<db-rg1024.png,width=0.4\textwidth>>>
+}
+[center]>
 
 === Animating code ===
 
@@ -742,7 +768,7 @@ for the table of contents.
 === selective editing ===
 
 ==== Selective editing ====
-When LaTeX document become large and contain many inputs (graphics), the latex
+When LaTeX documents become large and contain many inputs (graphics), the latex
 compiler tends to be slow -- to slow for the edit-compile cycle.
 --1em--
 To speed things up a bit, wiki2beamer allows you to select single frames for
