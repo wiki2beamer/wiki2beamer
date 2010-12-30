@@ -7,7 +7,53 @@
 <body>
 <h1>wiki2beamer</h1>
 <p>collaborative slide editing made easy</p>
-<p>wiki2beamer converts a simple wiki-like syntax to complex LaTeX beamer code. It's written in python and should run on windows and all *nix platforms.</p>
+<p>wiki2beamer converts a simple wiki-like syntax to complex LaTeX beamer code.
+It's written in python and should run on windows and all *nix platforms.
+Why collaborative? Because you can use it with version control systems.
+Afraid to loose some LaTeX powers? Don't worry: you can always fall back to
+plain LaTeX as wiki2beamer is just a preprocessor. Try it with your colleagues! :)</p>
+
+<h2>Syntax</h2>
+<p>This is how it looks like:</p>
+
+<table border="1">
+<tr>
+	<td>wiki2beamer code input</td>
+	<td>LaTeX code output</td>
+</tr>
+<tr>
+	<td>
+<pre>
+==== A simple frame ====
+
+* with a funky
+* bullet list
+*# and two
+*# numbered sub-items
+</pre>
+	</td>
+
+	<td>
+<pre>
+\begin{frame}
+ \frametitle{A simple frame}
+  
+  \begin{itemize}
+    \item with a funky
+    \item bullet list
+      \begin{enumerate}
+        \item and two
+	\item numbered sub-items
+      \end{enumerate}
+  \end{itemize}
+
+\end{frame}
+</pre>
+	</td>
+</tr>
+</table>
+<p>Which do you like more? And there is even more cool stuff inside: animations, code listings, text formatting, ... (see the <a href="wiki2beamer-example.pdf">example pdf</a>).</p>
+
 
 <h2>Download</h2>
 <p><a href="http://sourceforge.net/projects/wiki2beamer/">Get the latest version of wiki2beamer at sourceforge.net.</a></p>
