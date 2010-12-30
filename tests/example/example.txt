@@ -90,7 +90,7 @@ you want that disabled, you can switch it with the titleframe option.
 
 === Structure and frames ===
 
-==== Strucuture and frames ====
+==== Structure and frames ====
 
 As most wiki-dialects, wiki2beamer supports the famous
 
@@ -359,14 +359,56 @@ For some of the most common notations we already have escaping with a
 @[nowiki]@ environment.
 
 <[code][style=basic]
-<\[nowiki\] '''text that isn't bold''' \[nowiki\]>
+<\[nowiki\]
+'''text that isn't bold'''
+\[nowiki\]>
 [code]>
+
+Notice that the [nowiki] tags start and end at the beginning of a line.
 
 ==== Escaping (output) ====
 
-\texttt{ <[nowiki] '''text that isn't bold''' [nowiki]> }
+<[nowiki]
+'''text that isn't bold'''
+[nowiki]>
 
 === Code ===
+
+==== Code ====
+
+One of the great strengths of LaTeX is the ability to typeset and highlight
+sourcecode. Doing that manually is a very tedious task in visual presentation
+tools. In LaTeX code listings are realized with the @listings@ package that
+provides a new @\textbackslash lstlisting@ environment.
+--1em--
+In wiki2beamer we have a convenient @[code]@ environment.
+
+==== Code ====
+
+The basic usage is:
+<[code][style=basic]
+<\[code\]
+... your listing here ...
+\[code\]>
+[code]>
+
+The @lstlisting@ environment in the background provides options, e.g. you can
+configure the highlighting:
+<[code][style=basic]
+<\[code\]\[style=basic,language=C,title=code example\]
+if ( a == b ) { return 0; }
+\[code\]>
+[code]>
+
+Inside @[code]@ environments, wiki2beamer processing is mostly disabled. The
+only characters with a special meaning are @[@ and @]@ which have to be
+escaped with a \textbackslash.
+
+==== Code (output) ====
+
+<[code][style=basic,language=C,title=code example]
+if ( a == b ) { return 0; }
+[code]>
 
 
 === Layout ===
@@ -509,6 +551,136 @@ documentation.
 
 == Animation ==
 
+=== How it works ===
+
+==== Animation ====
+LaTeX beamer provides facilities for generating
+simple animated slides. Wiki2beamer provides some
+shortcuts on top of the beamer class.
+--1em--
+LaTeX beamer has the notion of animation layers:
+Whenever a frame contains an animation, it will consist of
+consecutive numbered animation layers.
+
+==== Layer specs ====
+Whenever you animate something, you can specify that it should
+appear or disappear on a certain animation layer. The notations
+can look like this:
+--1em--
+\begin{tabular}{ll}
+@<n>@   & a single layer ''n'' \\
+@<n,m>@ & two layers ''n'' and ''m'' \\
+@<n-m>@ & all layers between ''n'' and ''m'' \\
+@<n-m,k>@ & all layers between ''n'' and ''m'' plus layer ''k'' \\
+\end{tabular}
+
+=== Animating lists ===
+
+==== Animating lists ====
+To animate a wiki2beamer list, just add a spec after the @*@ or @\#@
+characters:
+
+<[code][style=basic]
+* allways there (layer 1-4)
+*<2> only on layer 2
+*<2-3> on layer 2-3
+*<2,4> on layer 2 and 4
+[code]>
+
+==== Animating lists (output) ====
+
+* allways there (layer 1-4)
+*<2> only on layer 2
+*<2-3> on layer 2-3
+*<2,4> on layer 2 and 4
+
+=== Animating anything ===
+
+==== Animating anything ====
+
+LaTeX knows the two commands @\textbackslash uncover@ and
+@\textbackslash only@.
+--1em--
+@uncover@ shows and element on the given layers
+while otherwise just displaying an invisible placeholder box.
+In wiki2beamer this is denotated as:
+<[center]
+<[nowiki]
+\texttt{+$<$n-m$>$\{content\}}
+[nowiki]>
+[center]>
+
+here's an example:
+<[code][style=basic]
+above
+
++<2>{uncovered}
+
+below
+[code]>
+
+==== @uncover@ example (output) ====
+
+above
+
++<2>{uncovered}
+
+below
+
+==== @only@ example ====
+
+@only@ makes an element appear whithout having a placeholder box before.
+In wiki2beamer this is denoted as:
+<[center]
+<[nowiki]
+\texttt{-$<$n-m$>$\{content\}}
+[nowiki]>
+[center]>
+
+here's the example:
+<[code][style=basic]
+above
+
+-<2>{only on 2}
+
+below
+[code]>
+
+==== @only@ example (output) ====
+
+above
+
+-<2>{only on 2}
+
+below
+
+=== Animating code ===
+
+==== Animating code ====
+When talking about code listings, you often want things to appear or
+disappear, step by step. In wiki2beamer, you can do that with a simple
+notation(((Try to do it without wiki2beamer, you'll feel the pain ;) ))).
+
+<[code][style=basic]
+<\[code\]
+some normal code above
+\[<2-4>some code only on layer 2-4\]
+\[\[<2>some code on layer 2\]\[<4>replaced on layer 4\]\]
+some normal code below
+\[code\]>
+[code]>
+
+==== Animating code (output) ====
+
+<[code][style=basic]
+some normal code above
+[<2-4>some code only on layer 2-4]
+[[<2>some code on layer 2][<4>replaced on layer 4]]
+some normal code below
+[code]>
+
+
+
 == Advanced usage ==
 
 ==== Advanced usage ====
@@ -566,4 +738,47 @@ for the table of contents.
 <[code][style=basic,basicstyle=\tiny\ttfamily]
 === some section name that is mich too long ===\[long section name\]
 [code]>
+
+=== selective editing ===
+
+==== Selective editing ====
+When LaTeX document become large and contain many inputs (graphics), the latex
+compiler tends to be slow -- to slow for the edit-compile cycle.
+--1em--
+To speed things up a bit, wiki2beamer allows you to select single frames for
+editing.
+<[center]
+<[nowiki]
+\texttt{!==== frame title ====}
+[nowiki]>
+[center]>
+--1em--
+When there is at least one selected frame, all frames that are not selected
+will be ommited from the LaTeX output.
+
+
+=== Managing input ===
+
+==== Managing input ====
+If you want to work with your colleagues on a single presentation
+you can (and should) of course use your favourite version control system,
+but you'd still have to resolve conflicts. To reduce the number of conflicts,
+wiki2beamer can build presentations from multiple input files.
+
+==== Mulitple inputs by commandline ====
+
+The first way is to use the commandline to concatenate multiple input files:
+--1em--
+<[code][style=basic]
+wiki2beamer header.txt dave.txt debby.txt > talk.tex
+[code]>
+
+
+
+
+
+>>>includefile.txt<<<
+
+
+
 

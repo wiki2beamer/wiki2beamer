@@ -1,0 +1,10 @@
+==== Multiple inputs by includes ====
+
+The second way is to include additional input files with the
+--1em--
+<[center]
+<[nowiki]
+\texttt{>>>includefile.txt<<<}
+[nowiki]>
+[center]>
+
