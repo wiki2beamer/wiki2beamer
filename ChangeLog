@@ -1,3 +1,8 @@
+Version 0.9.2 (2010-12-31) (happy new year)
+===========================================
+Fixed small bug that prevented fragile frames from working
+Added new up-to-date example
+
 Version 0.9.1 (2010-11-15)
 =======================================
 Fixed behaviour of >>>includefile<<< inside [code] environments
