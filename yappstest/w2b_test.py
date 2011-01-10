@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import w2b
+from yapps import yappsrt
+import traceback
+import sys
 
 def ast_print_escape(string):
     string = string.replace('\n', '\\n')
@@ -8,7 +11,7 @@ def ast_print_escape(string):
     string = string.replace('\t', '\\t')
     return string
 
-def ast_print(ast_node, level):
+def ast_print(ast_node, level=0):
     space_prefix = level * ' '
     if type(ast_node) == list:
         print '\n%s[' % space_prefix ,
@@ -36,11 +39,31 @@ def ast_print(ast_node, level):
 
 if __name__ == '__main__':
     from sys import argv, stdin
-    if len(argv) >= 2:
-        if len(argv) >= 3:
-            f = open(argv[2],'r')
+    if len(argv) >= 1:
+        if len(argv) >= 2:
+            f = open(argv[1],'r')
         else:
             f = stdin
-        ast_print(w2b.parse(argv[1], f.read()), 0)
-    else: print >>sys.stderr, 'Args:  <rule> [<filename>]'
+        
+        text = f.read()
+        scanner = w2b.wiki2beamerScanner(text)
+        parser = w2b.wiki2beamer(scanner)
+        ast = None
+        try:
+            ast = parser.document()
+        except yappsrt.SyntaxError, e:
+            traceback.print_exc()
+            print >>sys.stderr, ""
+            input = scanner.input
+            yappsrt.print_error(input, e, scanner)
+        except yappsrt.NoMoreTokens:
+            traceback.print_exc()
+            print >>sys.stderr, ""
+            print >>sys.stderr, "Could not complete parsing; stopped around here:"
+            print >>sys.stderr, scanner
+        
+        if ast != None:
+            ast_print(ast)
+        
+    else: print >>sys.stderr, 'Args: [<filename>]'
 

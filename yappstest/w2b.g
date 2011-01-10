@@ -4,10 +4,11 @@ parser wiki2beamer:
 	token END:		"$"
 	token SPACE:		"[ \\t]+"
 	token NEWLINE:		"\\r?\\n"
-	token PARBREAK:		"(\\r?\\n|^)((\\r?\\n)+)"
+	token PARBREAK:		"(\\r?\\n)(\\r?\\n)+"
 	token NUM:		"[0-9]+"
 	token WORD:		"[a-zA-Z]+"
-	token PUNCTUATION:	"(,|\\.|\\?|:|;|\"|'|`|´|\\\\[|\\\\]|\\\\<|\\\\>)+"
+	token PUNCT:		"(,|\\.|\\?|:|;|\"|'|`|´|\\[|\\])+"
+	token PUNCT_SPECIAL:	"[*#<>\\-]+"
 	token MINUS:		"-"
 	token COMMA:		","
 	token LATEX_COMMAND_NAME: "\\\\([a-zA-Z]+)"
@@ -25,8 +26,7 @@ parser wiki2beamer:
 	token W2B_H4_R:		"===="
 	token W2B_ENDFRAME:	"\\[frame\\]>"
 	token OVERLAY_SPEC_SIMPLE: "[0-9-, \\t]+"
-	token W2B_UL:		"\\*"
-	token W2B_OL:		"#"
+	token W2B_LISTBLOCK_BEGIN: "\\r?\\n?[\\*#]+"
 	token W2B_ESC_EXCLM:	"\\\\!"
 	token W2B_ALERT_L:	"!"
 	token W2B_ALERT_R:	"!"
@@ -102,66 +102,50 @@ parser wiki2beamer:
 		(
 			w2b_single_line {{result.append(w2b_single_line)}}
 			[NEWLINE {{result.append(('NEWLINE', NEWLINE))}}]
-		)
-		(
-			w2b_single_line {{result.append(w2b_single_line)}}
-			[NEWLINE {{result.append(('NEWLINE', NEWLINE))}}]
-		)*
+		)+
 		{{return ('W2B_TEXTBLOCK', result)}}
 
 	rule w2b_listblock:
 		{{ result = [] }}
-		(W2B_UL {{result.append(('W2B_UL', W2B_UL))}} | W2B_OL {{result.append(('W2B_OL', W2B_OL))}})
 		(
-			(W2B_UL {{result.append(('W2B_UL', W2B_UL))}} | W2B_OL {{result.append(('W2B_OL', W2B_OL))}})*
-			[overlay_spec {{result.append(overlay_spec)}}]
-			SPACE	{{result.append(('SPACE', SPACE))}}
-			w2b_single_line {{result.append(w2b_single_line)}}
-			[
-				NEWLINE {{result.append(('NEWLINE', NEWLINE))}}
-				(W2B_UL {{result.append(('W2B_UL', W2B_UL))}}
-			|	W2B_OL {{result.append(('W2B_OL', W2B_OL))}})
-			]
-		)*
+			W2B_LISTBLOCK_BEGIN {{ result.append(('W2B_LISTBLOCK_BEGIN', W2B_LISTBLOCK_BEGIN)) }}
+			[ overlay_spec {{ result.append(overlay_spec) }} ]
+			[ SPACE {{ result.append(('SPACE', SPACE)) }} ]
+			[ w2b_single_line {{ result.append( w2b_single_line ) }} ]
+		)+
 		{{ return ('W2B_LIST_BLOCK', result) }}
-
+	
 	rule w2b_single_line:
 		{{ result = [] }}
+		
 		(
-			WORD			{{result.append(('WORD', WORD))}}
-		|	NUM			{{result.append(('NUM', NUM))}}
-		|	SPACE			{{result.append(('SPACE', SPACE))}}
-		|	w2b_escape_seq		{{result.append(w2b_escape_seq)}}
-		|	w2b_text_alert		{{result.append(w2b_text_alert)}}
-		|	w2b_text_bold		{{result.append(w2b_text_bold)}}
-		|	w2b_text_italic		{{result.append(w2b_text_italic)}}
-		|	w2b_text_texttt		{{result.append(w2b_text_texttt)}}
-		|	w2b_text_textcolor	{{result.append(w2b_text_textcolor)}}
-		|	w2b_vspace		{{result.append(w2b_vspace)}}
-		|	w2b_vspacestar		{{result.append(w2b_vspacestar)}}
-		|	w2b_env_open		{{result.append(w2b_env_open)}}
-		|	w2b_env_close		{{result.append(w2b_env_close)}}
-		|	w2b_nowiki		{{result.append(w2b_nowiki)}}
-		|	PUNCTUATION		{{result.append(('PUNCTUATION', PUNCTUATION))}}
-		)
-		(
-			WORD			{{result.append(('WORD', WORD))}}
-		|	NUM			{{result.append(('NUM', NUM))}}
-		|	SPACE			{{result.append(('SPACE', SPACE))}}
-		|	w2b_escape_seq		{{result.append(w2b_escape_seq)}}
-		|	w2b_text_alert		{{result.append(w2b_text_alert)}}
-		|	w2b_text_bold		{{result.append(w2b_text_bold)}}
-		|	w2b_text_italic		{{result.append(w2b_text_italic)}}
-		|	w2b_text_texttt		{{result.append(w2b_text_texttt)}}
-		|	w2b_text_textcolor	{{result.append(w2b_text_textcolor)}}
-		|	w2b_vspace		{{result.append(w2b_vspace)}}
-		|	w2b_vspacestar		{{result.append(w2b_vspacestar)}}
-		|	w2b_env_open		{{result.append(w2b_env_open)}}
-		|	w2b_env_close		{{result.append(w2b_env_close)}}
-		|	w2b_nowiki		{{result.append(w2b_nowiki)}}
-		|	PUNCTUATION		{{result.append(('PUNCTUATION', PUNCTUATION))}}
-		)*
+			w2b_single_line_simple {{ result.append(w2b_single_line_simple) }}
+			[ PUNCT_SPECIAL {{ result.append(('PUNCT_SPECIAL', PUNCT_SPECIAL)) }} ]
+		)+
+
 		{{return ('W2B_SINGLE_LINE', result)}}
+	
+	rule w2b_single_line_simple:
+		{{ result = [] }}
+		(
+			WORD			{{ result.append(('WORD', WORD)) }}
+		|	NUM			{{ result.append(('NUM', NUM)) }}
+		|	SPACE			{{ result.append(('SPACE', SPACE)) }}
+		|	w2b_escape_seq		{{ result.append(w2b_escape_seq) }}
+		|	w2b_text_alert		{{ result.append(w2b_text_alert) }}
+		|	w2b_text_bold		{{ result.append(w2b_text_bold) }}
+		|	w2b_text_italic		{{ result.append(w2b_text_italic) }}
+		|	w2b_text_texttt		{{ result.append(w2b_text_texttt) }}
+		|	w2b_text_textcolor	{{ result.append(w2b_text_textcolor) }}
+		|	w2b_vspace		{{ result.append(w2b_vspace) }}
+		|	w2b_vspacestar		{{ result.append(w2b_vspacestar) }}
+		|	w2b_env_open		{{ result.append(w2b_env_open) }}
+		|	w2b_env_close		{{ result.append(w2b_env_close) }}
+		|	w2b_nowiki		{{ result.append(w2b_nowiki) }}
+		|	PUNCT			{{ result.append(('PUNCT', PUNCT)) }}
+		)+
+		{{return ('W2B_SINGLE_LINE', result)}}
+	
 
 	#TODO hack environment open/close matching outside of the grammar (graph-transformation?)
 	rule w2b_env_open:
