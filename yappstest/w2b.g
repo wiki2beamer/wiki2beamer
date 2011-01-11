@@ -1,5 +1,14 @@
 #first sketches for a yapps2 LL(1) grammar for wiki2beamer and some LaTeX
 
+def match_env(env_in, env_body, env_out):
+	if env_in != env_out:
+		raise SyntaxError('Opened environment %s doesn\'t match closed environment %s.' % (env_open, env_close))
+		return None
+	
+	return ('W2B_ENV', [env_in, env_body, env_out])
+
+%%
+
 parser wiki2beamer:
 	token END:		"$"
 	token SPACE:		"[ \\t]+"
@@ -7,8 +16,8 @@ parser wiki2beamer:
 	token PARBREAK:		"(\\r?\\n)(\\r?\\n)+"
 	token NUM:		"[0-9]+"
 	token WORD:		"[a-zA-Z]+"
-	token PUNCT:		"(,|\\.|\\?|:|;|\"|'|`|´|\\[|\\])+"
-	token PUNCT_SPECIAL:	"[*#<>\\-]+"
+	token PUNCT:		"(,|\\.|\\?|:|;|\"|'|`|´)+"
+	token PUNCT_SPECIAL:	"[*#<>\\-]"
 	token MINUS:		"-"
 	token COMMA:		","
 	token LATEX_COMMAND_NAME: "\\\\([a-zA-Z]+)"
@@ -139,15 +148,23 @@ parser wiki2beamer:
 		|	w2b_text_textcolor	{{ result.append(w2b_text_textcolor) }}
 		|	w2b_vspace		{{ result.append(w2b_vspace) }}
 		|	w2b_vspacestar		{{ result.append(w2b_vspacestar) }}
-		|	w2b_env_open		{{ result.append(w2b_env_open) }}
-		|	w2b_env_close		{{ result.append(w2b_env_close) }}
-		|	w2b_nowiki		{{ result.append(w2b_nowiki) }}
+		|	w2b_env_single_line	{{ result.append(w2b_env_single_line) }}
+		#|	w2b_env_open		{{ result.append(w2b_env_open) }}
+		#|	w2b_env_close		{{ result.append(w2b_env_close) }}
+		#|	w2b_nowiki		{{ result.append(w2b_nowiki) }}
 		|	PUNCT			{{ result.append(('PUNCT', PUNCT)) }}
 		)+
 		{{return ('W2B_SINGLE_LINE', result)}}
 	
 
-	#TODO hack environment open/close matching outside of the grammar (graph-transformation?)
+	#TODO environment open/close matching during parsing
+	rule w2b_env_single_line:
+		{{ env_match_params = [None, None, None] }}
+		W2B_ENV_OPEN_L [SPACE] W2B_ENV_NAME [SPACE] W2B_ENV_OPEN_R {{ env_match_params[0] = W2B_ENV_NAME }}
+		w2b_single_line_simple {{ env_match_params[1] = w2b_single_line_simple }}
+		W2B_ENV_CLOSE_L [SPACE] W2B_ENV_NAME [SPACE] W2B_ENV_CLOSE_R {{ env_match_params[2] = W2B_ENV_NAME }}
+		{{ return ('W2B_ENV_SINGLE_LINE', match_env(*env_match_params)) }}
+
 	rule w2b_env_open:
 		W2B_ENV_OPEN_L [SPACE] W2B_ENV_NAME [SPACE] W2B_ENV_OPEN_R
 		{{return ('W2B_ENV_OPEN', W2B_ENV_NAME) }}
