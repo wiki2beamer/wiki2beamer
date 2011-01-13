@@ -78,24 +78,24 @@ parser wiki2beamer:
 	token W2B_TEXTCOLOR_IN:		"(?u)[^_\\r\\n]*"
 	token W2B_TEXTCOLOR_R:		"(?u)_"
 
-	token W2B_VSPACE_L:	"--"
-	token W2B_VSPACE_R:	"--"
-	token W2B_VSPACE_IN:	"[^-\\r\\n]*"
-	token W2B_VSPACESTAR_L:	"--\\*"
+	token W2B_VSPACE_L:	"(?u)--"
+	token W2B_VSPACE_R:	"(?u)--"
+	token W2B_VSPACE_IN:	"(?u)[^-\\r\\n]*"
+	token W2B_VSPACESTAR_L:	"(?u)--\\*"
 
-	token W2B_ENV_NAME:	"[a-zA-Z]+"
-	token W2B_ENV_OPEN_L:	"<\\["
-	token W2B_ENV_OPEN_R:	"\\]"
-	token W2B_ENV_CLOSE_L:	"\\["
-	token W2B_ENV_CLOSE_R:	"\\]>"
+	token W2B_ENV_NAME:	"(?u)[a-zA-Z]+"
+	token W2B_ENV_OPEN_L:	"(?u)<\\["
+	token W2B_ENV_OPEN_R:	"(?u)\\]"
+	token W2B_ENV_CLOSE_L:	"(?u)\\["
+	token W2B_ENV_CLOSE_R:	"(?u)\\]>"
 
-	token W2B_AUTOTEMPLATE_OPEN:	"<\\[[ \\t]*autotemplate[ \\t]*\\]"
-	token W2B_AUTOTEMPLATE_CLOSE:	"\\[[ \\t]*autotemplate[ \\t]*\\]>"
-	token W2B_AUTOTEMPLATE_IN:	"[\\n\\r\\sa-zA-Z]*" #TODO far from complete
+	token W2B_AUTOTEMPLATE_OPEN:	"(?u)<\\[[ \\t]*autotemplate[ \\t]*\\]"
+	token W2B_AUTOTEMPLATE_CLOSE:	"(?u)\\[[ \\t]*autotemplate[ \\t]*\\]>"
+	token W2B_AUTOTEMPLATE_IN:	"(?u)[\\n\\r\\sa-zA-Z]*" #TODO far from complete
 
-	token W2B_NOWIKI_OPEN:	"<\\[[ \\t]*nowiki[ \\t]*\\]"
-	token W2B_NOWIKI_CLOSE:	"\\[[ \\t]*nowiki[ \\t]*\\]>"
-	token W2B_NOWIKI_IN:	"(\\\\<|\\\\>|\\\\\\[|\\\\\\]|[^\\[\\]<>])*" #TODO document escaping
+	token W2B_NOWIKI_OPEN:	"(?u)<\\[[ \\t]*nowiki[ \\t]*\\]"
+	token W2B_NOWIKI_CLOSE:	"(?u)\\[[ \\t]*nowiki[ \\t]*\\]>"
+	token W2B_NOWIKI_IN:	"(?u)(\\\\<|\\\\>|\\\\\\[|\\\\\\]|[^\\[\\]<>])*" #TODO document escaping
 
 
 
