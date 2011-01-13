@@ -5,7 +5,9 @@ from yapps import yappsrt
 import traceback
 import sys
 
-def ast_print_escape(string):
+
+def ast_print_escape(ustring):
+    string = ustring.encode("utf8")
     string = string.replace('\n', '\\n')
     string = string.replace('\r', '\\r')
     string = string.replace('\t', '\\t')
@@ -31,6 +33,8 @@ def ast_print(ast_node, level=0):
             print '\n%s%s()' % (space_prefix, ast_node[0]) ,
 
     elif type(ast_node) == str:
+        print 'WARNING -- str found, fix parser!!!: "%s"' % (ast_print_escape(ast_node)) ,
+    elif type(ast_node) == unicode:
         print '"%s"' % (ast_print_escape(ast_node)) ,
     else:
         print type(ast_node)
@@ -46,6 +50,7 @@ if __name__ == '__main__':
             f = stdin
         
         text = f.read()
+        text = text.decode("utf8")
         scanner = w2b.wiki2beamerScanner(text)
         parser = w2b.wiki2beamer(scanner)
         ast = None
