@@ -1,7 +1,2 @@
 
-
-foo1 <[center] foo2 [center]> foo3
-
-
-
-
+!!aaa@@moo@@bbb!!

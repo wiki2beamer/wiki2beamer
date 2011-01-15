@@ -59,8 +59,8 @@ parser wiki2beamer:
 	token OVERLAY_SPEC_SIMPLE: "(?u)[0-9-, \\t]+"
 	token W2B_LISTBLOCK_BEGIN: "(?u)\\r?\\n?[\\*#]+"
 	token W2B_ESC_EXCLM:	"(?u)\\\\!"
-	token W2B_ALERT_L:	"(?u)!"
-	token W2B_ALERT_R:	"(?u)!"
+	token W2B_ALERT_L:	"(?u)!!"
+	token W2B_ALERT_R:	"(?u)!!"
 	token W2B_ALERT_IN:	"(?u)[^!\\r\\n]*"
 	token W2B_BOLD_L:	"(?u)'''"
 	token W2B_BOLD_R:	"(?u)'''"
@@ -69,14 +69,14 @@ parser wiki2beamer:
 	token W2B_ITALIC_R:	"(?u)''"
 	token W2B_ITALIC_IN:	"(?u)[^'\\r\\n]*"
 	token W2B_ESC_AT:	"(?u)\\\\@"
-	token W2B_TEXTTT_L:	"(?u)@"
-	token W2B_TEXTTT_R:	"(?u)@"
+	token W2B_TEXTTT_L:	"(?u)@@"
+	token W2B_TEXTTT_R:	"(?u)@@"
 	token W2B_TEXTTT_IN:	"(?u)[^@\\r\\n]*"
-	token W2B_TEXTCOLOR_L:		"(?u)_"
+	token W2B_TEXTCOLOR_L:		"(?u)__"
 	token W2B_TEXTCOLOR_COLOR:	"(?u)[^_\\r\\n]*"
-	token W2B_TEXTCOLOR_MID:	"(?u)_"
+	token W2B_TEXTCOLOR_MID:	"(?u)__"
 	token W2B_TEXTCOLOR_IN:		"(?u)[^_\\r\\n]*"
-	token W2B_TEXTCOLOR_R:		"(?u)_"
+	token W2B_TEXTCOLOR_R:		"(?u)__"
 
 	token W2B_VSPACE_L:	"(?u)--"
 	token W2B_VSPACE_R:	"(?u)--"
@@ -191,6 +191,15 @@ parser wiki2beamer:
 
 		{{return ('w2b_single_line', result)}}
 	
+	rule w2b_single_line_no_alert:
+		{{ result = [] }}
+		(
+			w2b_single_line_simple_no_alert {{ result.append(w2b_single_line_simple_no_alert) }}
+			[ PUNCT_SPECIAL {{ result.append(('PUNCT_SPECIAL', PUNCT_SPECIAL)) }} ]
+		)+
+
+		{{return ('w2b_single_line_no_alert', result)}}
+	
 	rule w2b_single_line_simple:
 		{{ result = [] }}
 		(
@@ -208,6 +217,24 @@ parser wiki2beamer:
 		|	PUNCT			{{ result.append(('PUNCT', PUNCT)) }}
 		)+
 		{{return ('w2b_single_line_simple', result)}}
+	
+	rule w2b_single_line_simple_no_alert:
+		{{ result = [] }}
+		(
+			WORD			{{ result.append(('WORD', WORD)) }}
+		|	NUM			{{ result.append(('NUM', NUM)) }}
+		|	SPACE			{{ result.append(('SPACE', SPACE)) }}
+		|	w2b_escape_seq		{{ result.append(w2b_escape_seq) }}
+		#|	w2b_text_alert		{{ result.append(w2b_text_alert) }}
+		|	w2b_text_bold		{{ result.append(w2b_text_bold) }}
+		|	w2b_text_italic		{{ result.append(w2b_text_italic) }}
+		|	w2b_text_texttt		{{ result.append(w2b_text_texttt) }}
+		|	w2b_text_textcolor	{{ result.append(w2b_text_textcolor) }}
+		|	w2b_vspace		{{ result.append(w2b_vspace) }}
+		|	w2b_vspacestar		{{ result.append(w2b_vspacestar) }}
+		|	PUNCT			{{ result.append(('PUNCT', PUNCT)) }}
+		)+
+		{{return ('w2b_single_line_simple_no_alert', result)}}
 	
 	rule w2b_single_line_with_env:
 		{{ result = [] }}
@@ -234,8 +261,11 @@ parser wiki2beamer:
 	
 	#TODO parsing of typesetting contents
 	rule w2b_text_alert:
-		W2B_ALERT_L W2B_ALERT_IN W2B_ALERT_R
-		{{ return ('w2b_text_alert', W2B_ALERT_IN) }}
+		{{ result = [] }}
+		W2B_ALERT_L      {{ result.append(('W2B_ALERT_L', W2B_ALERT_L)) }}
+		w2b_single_line_no_alert  {{ result.append(w2b_single_line_no_alert) }}
+		W2B_ALERT_R      {{ result.append(('W2B_ALERT_R', W2B_ALERT_R)) }}
+		{{ return ('w2b_text_alert', result) }}
 
 	rule w2b_text_bold:
 		W2B_BOLD_L W2B_BOLD_IN W2B_BOLD_R
