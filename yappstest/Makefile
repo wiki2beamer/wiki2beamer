@@ -7,4 +7,4 @@ w2b.py: Makefile w2b.g
 	yapps2 w2b.g w2b.py
 
 clean:
-	rm w2b.py
+	rm w2b.py w2b.pyc
