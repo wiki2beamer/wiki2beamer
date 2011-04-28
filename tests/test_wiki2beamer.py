@@ -129,6 +129,13 @@ class TestTransform(unittest.TestCase):
             'foo +<2-3>  {\\begin{enumerate} \\end{enumerate}}', self.state),\
             'foo \\uncover<2-3>{\\begin{enumerate} \\end{enumerate}}')
 
+    def test_color(self):
+        self.assertEqual(transform('_blue_foo_', self.state),
+            '\\textcolor{blue}{foo}')
+
+        # test for bug 3294518
+        self.assertEqual(transform(r'\frac{V_1}{R_1}=\frac{V_2}{R_2}', self.state),
+                r'\frac{V_1}{R_1}=\frac{V_2}{R_2}')
 
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):
