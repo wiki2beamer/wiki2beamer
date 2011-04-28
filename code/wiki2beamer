@@ -345,7 +345,7 @@ def transform_alerts(string):
 
 def transform_colors(string):
     """ colors """
-    p = re.compile("_([^_\\\\]*?)_([^_]*?[^_\\\\])_", re.VERBOSE)
+    p = re.compile("_([^_\\\\{}]*?)_([^_]*?[^_\\\\{}])_", re.VERBOSE)
     string = p.sub(r"\\textcolor{\1}{\2}", string) 
     return string
    
