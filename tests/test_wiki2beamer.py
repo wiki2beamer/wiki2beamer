@@ -133,6 +133,10 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(transform('_blue_foo_', self.state),
             '\\textcolor{blue}{foo}')
 
+        # test for bug 3294518
+        self.assertEqual(transform(r'\frac{V_1}{R_1}=\frac{V_2}{R_2}', self.state),
+                r'\frac{V_1}{R_1}=\frac{V_2}{R_2}')
+
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):
         code = "System435.out.println(\"foo\");123System.ou12t.println234(\"foo\");System.23out.23456println(\"foo\");S237yst28em.out.pr18intln(\"foo\");"
