@@ -1,6 +1,6 @@
 .PHONY: debian clean zip man example
 
-VERSIONNR=0.9.2
+VERSIONNR=0.9.3
 ZIPSUBDIR=./zip/
 VERSIONDIR=wiki2beamer-$(VERSIONNR)
 
