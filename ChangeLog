@@ -1,7 +1,8 @@
-Version 0.9.x
+Version 0.9.4
 =======================================
-Added Python 3000 compatability
-Restored Python 2.3 compatability
+Added Python 3000 compatibility
+Restored Python 2.3 compatibility
+Fixed bug in >>>include<<< statements after [code] sections
 
 Version 0.9.3 (2011-05-06)
 =======================================
