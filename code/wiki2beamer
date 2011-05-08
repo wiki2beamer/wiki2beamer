@@ -575,10 +575,14 @@ def expand_code_genanims(parsed_animspec, minoverlay, maxoverlay, type):
     return out
 
 def expand_code_getname(code):
-    asciihextable = string.maketrans('0123456789abcdef',\
-                                     'abcdefghijklmnop')
-    d = md5hex(code).translate(asciihextable)
-    return d
+    hex2alpha_table = { '0':'a', '1':'b', '2':'c', '3':'d', \
+        '4':'e', '5':'f', '6':'g', '7':'h', '8':'i', '9':'j', \
+        'a':'k', 'b':'l', 'c':'m', 'd':'n', 'e':'o', 'f':'p' \
+    }
+    
+    hexhash = md5hex(code.encode('utf8'))
+    alphahash = ''.join(list(map(lambda x: hex2alpha_table[x], hexhash)))
+    return alphahash
 
 def expand_code_makeoverprint(names, minoverlay):
     out = ['\\begin{overprint}\n']
@@ -614,7 +618,7 @@ def expand_code_segment(result, codebuffer, state):
     (anim, non_anim) = expand_code_tokenize_anims(code)
     #print anim
     #print non_anim
-    if len(anim)>0:
+    if len(list(anim))>0:
         #generate multiple versions of the anim parts
         parsed_anims = map(expand_code_parse_animspec, anim)
         #print parsed_anims
