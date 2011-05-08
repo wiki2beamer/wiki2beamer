@@ -55,11 +55,18 @@ def md5hex(string):
 
 def mydebug(message):
     """ print debug message to stderr """
-    print >>sys.stderr, message
+    if sys.version_info >= (2,7):
+        print(message, file=sys.stderr)
+    else:
+        print >>sys.stderr, message
 
 def syntax_error(message, code):
-    print >>sys.stderr, 'syntax error: %s' % message
-    print >>sys.stderr, '\tcode:\n%s' % code
+    if sys.version_info >= (2,7):
+        print('syntax error: %s' % message, file=sys.stderr)
+        print('\tcode:\n%s' % code, file=sys.stderr)
+    else:
+        print >>sys.stderr, 'syntax error: %s' % message
+        print >>sys.stderr, '\tcode:\n%s' % code
     sys.exit(-3)
 
 class IncludeLoopException(Exception):
@@ -1043,8 +1050,12 @@ def convert2beamer_full(lines):
 
 def print_result(lines):
     """ print result to stdout """
-    for l in lines:
-        print >>sys.stdout, l
+    if sys.version_info >= (2,7):
+        for l in lines:
+            print(l, file=sys.stdout)
+    else:
+        for l in lines:
+            print >>sys.stdout, l
     return
 
 def main(argv):
