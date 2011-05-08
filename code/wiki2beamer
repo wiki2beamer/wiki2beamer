@@ -973,7 +973,7 @@ def include_file_recursive(base):
             if nowikimode or codemode:
                 if nowikiendre.match(line):
                     nowikimode = False
-                elif codestartre.match(line):
+                elif codeendre.match(line):
                     codemode = False
                 output.append(line)
             elif nowikistartre.match(line):
