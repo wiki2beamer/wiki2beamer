@@ -565,8 +565,8 @@ def expand_code_genanims(parsed_animspec, minoverlay, maxoverlay, type):
                 maxlen = len(simple_animspec[1])
     
     out = []
-    fill = ''.join([' ' for i in xrange(0, maxlen)])
-    for x in xrange(minoverlay,maxoverlay+1):
+    fill = ''.join([' ' for i in range(0, maxlen)])
+    for x in range(minoverlay,maxoverlay+1):
         out.append(fill[:])
 
     for simple_animspec in parsed_animspec:
@@ -624,7 +624,7 @@ def expand_code_segment(result, codebuffer, state):
         #print parsed_anims
         max_overlay = expand_code_getmaxoverlay(map(lambda x: x[1], parsed_anims))
         #if there is unanimated code, use 0 as the starting overlay
-        if len(non_anim)>0:
+        if len(list(non_anim))>0:
             min_overlay = 1
         else:
             min_overlay = expand_code_getminoverlay(map(lambda x: x[1], parsed_anims))
@@ -633,7 +633,7 @@ def expand_code_segment(result, codebuffer, state):
         gen_anims = map(lambda x: expand_code_genanims(x[1], min_overlay, max_overlay, x[0]), parsed_anims)
         #print gen_anims
         anim_map = {}
-        for i in xrange(0,max_overlay-min_overlay+1):
+        for i in range(0,max_overlay-min_overlay+1):
             anim_map[i+min_overlay] = map(lambda x: x[i], gen_anims)
         #print anim_map
     
