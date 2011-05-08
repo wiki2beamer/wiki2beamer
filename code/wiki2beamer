@@ -34,6 +34,7 @@ import random
 import string
 import optparse
 
+
 VERSIONTAG = "0.9.3"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich and others"
@@ -1060,10 +1061,7 @@ def main(argv):
     input_files += args
     lines = []
     for file_ in input_files:
-        try:
-            lines += include_file_recursive(file_)
-        except Exception, e:
-            syntax_error(e, -4)
+        lines += include_file_recursive(file_)
 
     lines = convert2beamer(lines)
     print_result(lines)
