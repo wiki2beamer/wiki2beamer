@@ -466,8 +466,8 @@ def expand_code_tokenize_anims(code):
     anim = p.findall(code)
     
     #unescape
-    anim = map(lambda s: s.replace(esc_open, '\\[').replace(esc_close, '\\]'), anim)
-    non_anim = map(lambda s: s.replace(esc_open, '[').replace(esc_close, ']'), non_anim)
+    anim = [s.replace(esc_open, '\\[').replace(esc_close, '\\]') for s in anim]
+    non_anim = [s.replace(esc_open, '[').replace(esc_close, ']') for s in non_anim]
 
     return (anim, non_anim)
 
@@ -488,7 +488,7 @@ def expand_code_parse_overlayspec(overlayspec):
                 except ValueError:
                     syntax_error('not an int, overlay specs must be of the form <(%d-%d)|(%d), ...>', overlayspec)
 
-                overlays.extend(range(start,stop+1))
+                overlays.extend(list(range(start,stop+1)))
         else:
             try:
                 num = int(group)
@@ -530,11 +530,11 @@ def expand_code_parse_animspec(animspec):
     animspec = animspec.replace('\\]', esc_close)
     
     p = re.compile(r'\[|\]\[|\]')
-    simple_specs = map(lambda s: '[%s]'%s, filter(lambda s: len(s.strip())>0, p.split(animspec)))
+    simple_specs = ['[%s]'%s for s in [s for s in p.split(animspec) if len(s.strip())>0]]
 
     #unescape
-    simple_specs = map(lambda s: s.replace(esc_open, '\\[').replace(esc_close, '\\]'), simple_specs)
-    parsed_simple_specs = map(expand_code_parse_simpleanimspec, simple_specs)
+    simple_specs = [s.replace(esc_open, '\\[').replace(esc_close, '\\]') for s in simple_specs]
+    parsed_simple_specs = list(map(expand_code_parse_simpleanimspec, simple_specs))
     unified_pss = []
     for pss in parsed_simple_specs:
         unified_pss.extend(pss)
@@ -550,12 +550,12 @@ def expand_code_getmaxoverlay(parsed_anims):
     return max_overlay
 
 def expand_code_getminoverlay(parsed_anims):
-    min_overlay = sys.maxint
+    min_overlay = sys.maxsize
     for anim in parsed_anims:
         for spec in anim:
             if spec[0] < min_overlay:
                 min_overlay = spec[0]
-    if min_overlay == sys.maxint:
+    if min_overlay == sys.maxsize:
         min_overlay = 0
     return min_overlay
 
@@ -585,7 +585,7 @@ def expand_code_getname(code):
     }
     
     hexhash = md5hex(code.encode('utf8'))
-    alphahash = ''.join(list(map(lambda x: hex2alpha_table[x], hexhash)))
+    alphahash = ''.join(list([hex2alpha_table[x] for x in hexhash]))
     return alphahash
 
 def expand_code_makeoverprint(names, minoverlay):
@@ -621,24 +621,24 @@ def expand_code_segment(result, codebuffer, state):
     (anim, non_anim) = expand_code_tokenize_anims(code)
     if len(list(anim))>0:
         #generate multiple versions of the anim parts
-        parsed_anims = map(expand_code_parse_animspec, anim)
-        max_overlay = expand_code_getmaxoverlay(map(lambda x: x[1], parsed_anims))
+        parsed_anims = list(map(expand_code_parse_animspec, anim))
+        max_overlay = expand_code_getmaxoverlay([x[1] for x in parsed_anims])
         #if there is unanimated code, use 0 as the starting overlay
         if len(list(non_anim))>0:
             min_overlay = 1
         else:
-            min_overlay = expand_code_getminoverlay(map(lambda x: x[1], parsed_anims))
-        gen_anims = map(lambda x: expand_code_genanims(x[1], min_overlay, max_overlay, x[0]), parsed_anims)
+            min_overlay = expand_code_getminoverlay([x[1] for x in parsed_anims])
+        gen_anims = [expand_code_genanims(x[1], min_overlay, max_overlay, x[0]) for x in parsed_anims]
         anim_map = {}
         for i in range(0,max_overlay-min_overlay+1):
-            anim_map[i+min_overlay] = map(lambda x: x[i], gen_anims)
+            anim_map[i+min_overlay] = [x[i] for x in gen_anims]
     
         names = []
         for overlay in sorted(anim_map.keys()):
             #combine non_anim and anim parts
             anim_map[overlay].append('')
-            zipped = zip(non_anim, anim_map[overlay])
-            mapped = map(lambda x: x[0] + x[1], zipped)
+            zipped = list(zip(non_anim, anim_map[overlay]))
+            mapped = [x[0] + x[1] for x in zipped]
             code = ''.join(mapped)
             
             #generate a collision free entry in the defverbs-map and names-list
@@ -662,7 +662,7 @@ def expand_code_segment(result, codebuffer, state):
     return
 
 def expand_code_defverbs(result, state):
-        result[state.code_pos] = result[state.code_pos] + '\n'.join(state.defverbs.values()) + '\n'
+        result[state.code_pos] = result[state.code_pos] + '\n'.join(list(state.defverbs.values())) + '\n'
         state.defverbs={}
 
 def get_autotemplate_closing():
@@ -744,7 +744,7 @@ def unify_autotemplates(autotemplates):
     
     autotemplate = []
     autotemplate.append(('documentclass', documentclass))
-    for (name, options) in usepackages.items():
+    for (name, options) in list(usepackages.items()):
         if options != None and options.strip() != '':
             string = '%s{%s}' % (options, name)
         else:
