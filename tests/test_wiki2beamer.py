@@ -116,15 +116,15 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(transform(' --*3em-- ', self.state), '\n\\vspace*{3em}\n')
 
     def test_uncover(self):
-        self.assertEqual(transform('+<2-> {foo}', self.state), '\uncover<2->{foo}')
-        self.assertEqual(transform(' +<2->{\nfoo', self.state), ' \uncover<2->{\nfoo')
+        self.assertEqual(transform('+<2-> {foo}', self.state), '\\uncover<2->{foo}')
+        self.assertEqual(transform(' +<2->{\nfoo', self.state), ' \\uncover<2->{\nfoo')
 
     def test_only(self):
         self.assertEqual(transform('-<2-> {foo}', self.state), '\only<2->{foo}')
         self.assertEqual(transform(' -<2->{\nfoo', self.state), ' \only<2->{\nfoo')
     
     def test_uncover_intext(self):
-        self.assertEqual(transform('foo +<2->{moo} bar', self.state), 'foo \uncover<2->{moo} bar')
+        self.assertEqual(transform('foo +<2->{moo} bar', self.state), 'foo \\uncover<2->{moo} bar')
         self.assertEqual(transform(\
             'foo +<2-3>  {\\begin{enumerate} \\end{enumerate}}', self.state),\
             'foo \\uncover<2-3>{\\begin{enumerate} \\end{enumerate}}')
@@ -158,7 +158,7 @@ class TestExpandCode(unittest.TestCase):
 
     def test_search_escape_sequences_large(self):
         code = []
-        for i in xrange(0, 10000):
+        for i in range(0, 10000):
             code.append(chr(random.randint(48,57)))
         code = ''.join(code)
 
@@ -169,7 +169,7 @@ class TestExpandCode(unittest.TestCase):
     def test_expand_code_tokenize_anims(self):
         items = ['1', '2', '3', '-', ',', '[', ']', '<', '>', 'a', 'b', 'c', 'd', 'e', '}', '{']
         code = []
-        for i in xrange(0, 100):
+        for i in range(0, 100):
             code.extend(items)
             random.shuffle(items)
         
@@ -307,7 +307,7 @@ class TestFileInclusion(unittest.TestCase):
                                           '[code]>']
 
                 }
-        for file_, lines in files.items():
+        for file_, lines in list(files.items()):
             add_lines_to_cache(file_, lines)
         return
     
@@ -380,5 +380,4 @@ class TestSelectedFramesMode(unittest.TestCase):
         self.assertEqual(out,expected)
 
 if __name__=="__main__":
-    print "Testing wiki2beamer version %s" % (VERSIONTAG)
     unittest.main()
