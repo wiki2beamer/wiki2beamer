@@ -29,6 +29,7 @@
 
 
 import sys
+import os
 import re
 import random
 import string
@@ -53,20 +54,20 @@ def md5hex(string):
         dg.update(string)
         return dg.hexdigest()
 
+def pprint(string, file=sys.stdout, eol=True):
+    ''' portable version of print which directly writes into the given stream '''
+    file.write(string)
+    if eol:
+        file.write(os.linesep)
+    file.flush()
+
 def mydebug(message):
     """ print debug message to stderr """
-    if sys.version_info >= (2,7):
-        print(message, file=sys.stderr)
-    else:
-        print >>sys.stderr, message
+    pprint(message, file=sys.stderr)
 
 def syntax_error(message, code):
-    if sys.version_info >= (2,7):
-        print('syntax error: %s' % message, file=sys.stderr)
-        print('\tcode:\n%s' % code, file=sys.stderr)
-    else:
-        print >>sys.stderr, 'syntax error: %s' % message
-        print >>sys.stderr, '\tcode:\n%s' % code
+    pprint('syntax error: %s' % message, file=sys.stderr)
+    pprint('\tcode:\n%s' % code, file=sys.stderr)
     sys.exit(-3)
 
 class IncludeLoopException(Exception):
@@ -202,13 +203,11 @@ def transform_define_foothead(string, state):
     p = re.compile("^@FRAMEHEADER=(.*)$", re.VERBOSE)
     m = p.match(string)
     if (m != None):
-        #print m.group(1)
         state.next_frame_header = m.group(1)
         string = ""
     p = re.compile("^@FRAMEFOOTER=(.*)$", re.VERBOSE)
     m = p.match(string)
     if (m != None):
-        #print m.group(1)
         state.next_frame_footer = m.group(1)
         string = ""
     return string
@@ -536,11 +535,9 @@ def expand_code_parse_animspec(animspec):
     #unescape
     simple_specs = map(lambda s: s.replace(esc_open, '\\[').replace(esc_close, '\\]'), simple_specs)
     parsed_simple_specs = map(expand_code_parse_simpleanimspec, simple_specs)
-    #print parsed_simple_specs
     unified_pss = []
     for pss in parsed_simple_specs:
         unified_pss.extend(pss)
-    #print unified_pss
     return ('double', unified_pss)
     
 
@@ -619,30 +616,22 @@ def expand_code_segment(result, codebuffer, state):
  
     #join lines into one string
     code = ''.join(codebuffer)
-    #print code
 
     #tokenize code into anim and non_anim parts
     (anim, non_anim) = expand_code_tokenize_anims(code)
-    #print anim
-    #print non_anim
     if len(list(anim))>0:
         #generate multiple versions of the anim parts
         parsed_anims = map(expand_code_parse_animspec, anim)
-        #print parsed_anims
         max_overlay = expand_code_getmaxoverlay(map(lambda x: x[1], parsed_anims))
         #if there is unanimated code, use 0 as the starting overlay
         if len(list(non_anim))>0:
             min_overlay = 1
         else:
             min_overlay = expand_code_getminoverlay(map(lambda x: x[1], parsed_anims))
-        #print min_overlay
-        #print max_overlay
         gen_anims = map(lambda x: expand_code_genanims(x[1], min_overlay, max_overlay, x[0]), parsed_anims)
-        #print gen_anims
         anim_map = {}
         for i in range(0,max_overlay-min_overlay+1):
             anim_map[i+min_overlay] = map(lambda x: x[i], gen_anims)
-        #print anim_map
     
         names = []
         for overlay in sorted(anim_map.keys()):
@@ -670,7 +659,6 @@ def expand_code_segment(result, codebuffer, state):
         state.defverbs[name] = expanded_code
         result.append('\n\\%s\n' % name)
 
-    #print '----'
     return
 
 def expand_code_defverbs(result, state):
@@ -869,7 +857,7 @@ def read_file_to_lines(filename):
         lines = joinLines(f.readlines())
         f.close()
     except:
-        print >>sys.stdout, "Cannot read file: " + filename
+        pprint("Cannot read file: %s" % filename, sys.stderr)
         sys.exit(-2)
 
     return lines
@@ -1050,12 +1038,8 @@ def convert2beamer_full(lines):
 
 def print_result(lines):
     """ print result to stdout """
-    if sys.version_info >= (2,7):
-        for l in lines:
-            print(l, file=sys.stdout)
-    else:
-        for l in lines:
-            print >>sys.stdout, l
+    for l in lines:
+        pprint(l, file=sys.stdout)
     return
 
 def main(argv):
