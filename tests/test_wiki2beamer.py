@@ -380,5 +380,4 @@ class TestSelectedFramesMode(unittest.TestCase):
         self.assertEqual(out,expected)
 
 if __name__=="__main__":
-    print "Testing wiki2beamer version %s" % (VERSIONTAG)
     unittest.main()
