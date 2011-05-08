@@ -471,6 +471,13 @@ def expand_code_tokenize_anims(code):
 
     return (anim, non_anim)
 
+def make_unique(seq):
+    '''remove duplicate elements in a list, does not preserve order'''
+    keys = {}  
+    for elem in seq:
+        keys[elem] = 1
+    return list(keys.keys())
+
 def expand_code_parse_overlayspec(overlayspec):
     overlays = []
 
@@ -497,7 +504,7 @@ def expand_code_parse_overlayspec(overlayspec):
             overlays.append(num)
     
     #make unique
-    overlays = list(set(overlays))
+    overlays = make_unique(overlays)
     return overlays
 
 def expand_code_parse_simpleanimspec(animspec):
