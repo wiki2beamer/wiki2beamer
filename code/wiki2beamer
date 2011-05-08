@@ -615,7 +615,12 @@ def expand_code_get_unique_name(defverbs, code, lstparams):
 
     return (name, expanded_code)
 
-   
+def make_sorted(seq):
+    '''replacement for sorted built-in'''
+    l = [ x for x in seq ]
+    l.sort()
+    return l
+
 def expand_code_segment(result, codebuffer, state):
     #treat first line as params for lstlistings
     lstparams = codebuffer[0]
@@ -641,7 +646,7 @@ def expand_code_segment(result, codebuffer, state):
             anim_map[i+min_overlay] = [x[i] for x in gen_anims]
     
         names = []
-        for overlay in sorted(anim_map.keys()):
+        for overlay in make_sorted(anim_map.keys()):
             #combine non_anim and anim parts
             anim_map[overlay].append('')
             zipped = list(zip(non_anim, anim_map[overlay]))
