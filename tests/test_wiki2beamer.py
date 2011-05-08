@@ -304,7 +304,8 @@ class TestFileInclusion(unittest.TestCase):
                                           '<[nowiki]',
                                           '>>>test_file<<<',
                                           '[nowiki]>',
-                                          '[code]>']
+                                          '[code]>'],
+                 'test_file_include_after_code':['<[code]','[code]>','>>>test_file<<<']
 
                 }
         for file_, lines in list(files.items()):
@@ -342,11 +343,17 @@ class TestFileInclusion(unittest.TestCase):
         out = convert2beamer(out)
         self.assertEqual(out,expected)
 
-def test_include_file_inside_code_inside_nowiki(self):
+    def test_include_file_inside_code_inside_nowiki(self):
         expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '', '>>>test_file<<<', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '', '']
         out = include_file_recursive('test_file_code_nowiki')
         out = convert2beamer(out)
         self.assertEqual(out,expected)
+    
+    def test_include_file_after_code(self):
+        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '', 'test file content', '']
+        out = include_file_recursive('test_file_include_after_code')
+        out = convert2beamer(out)
+        self.assertEqual(out, expected)
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
