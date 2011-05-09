@@ -7,4 +7,4 @@ The second way is to include additional input files with the
 \texttt{>>>includefile.txt<<<}
 [nowiki]>
 [center]>
-sytax.
+syntax.
