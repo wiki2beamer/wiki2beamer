@@ -617,7 +617,7 @@ def expand_code_get_unique_name(defverbs, code, lstparams):
 
 def make_sorted(seq):
     '''replacement for sorted built-in'''
-    l = [ x for x in seq ]
+    l = list(seq)
     l.sort()
     return l
 
