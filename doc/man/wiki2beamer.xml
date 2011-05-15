@@ -45,10 +45,12 @@
 	<variablelist>
 		<varlistentry><term><replaceable>FILE</replaceable></term>
 			<listitem><para>the text-file(s) to be processed</para></listitem></varlistentry>
-		<varlistentry><term><option>-h</option> <option>--help</option></term>
+		<varlistentry><term><option>-h</option>,<option>--help</option></term>
 			<listitem><para>show a short usage help</para></listitem></varlistentry>
 		<varlistentry><term>--version</term>
 			<listitem><para>show version information</para></listitem></varlistentry>
+		<varlistentry><term><option>-o</option>,<option>--output</option> <replaceable>FILE</replaceable></term>
+			<listitem><para>write output to <replaceable>FILE</replaceable> instead of stdout</para></listitem></varlistentry>
 	</variablelist>
 </refsect1>
 
