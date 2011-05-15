@@ -1068,11 +1068,11 @@ def redirect_stdout(outfilename):
 
 def main(argv):
     """ check parameters, start file processing """
-    usage = "%prog [input1.txt [input2.txt ...]] > output.tex"
+    usage = "%prog [options] [input1.txt [input2.txt ...]] > output.tex"
     version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
 
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
-    parser.add_option("-o", "--output", dest="output", metavar="FILE")
+    parser.add_option("-o", "--output", dest="output", metavar="FILE", help="write output to FILE instead of stdout")
     opts, args = parser.parse_args()
 
     if opts.output != None:        
