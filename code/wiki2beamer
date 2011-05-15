@@ -54,8 +54,15 @@ def md5hex(string):
         dg.update(string)
         return dg.hexdigest()
 
+_redirected_stdout = None
+_redirected_stderr = None
 def pprint(string, file=sys.stdout, eol=True):
     ''' portable version of print which directly writes into the given stream '''
+    if file == sys.stdout and _redirected_stdout != None:
+        file = _redirected_stdout
+    if file == sys.stderr and _redirected_stderr != None:
+        file = _redirected_stderr
+
     file.write(string)
     if eol:
         file.write(os.linesep)
@@ -1054,13 +1061,22 @@ def print_result(lines):
         pprint(l, file=sys.stdout)
     return
 
+def redirect_stdout(outfilename):
+    global _redirected_stdout
+    outfile = open(outfilename, "wt")
+    _redirected_stdout = outfile
+
 def main(argv):
     """ check parameters, start file processing """
     usage = "%prog [input1.txt [input2.txt ...]] > output.tex"
     version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
 
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
+    parser.add_option("-o", "--output", dest="output", metavar="FILE")
     opts, args = parser.parse_args()
+
+    if opts.output != None:        
+        redirect_stdout(opts.output)
 
     input_files = []
     if not sys.stdin.isatty():
