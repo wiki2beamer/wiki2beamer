@@ -1,3 +1,7 @@
+Version 0.9.5
+=======================================
+Added -o,--output option
+
 Version 0.9.4 (2011-05-08)
 =======================================
 Added Python 3000 compatibility
