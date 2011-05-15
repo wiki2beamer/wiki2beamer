@@ -35,7 +35,9 @@
 	<cmdsynopsis>
 		<command>wiki2beamer</command>
 		<group choice="opt">
-			<option><replaceable>OPTION</replaceable></option>
+			<option rep="repeat"><replaceable>OPTION</replaceable></option>
+		</group>
+		<group choice="opt">
 			<arg rep="repeat"><replaceable>FILE</replaceable></arg>
 		</group>
 	</cmdsynopsis>
