@@ -60,9 +60,11 @@
 	<para>Usually you want to pipe the output of wiki2beamer into a file:</para>
 	<para><code>wiki2beamer footalk.txt > footalk.tex</code></para>
 	<para>
-		If called without any input file, wiki2beamer will still read input from STDIN. If called with multiple
-		input files, wiki2beamer reads and processes them in order with their content being simply concatenated.
-		If no input files are supplied, and nothing is available on STDIN, wiki2beamer prints its usage message and exits.
+		If called with multiple input files, wiki2beamer processes them in
+		order with their content being simply concatenated. If called without
+		any input file, wiki2beamer will attempt to read input from STDIN. If
+		no input files are supplied and nothing is available on STDIN,
+		wiki2beamer prints its usage message and exits.
 	</para>
 	<para>
 		If an error occurs, wiki2beamer returns a return code other then 0.
