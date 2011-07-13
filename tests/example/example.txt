@@ -549,6 +549,25 @@ documentation.
 
 <<<db-rg1024.png,height=0.5\textheight>>>
 
+==== Figure Example ====
+
+Alternatively you could use the @figure@ environment which would allow you to
+add a @caption@ too:
+
+<[code][style=basic]
+    <\[figure\]
+    <<<db-rg1024.png,height=0.5\textheight>>>
+    \caption{Database Scheme}
+    <\[figure\]
+[code]>
+
+==== Figure Example (output) ====
+
+<[figure]
+<<<db-rg1024.png,height=0.5\textheight>>>
+\caption{Database Scheme}
+[figure]>
+
 == Animation ==
 
 === How it works ===
