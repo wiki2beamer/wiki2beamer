@@ -32,7 +32,6 @@ import sys
 import os
 import re
 import random
-import string
 import optparse
 
 
@@ -924,22 +923,18 @@ def filter_selected_lines(lines):
     selected_lines = []
 
     selected_frame_opened = False
-    unselected_frame_opened = False
     frame_closed = True
     frame_manually_closed = False
     for line in lines:
         if line_opens_selected_frame(line):
             selected_frame_opened = True
-            unselected_frame_opened = False
             frame_closed = False
 
         if line_opens_unselected_frame(line):
-            unselected_frame_opened = True
             selected_frame_opened = False
             frame_closed = False
 
         if line_closes_frame(line):
-            unselected_frame_opened = False
             selected_frame_opened = False
             frame_closed = True
             frame_manually_closed = True
