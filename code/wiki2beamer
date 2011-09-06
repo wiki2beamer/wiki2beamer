@@ -113,13 +113,11 @@ codestartre = re.compile(r'^<\[\s*code\s*\]')
 codeendre = re.compile(r'^\[\s*code\s*\]>')
 
 # lazy initialisation cache for file content
-_file_cache = dict()
+_file_cache = {}
 
 def add_lines_to_cache(filename, lines):
     if not filename in _file_cache:
         _file_cache[filename] = lines
-    return
-
 
 def get_lines_from_cache(filename):
     if filename in _file_cache:
@@ -128,11 +126,9 @@ def get_lines_from_cache(filename):
         lines = read_file_to_lines(filename)
         _file_cache[filename] = lines
         return lines
-    return
 
 def clear_file_cache():
-    _file_cache = {}
-    return
+    _file_cache.clear()
 
 
 class w2bstate:
