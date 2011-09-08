@@ -608,12 +608,13 @@ def expand_code_makeoverprint(names, minoverlay):
 def expand_code_get_unique_name(defverbs, code, lstparams):
     """generate a collision free entry in the defverbs-map and names-list"""
     name = expand_code_getname(code)
-    expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+    formatted = expand_code_make_listing(code, lstparams)
+    expanded_code = expand_code_make_defverb(formatted, name)
     rehash = ''
-    while name in defverbs and defverbs[name] != expanded_code:
+    while defverbs.get(name, expanded_code) != expanded_code:
         rehash += chr(random.randint(65,90)) #append a character from A-Z to rehash value
         name = expand_code_getname(code + rehash)
-        expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+        expanded_code = expand_code_make_defverb(formatted, name)
 
     return (name, expanded_code)
 
@@ -668,7 +669,7 @@ def expand_code_segment(result, codebuffer, state):
         #we have no animations and can just put the defverbatim in
         #remove escapings
         code = code.replace('\\[', '[').replace('\\]', ']')
-        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)  
+        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
         state.defverbs[name] = expanded_code
         result.append('\n\\%s\n' % name)
 
