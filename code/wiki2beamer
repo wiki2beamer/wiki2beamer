@@ -57,9 +57,9 @@ _redirected_stdout = None
 _redirected_stderr = None
 def pprint(string, file=sys.stdout, eol=True):
     ''' portable version of print which directly writes into the given stream '''
-    if file == sys.stdout and _redirected_stdout != None:
+    if file == sys.stdout and _redirected_stdout is not None:
         file = _redirected_stdout
-    if file == sys.stderr and _redirected_stderr != None:
+    if file == sys.stderr and _redirected_stderr is not None:
         file = _redirected_stderr
 
     file.write(string)
@@ -97,14 +97,14 @@ r"""{basic}{
     stringstyle=\color{magenta}%
 }"""
 
-autotemplate = [\
-    ('documentclass', '{beamer}'),\
-    ('usepackage', '{listings}'),\
-    ('usepackage', '{wasysym}'),\
-    ('usepackage', '{graphicx}'),\
-    ('date', '{\\today}'),\
-    ('lstdefinestyle', lstbasicstyle),\
-    ('titleframe', 'True')\
+autotemplate = [
+    ('documentclass', '{beamer}'),
+    ('usepackage', '{listings}'),
+    ('usepackage', '{wasysym}'),
+    ('usepackage', '{graphicx}'),
+    ('date', '{\\today}'),
+    ('lstdefinestyle', lstbasicstyle),
+    ('titleframe', 'True'),
 ]
 
 nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
@@ -162,13 +162,13 @@ def transform_itemenums(string, state):
     # handle itemizing/enumerations
     p = re.compile("^([\*\#]+).*$")
     m = p.match(string)
-    if (m == None):
+    if m is None:
         my_enum_item_level = ""
     else:
         my_enum_item_level = m.group(1)
 
     # trivial: old level = new level
-    if (my_enum_item_level == state.enum_item_level):
+    if my_enum_item_level == state.enum_item_level:
         pass
     else:
         # find common part
@@ -180,16 +180,16 @@ def transform_itemenums(string, state):
 
         # close enum_item_level environments from back to front
         for i in range(len(state.enum_item_level)-1, common, -1):
-            if (state.enum_item_level[i] == "*"):
+            if state.enum_item_level[i] == "*":
                 preamble = preamble + "\\end{itemize}\n"
-            elif (state.enum_item_level[i] == "#"):
+            elif state.enum_item_level[i] == "#":
                 preamble = preamble + "\\end{enumerate}\n"
         
         # open my_enum_item_level environments from front to back
         for i in range(common+1, len(my_enum_item_level)):
-            if (my_enum_item_level[i] == "*"):
+            if my_enum_item_level[i] == "*":
                 preamble = preamble + "\\begin{itemize}\n"
-            elif (my_enum_item_level[i] == "#"):
+            elif my_enum_item_level[i] == "#":
                 preamble = preamble + "\\begin{enumerate}\n"
     state.enum_item_level = my_enum_item_level
     
@@ -204,12 +204,12 @@ def transform_define_foothead(string, state):
     """ header and footer definitions"""
     p = re.compile("^@FRAMEHEADER=(.*)$", re.VERBOSE)
     m = p.match(string)
-    if (m != None):
+    if m is not None:
         state.next_frame_header = m.group(1)
         string = ""
     p = re.compile("^@FRAMEFOOTER=(.*)$", re.VERBOSE)
     m = p.match(string)
-    if (m != None):
+    if m is not None:
         state.next_frame_footer = m.group(1)
         string = ""
     return string
@@ -218,7 +218,7 @@ def transform_detect_manual_frameclose(string, state):
     """ detect manual closing of frames """
     p = re.compile(r"\[\s*frame\s*\]>")
     if state.frame_opened:
-        if p.match(string) != None:
+        if p.match(string) is not None:
             state.frame_opened = False
     return string
 
@@ -236,7 +236,7 @@ def transform_h4_to_frame(string, state):
     else:
         _string = p.sub(frame_closing + frame_opening, string)
 
-    if (string != _string):
+    if string != _string:
         state.frame_opened = True
         state.switch_to_next_frame()
 
@@ -252,7 +252,7 @@ def transform_h3_to_subsec(string, state):
         _string = p.sub(frame_closing + subsec_opening, string)
     else:
         _string = p.sub(subsec_opening, string)
-    if (string != _string):
+    if string != _string:
         state.frame_opened = False
     
     return _string
@@ -266,7 +266,7 @@ def transform_h2_to_sec(string, state):
         _string = p.sub(frame_closing + sec_opening, string)
     else:
         _string = p.sub(sec_opening, string)
-    if (string != _string):
+    if string != _string:
         state.frame_opened = False
 
     return _string
@@ -517,7 +517,7 @@ def expand_code_parse_simpleanimspec(animspec):
 
     p = re.compile(r'^\[<([0-9,\-]+)>((?:.|\s)*)\]$')
     m = p.match(animspec)
-    if m != None:
+    if m is not None:
         overlays = expand_code_parse_overlayspec(m.group(1))
         code = m.group(2)
     else:
@@ -758,7 +758,7 @@ def unify_autotemplates(autotemplates):
     autotemplate = []
     autotemplate.append(('documentclass', documentclass))
     for (name, options) in usepackages.items():
-        if options != None and options.strip() != '':
+        if options is not None and options.strip() != '':
             string = '%s{%s}' % (options, name)
         else:
             string = '{%s}' % name
@@ -881,25 +881,25 @@ def scan_for_selected_frames(lines):
     p = re.compile("^!====\s*(.*?)\s*====(.*)", re.VERBOSE)
     for line in lines:
         mo = p.match(line)
-        if mo != None:
+        if mo is not None:
             return True
     return False
 
 def line_opens_unselected_frame(line):
     p = re.compile("^====\s*(.*?)\s*====(.*)", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
 def line_opens_selected_frame(line):
     p = re.compile("^!====\s*(.*?)\s*====(.*)", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
 def line_closes_frame(line):
     p = re.compile("^\s*\[\s*frame\s*\]>", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
@@ -1065,7 +1065,7 @@ def main(argv):
     parser.add_option("-o", "--output", dest="output", metavar="FILE", help="write output to FILE instead of stdout")
     opts, args = parser.parse_args()
 
-    if opts.output != None:        
+    if opts.output is not None:
         redirect_stdout(opts.output)
 
     input_files = []
@@ -1084,5 +1084,5 @@ def main(argv):
     print_result(lines)
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     main(sys.argv)
