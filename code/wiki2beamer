@@ -605,7 +605,7 @@ def expand_code_getname(code):
     }
     
     hexhash = md5hex(code.encode('utf8'))
-    alphahash = ''.join(list([hex2alpha_table[x] for x in hexhash]))
+    alphahash = ''.join(hex2alpha_table[x] for x in hexhash)
     return alphahash
 
 def expand_code_makeoverprint(names, minoverlay):
@@ -644,15 +644,15 @@ def expand_code_segment(result, codebuffer, state):
 
     #tokenize code into anim and non_anim parts
     (anim, non_anim) = expand_code_tokenize_anims(code)
-    if len(list(anim))>0:
+    if len(anim)>0:
         #generate multiple versions of the anim parts
         parsed_anims = list(map(expand_code_parse_animspec, anim))
-        max_overlay = expand_code_getmaxoverlay([x[1] for x in parsed_anims])
+        max_overlay = expand_code_getmaxoverlay(x[1] for x in parsed_anims)
         #if there is unanimated code, use 0 as the starting overlay
         if len(list(non_anim))>0:
             min_overlay = 1
         else:
-            min_overlay = expand_code_getminoverlay([x[1] for x in parsed_anims])
+            min_overlay = expand_code_getminoverlay(x[1] for x in parsed_anims)
         gen_anims = [expand_code_genanims(x[1], min_overlay, max_overlay, x[0]) for x in parsed_anims]
         anim_map = {}
         for i in range(0,max_overlay-min_overlay+1):
@@ -662,9 +662,8 @@ def expand_code_segment(result, codebuffer, state):
         for overlay in make_sorted(anim_map.keys()):
             #combine non_anim and anim parts
             anim_map[overlay].append('')
-            zipped = list(zip(non_anim, anim_map[overlay]))
-            mapped = [x[0] + x[1] for x in zipped]
-            code = ''.join(mapped)
+            zipped = zip(non_anim, anim_map[overlay])
+            code = ''.join(x[0] + x[1] for x in zipped)
             
             #generate a collision free entry in the defverbs-map and names-list
             (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
@@ -688,7 +687,7 @@ def expand_code_segment(result, codebuffer, state):
 
 def expand_code_defverbs(result, state):
         result[state.code_pos] = result[state.code_pos] + '\n'.join(list(state.defverbs.values())) + '\n'
-        state.defverbs={}
+    state.defverbs.clear()
 
 def get_autotemplate_closing():
     return '\n\end{document}\n'
@@ -769,7 +768,7 @@ def unify_autotemplates(autotemplates):
     
     autotemplate = []
     autotemplate.append(('documentclass', documentclass))
-    for (name, options) in list(usepackages.items()):
+    for (name, options) in usepackages.items():
         if options != None and options.strip() != '':
             string = '%s{%s}' % (options, name)
         else:
