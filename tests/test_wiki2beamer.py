@@ -286,6 +286,21 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
+    def test_code_inside_code(self):
+        lines = ['<[code]', '\\[code\\]', '[code]>']
+        out = convert2beamer(lines)
+        self.assertTrue('code' in '\n'.join(out))
+
+    def test_indexing_inside_code(self):
+        lines = ['<[code]', 'i\\[12345\\]', '[code]>']
+        out = convert2beamer(lines)
+        self.assertTrue('12345' in '\n'.join(out))
+
+    def test_a_list_inside_code(self):
+        lines = ['<[code]', '\\[11111 10000 9000 code 70000\\]', '[code]>']
+        out = convert2beamer(lines)
+        self.assertTrue('11111' in '\n'.join(out))
+
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
         files = {'test_file': ['test file content'],
