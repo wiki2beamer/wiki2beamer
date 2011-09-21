@@ -130,6 +130,10 @@ def get_lines_from_cache(filename):
 def clear_file_cache():
     _file_cache.clear()
 
+try:
+    from collections import OrderedDict as maybe_odict
+except ImportError:
+    maybe_odict = dict
 
 class w2bstate:
     def __init__(self):
@@ -141,7 +145,7 @@ class w2bstate:
         self.next_frame_header = ''
         self.current_line = 0
         self.autotemplate_opened = False
-        self.defverbs = {}
+        self.defverbs = maybe_odict()
         self.code_pos = 0
         return
 
