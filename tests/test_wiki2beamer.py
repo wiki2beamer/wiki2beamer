@@ -137,6 +137,13 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(transform(r'\frac{V_1}{R_1}=\frac{V_2}{R_2}', self.state),
                 r'\frac{V_1}{R_1}=\frac{V_2}{R_2}')
 
+        # test for bug 3365134
+        # colors interfere with graphics
+        self.assertEqual(transform(r'<<<file/foo_bar/baz_dazz_baz>>>',
+            self.state),'\includegraphics{file/foo_bar/baz_dazz_baz}')
+        self.assertEqual(transform(r'_blue_make me blue_ <<<file/foo_bar_/baz_fasel.svg>>>',
+            self.state),r'\textcolor{blue}{make me blue} \includegraphics{file/foo_bar_/baz_fasel.svg}')
+
 class TestExpandCode(unittest.TestCase):
     def test_search_escape_sequences_basic(self):
         code = "System435.out.println(\"foo\");123System.ou12t.println234(\"foo\");System.23out.23456println(\"foo\");S237yst28em.out.pr18intln(\"foo\");"

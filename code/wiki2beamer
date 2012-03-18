@@ -359,8 +359,19 @@ def transform_alerts(string):
 
 def transform_colors(string):
     """ colors """
+    def maybe_replace(m):
+        """ only replace if we are not within <<< >>> """
+        for g in graphics:
+            # found color is within a graphics token
+            if m.start() >= g.start() and m.end() <= g.end():
+                return m.string[m.start():m.end()]
+
+        return "\\textcolor{" + m.group(1) + "}{" + m.group(2) + "}"
+
+    p = re.compile("(\<\<\<)(.*?)\>\>\>", re.VERBOSE)
+    graphics = list(p.finditer(string))
     p = re.compile("_([^_\\\\{}]*?)_([^_]*?[^_\\\\{}])_", re.VERBOSE)
-    string = p.sub(r"\\textcolor{\1}{\2}", string) 
+    string = p.sub(maybe_replace, string)
     return string
    
 def transform_footnotes(string):
