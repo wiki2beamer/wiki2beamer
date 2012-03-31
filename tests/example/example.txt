@@ -15,7 +15,7 @@ meant to be a reference though, that will be the man page wiki2beamer(1).
 Wiki2beamer was written to make typesetting presentations with \LaTeX and
 beamer easier. \LaTeX beamer can create beautiful presentations but it's
 a very verbose language and most of the simple tasks like using frames or
-bullet lists take an awfull amount of code that looks really complicated.
+bullet lists take an awful amount of code that looks really complicated.
 This often scares away beginners and
 fellow colleagues from even starting with \LaTeX. This is where wiki2beamer
 steps in. It's designed to make the start easier and not remove any of the
@@ -173,7 +173,7 @@ The same works for numbered lists
 # first item
 # second item
 ## with two subitems
-## and onother
+## and another
 ### subsubitem
 # third item
 [code]>
@@ -183,7 +183,7 @@ The same works for numbered lists
 # first item
 # second item
 ## with two subitems
-## and onother
+## and another
 ### subsubitem
 # third item
 
@@ -439,7 +439,7 @@ notation.
 
 
 ==== Columns ====
-Latex beamer can devide the current frame into collumns.
+Latex beamer can divide the current frame into columns.
 In wiki2beamer this can be done with the following notation:
 <[code][style=basic]
 <\[columns\]
@@ -622,7 +622,7 @@ LaTeX knows the two commands @\textbackslash uncover@ and
 --1em--
 @uncover@ shows and element on the given layers
 while otherwise just displaying an invisible placeholder box.
-In wiki2beamer this is denotated as:
+In wiki2beamer this is denoted as:
 <[center]
 <[nowiki]
 \texttt{+$<$n-m$>$\{content\}}
@@ -648,7 +648,7 @@ below
 
 ==== @only@ example ====
 
-@only@ makes an element appear whithout having a placeholder box before.
+@only@ makes an element appear without having a placeholder box before.
 In wiki2beamer this is denoted as:
 <[center]
 <[nowiki]
@@ -777,7 +777,7 @@ This is such a fragile frame with some \verb-V#rb/\t|m t<xt- .
 ==== Short section names ====
 
 The same notation that applies for frame options
-can be used with sections. This is used to asign a short name of the section
+can be used with sections. This is used to assign a short name of the section
 for the table of contents.
 
 <[code][style=basic,basicstyle=\tiny\ttfamily]
@@ -799,7 +799,7 @@ editing.
 [center]>
 --1em--
 When there is at least one selected frame, all frames that are not selected
-will be ommited from the LaTeX output.
+will be omitted from the LaTeX output.
 
 
 === Managing input ===
