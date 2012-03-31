@@ -1,4 +1,4 @@
-Version 0.9.5
+Version 0.9.5 (2012-03-31)
 =======================================
 Added -o,--output option
 Fix for bug 3365134, mixing coloring and filenames with underscores
