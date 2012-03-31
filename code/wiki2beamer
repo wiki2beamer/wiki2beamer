@@ -36,7 +36,7 @@ import string
 import optparse
 
 
-VERSIONTAG = "0.9.4"
+VERSIONTAG = "0.9.5"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich and others"
 
