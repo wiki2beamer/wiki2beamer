@@ -1,6 +1,9 @@
 Version 0.9.5
 =======================================
 Added -o,--output option
+Fix for bug 3365134, mixing coloring and filenames with underscores
+Improve performance of make_sorted
+Various fixes in manpage
 
 Version 0.9.4 (2011-05-08)
 =======================================
