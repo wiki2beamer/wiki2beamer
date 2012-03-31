@@ -810,7 +810,7 @@ you can (and should) of course use your favourite version control system,
 but you'd still have to resolve conflicts. To reduce the number of conflicts,
 wiki2beamer can build presentations from multiple input files.
 
-==== Mulitple inputs by commandline ====
+==== Multiple inputs by commandline ====
 
 The first way is to use the commandline to concatenate multiple input files:
 --1em--
