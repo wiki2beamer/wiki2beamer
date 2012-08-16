@@ -241,8 +241,20 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
+    def test_itemize_nospace(self):
+        lines = ['*foo', '*bar', '**foobar']
+        expected = ['\n', '\\begin{itemize}\n  \\item foo', '  \\item bar', '\\begin{itemize}\n  \\item foobar', '\\end{itemize}\n\\end{itemize}\n']
+        out = convert2beamer(lines)
+        self.assertEqual(out, expected)
+
     def test_enumerate(self):
         lines = ['# one', '# two', '## onetwo']
+        expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
+        out = convert2beamer(lines)
+        self.assertEqual(out,expected)
+
+    def test_enumerate_nospace(self):
+        lines = ['#one', '#two', '##onetwo']
         expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)

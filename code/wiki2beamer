@@ -199,8 +199,8 @@ def transform_itemenums(string, state):
     state.enum_item_level = my_enum_item_level
     
     # now, substitute item markers
-    p = re.compile("^([\*\#]+)(.*)$")
-    _string = p.sub(r"  \\item\2", string)
+    p = re.compile("^([\*\#]+)\s*(.*)$")
+    _string = p.sub(r"  \\item \2", string)
     string = preamble + _string
  
     return string
