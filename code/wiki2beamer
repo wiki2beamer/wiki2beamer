@@ -627,8 +627,8 @@ def expand_code_get_unique_name(defverbs, code, lstparams):
     expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
     rehash = ''
     while name in defverbs and defverbs[name] != expanded_code:
-        rehash += char(random.randint(65,90)) #append a character from A-Z to rehash value
-        name = expanded_code_getname(code + rehash)
+        rehash += chr(random.randint(65,90)) #append a character from A-Z to rehash value
+        name = expand_code_getname(code + rehash)
         expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
 
     return (name, expanded_code)
