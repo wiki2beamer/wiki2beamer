@@ -609,7 +609,7 @@ def expand_code_getname(code):
         'a':'k', 'b':'l', 'c':'m', 'd':'n', 'e':'o', 'f':'p' \
     }
     
-    hexhash = md5hex(code.encode('utf8'))
+    hexhash = md5hex(code)
     alphahash = ''.join(list([hex2alpha_table[x] for x in hexhash]))
     return alphahash
 
