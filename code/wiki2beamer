@@ -32,7 +32,6 @@ import sys
 import os
 import re
 import random
-import string
 import optparse
 
 
@@ -58,9 +57,9 @@ _redirected_stdout = None
 _redirected_stderr = None
 def pprint(string, file=sys.stdout, eol=True):
     ''' portable version of print which directly writes into the given stream '''
-    if file == sys.stdout and _redirected_stdout != None:
+    if file == sys.stdout and _redirected_stdout is not None:
         file = _redirected_stdout
-    if file == sys.stderr and _redirected_stderr != None:
+    if file == sys.stderr and _redirected_stderr is not None:
         file = _redirected_stderr
 
     file.write(string)
@@ -98,14 +97,14 @@ r"""{basic}{
     stringstyle=\color{magenta}%
 }"""
 
-autotemplate = [\
-    ('documentclass', '{beamer}'),\
-    ('usepackage', '{listings}'),\
-    ('usepackage', '{wasysym}'),\
-    ('usepackage', '{graphicx}'),\
-    ('date', '{\\today}'),\
-    ('lstdefinestyle', lstbasicstyle),\
-    ('titleframe', 'True')\
+autotemplate = [
+    ('documentclass', '{beamer}'),
+    ('usepackage', '{listings}'),
+    ('usepackage', '{wasysym}'),
+    ('usepackage', '{graphicx}'),
+    ('date', '{\\today}'),
+    ('lstdefinestyle', lstbasicstyle),
+    ('titleframe', 'True'),
 ]
 
 nowikistartre = re.compile(r'^<\[\s*nowiki\s*\]')
@@ -114,13 +113,11 @@ codestartre = re.compile(r'^<\[\s*code\s*\]')
 codeendre = re.compile(r'^\[\s*code\s*\]>')
 
 # lazy initialisation cache for file content
-_file_cache = dict()
+_file_cache = {}
 
 def add_lines_to_cache(filename, lines):
     if not filename in _file_cache:
         _file_cache[filename] = lines
-    return
-
 
 def get_lines_from_cache(filename):
     if filename in _file_cache:
@@ -129,12 +126,14 @@ def get_lines_from_cache(filename):
         lines = read_file_to_lines(filename)
         _file_cache[filename] = lines
         return lines
-    return
 
 def clear_file_cache():
-    _file_cache = {}
-    return
+    _file_cache.clear()
 
+try:
+    from collections import OrderedDict as maybe_odict
+except ImportError:
+    maybe_odict = dict
 
 class w2bstate:
     def __init__(self):
@@ -146,7 +145,7 @@ class w2bstate:
         self.next_frame_header = ''
         self.current_line = 0
         self.autotemplate_opened = False
-        self.defverbs = {}
+        self.defverbs = maybe_odict()
         self.code_pos = 0
         return
 
@@ -167,13 +166,13 @@ def transform_itemenums(string, state):
     # handle itemizing/enumerations
     p = re.compile("^([\*\#]+).*$")
     m = p.match(string)
-    if (m == None):
+    if m is None:
         my_enum_item_level = ""
     else:
         my_enum_item_level = m.group(1)
 
     # trivial: old level = new level
-    if (my_enum_item_level == state.enum_item_level):
+    if my_enum_item_level == state.enum_item_level:
         pass
     else:
         # find common part
@@ -185,16 +184,16 @@ def transform_itemenums(string, state):
 
         # close enum_item_level environments from back to front
         for i in range(len(state.enum_item_level)-1, common, -1):
-            if (state.enum_item_level[i] == "*"):
+            if state.enum_item_level[i] == "*":
                 preamble = preamble + "\\end{itemize}\n"
-            elif (state.enum_item_level[i] == "#"):
+            elif state.enum_item_level[i] == "#":
                 preamble = preamble + "\\end{enumerate}\n"
         
         # open my_enum_item_level environments from front to back
         for i in range(common+1, len(my_enum_item_level)):
-            if (my_enum_item_level[i] == "*"):
+            if my_enum_item_level[i] == "*":
                 preamble = preamble + "\\begin{itemize}\n"
-            elif (my_enum_item_level[i] == "#"):
+            elif my_enum_item_level[i] == "#":
                 preamble = preamble + "\\begin{enumerate}\n"
     state.enum_item_level = my_enum_item_level
     
@@ -209,12 +208,12 @@ def transform_define_foothead(string, state):
     """ header and footer definitions"""
     p = re.compile("^@FRAMEHEADER=(.*)$", re.VERBOSE)
     m = p.match(string)
-    if (m != None):
+    if m is not None:
         state.next_frame_header = m.group(1)
         string = ""
     p = re.compile("^@FRAMEFOOTER=(.*)$", re.VERBOSE)
     m = p.match(string)
-    if (m != None):
+    if m is not None:
         state.next_frame_footer = m.group(1)
         string = ""
     return string
@@ -223,7 +222,7 @@ def transform_detect_manual_frameclose(string, state):
     """ detect manual closing of frames """
     p = re.compile(r"\[\s*frame\s*\]>")
     if state.frame_opened:
-        if p.match(string) != None:
+        if p.match(string) is not None:
             state.frame_opened = False
     return string
 
@@ -241,7 +240,7 @@ def transform_h4_to_frame(string, state):
     else:
         _string = p.sub(frame_closing + frame_opening, string)
 
-    if (string != _string):
+    if string != _string:
         state.frame_opened = True
         state.switch_to_next_frame()
 
@@ -257,7 +256,7 @@ def transform_h3_to_subsec(string, state):
         _string = p.sub(frame_closing + subsec_opening, string)
     else:
         _string = p.sub(subsec_opening, string)
-    if (string != _string):
+    if string != _string:
         state.frame_opened = False
     
     return _string
@@ -271,7 +270,7 @@ def transform_h2_to_sec(string, state):
         _string = p.sub(frame_closing + sec_opening, string)
     else:
         _string = p.sub(sec_opening, string)
-    if (string != _string):
+    if string != _string:
         state.frame_opened = False
 
     return _string
@@ -533,7 +532,7 @@ def expand_code_parse_simpleanimspec(animspec):
 
     p = re.compile(r'^\[<([0-9,\-]+)>((?:.|\s)*)\]$')
     m = p.match(animspec)
-    if m != None:
+    if m is not None:
         overlays = expand_code_parse_overlayspec(m.group(1))
         code = m.group(2)
     else:
@@ -610,7 +609,7 @@ def expand_code_getname(code):
     }
     
     hexhash = md5hex(code.encode('utf8'))
-    alphahash = ''.join(list([hex2alpha_table[x] for x in hexhash]))
+    alphahash = ''.join(hex2alpha_table[x] for x in hexhash)
     return alphahash
 
 def expand_code_makeoverprint(names, minoverlay):
@@ -624,12 +623,13 @@ def expand_code_makeoverprint(names, minoverlay):
 def expand_code_get_unique_name(defverbs, code, lstparams):
     """generate a collision free entry in the defverbs-map and names-list"""
     name = expand_code_getname(code)
-    expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+    formatted = expand_code_make_listing(code, lstparams)
+    expanded_code = expand_code_make_defverb(formatted, name)
     rehash = ''
-    while name in defverbs and defverbs[name] != expanded_code:
-        rehash += char(random.randint(65,90)) #append a character from A-Z to rehash value
-        name = expanded_code_getname(code + rehash)
-        expanded_code = expand_code_make_defverb(expand_code_make_lstlisting(code, lstparams), name)
+    while defverbs.get(name, expanded_code) != expanded_code:
+        rehash += chr(random.randint(65,90)) #append a character from A-Z to rehash value
+        name = expand_code_getname(code + rehash)
+        expanded_code = expand_code_make_defverb(formatted, name)
 
     return (name, expanded_code)
 
@@ -649,15 +649,15 @@ def expand_code_segment(result, codebuffer, state):
 
     #tokenize code into anim and non_anim parts
     (anim, non_anim) = expand_code_tokenize_anims(code)
-    if len(list(anim))>0:
+    if len(anim)>0:
         #generate multiple versions of the anim parts
         parsed_anims = list(map(expand_code_parse_animspec, anim))
-        max_overlay = expand_code_getmaxoverlay([x[1] for x in parsed_anims])
+        max_overlay = expand_code_getmaxoverlay(x[1] for x in parsed_anims)
         #if there is unanimated code, use 0 as the starting overlay
         if len(list(non_anim))>0:
             min_overlay = 1
         else:
-            min_overlay = expand_code_getminoverlay([x[1] for x in parsed_anims])
+            min_overlay = expand_code_getminoverlay(x[1] for x in parsed_anims)
         gen_anims = [expand_code_genanims(x[1], min_overlay, max_overlay, x[0]) for x in parsed_anims]
         anim_map = {}
         for i in range(0,max_overlay-min_overlay+1):
@@ -667,9 +667,8 @@ def expand_code_segment(result, codebuffer, state):
         for overlay in make_sorted(anim_map.keys()):
             #combine non_anim and anim parts
             anim_map[overlay].append('')
-            zipped = list(zip(non_anim, anim_map[overlay]))
-            mapped = [x[0] + x[1] for x in zipped]
-            code = ''.join(mapped)
+            zipped = zip(non_anim, anim_map[overlay])
+            code = ''.join(x[0] + x[1] for x in zipped)
             
             #generate a collision free entry in the defverbs-map and names-list
             (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
@@ -685,7 +684,7 @@ def expand_code_segment(result, codebuffer, state):
         #we have no animations and can just put the defverbatim in
         #remove escapings
         code = code.replace('\\[', '[').replace('\\]', ']')
-        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)  
+        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
         state.defverbs[name] = expanded_code
         result.append('\n\\%s\n' % name)
 
@@ -693,7 +692,7 @@ def expand_code_segment(result, codebuffer, state):
 
 def expand_code_defverbs(result, state):
         result[state.code_pos] = result[state.code_pos] + '\n'.join(list(state.defverbs.values())) + '\n'
-        state.defverbs={}
+    state.defverbs.clear()
 
 def get_autotemplate_closing():
     return '\n\end{document}\n'
@@ -774,8 +773,8 @@ def unify_autotemplates(autotemplates):
     
     autotemplate = []
     autotemplate.append(('documentclass', documentclass))
-    for (name, options) in list(usepackages.items()):
-        if options != None and options.strip() != '':
+    for (name, options) in usepackages.items():
+        if options is not None and options.strip() != '':
             string = '%s{%s}' % (options, name)
         else:
             string = '{%s}' % name
@@ -898,25 +897,25 @@ def scan_for_selected_frames(lines):
     p = re.compile("^!====\s*(.*?)\s*====(.*)", re.VERBOSE)
     for line in lines:
         mo = p.match(line)
-        if mo != None:
+        if mo is not None:
             return True
     return False
 
 def line_opens_unselected_frame(line):
     p = re.compile("^====\s*(.*?)\s*====(.*)", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
 def line_opens_selected_frame(line):
     p = re.compile("^!====\s*(.*?)\s*====(.*)", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
 def line_closes_frame(line):
     p = re.compile("^\s*\[\s*frame\s*\]>", re.VERBOSE)
-    if p.match(line) != None:
+    if p.match(line) is not None:
         return True
     return False
 
@@ -924,22 +923,18 @@ def filter_selected_lines(lines):
     selected_lines = []
 
     selected_frame_opened = False
-    unselected_frame_opened = False
     frame_closed = True
     frame_manually_closed = False
     for line in lines:
         if line_opens_selected_frame(line):
             selected_frame_opened = True
-            unselected_frame_opened = False
             frame_closed = False
 
         if line_opens_unselected_frame(line):
-            unselected_frame_opened = True
             selected_frame_opened = False
             frame_closed = False
 
         if line_closes_frame(line):
-            unselected_frame_opened = False
             selected_frame_opened = False
             frame_closed = True
             frame_manually_closed = True
@@ -1086,7 +1081,7 @@ def main(argv):
     parser.add_option("-o", "--output", dest="output", metavar="FILE", help="write output to FILE instead of stdout")
     opts, args = parser.parse_args()
 
-    if opts.output != None:        
+    if opts.output is not None:
         redirect_stdout(opts.output)
 
     input_files = []
@@ -1105,5 +1100,5 @@ def main(argv):
     print_result(lines)
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     main(sys.argv)
