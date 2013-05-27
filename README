@@ -5,11 +5,12 @@ http://wiki2beamer.sourceforge.net/
 Create latex beamer code from an easy, wiki-like syntax.
 
 Current version: 0.9.5
-Authors:
+Maintainer:
+	Valentin Haenel <valentin.haenel@gmx.de>
+Original Authors:
 	Michael Rentzsch (http://www.repc.de, michael.rentzsch@repc.de)
 	Kai Dietrich (http://www.cleeus.de/, mail@cleeus.de)
-Contributors
-	Valentin Haenel <valentin.haenel@gmx.de>
+Contributors:
 	Julius Plenz <julius@plenz.com>
 	Volker Mische <volker.mische@gmail.com>
 	Georges Khaznadar <georgesk@ofset.org>
