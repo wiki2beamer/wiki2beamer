@@ -1,0 +1,12 @@
+*.aux
+*.log
+*.out
+*.snm
+*.toc
+*.nav
+
+# Make .tex ignores more specific.
+wiki2beamer.tex
+wiki_*.tex
+
+*.pdf
