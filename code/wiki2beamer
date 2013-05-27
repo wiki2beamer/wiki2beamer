@@ -176,7 +176,7 @@ def transform_itemenums(string, state):
         pass
     else:
         # find common part
-        common = -1 
+        common = -1
         while (len(state.enum_item_level) > common + 1) and \
                 (len(my_enum_item_level) > common + 1) and \
                 (state.enum_item_level[common+1] == my_enum_item_level[common+1]):
@@ -188,7 +188,7 @@ def transform_itemenums(string, state):
                 preamble = preamble + "\\end{itemize}\n"
             elif state.enum_item_level[i] == "#":
                 preamble = preamble + "\\end{enumerate}\n"
-        
+
         # open my_enum_item_level environments from front to back
         for i in range(common+1, len(my_enum_item_level)):
             if my_enum_item_level[i] == "*":
@@ -196,12 +196,12 @@ def transform_itemenums(string, state):
             elif my_enum_item_level[i] == "#":
                 preamble = preamble + "\\begin{enumerate}\n"
     state.enum_item_level = my_enum_item_level
-    
+
     # now, substitute item markers
     p = re.compile("^([\*\#]+)\s*(.*)$")
     _string = p.sub(r"  \\item \2", string)
     string = preamble + _string
- 
+
     return string
 
 def transform_define_foothead(string, state):
@@ -233,7 +233,7 @@ def transform_h4_to_frame(string, state):
     """headings (3) to frames"""
     frame_opening = r"\\begin{frame}\2\n \\frametitle{\1}\n %s \n" % escape_resub(state.next_frame_header)
     frame_closing = escape_resub(get_frame_closing(state))
-    
+
     p = re.compile("^!?====\s*(.*?)\s*====(.*)", re.VERBOSE)
     if not state.frame_opened:
         _string = p.sub(frame_opening, string)
@@ -258,7 +258,7 @@ def transform_h3_to_subsec(string, state):
         _string = p.sub(subsec_opening, string)
     if string != _string:
         state.frame_opened = False
-    
+
     return _string
 
 def transform_h2_to_sec(string, state):
@@ -313,7 +313,7 @@ def transform_boldfont(string):
 def transform_italicfont(string):
     """ italic font """
     p = re.compile("''(.*?)''", re.VERBOSE)
-    string = p.sub(r"\\emph{\1}", string) 
+    string = p.sub(r"\\emph{\1}", string)
     return string
 
 def _transform_mini_parser(character, replacement, string):
@@ -372,33 +372,33 @@ def transform_colors(string):
     p = re.compile("_([^_\\\\{}]*?)_([^_]*?[^_\\\\{}])_", re.VERBOSE)
     string = p.sub(maybe_replace, string)
     return string
-   
+
 def transform_footnotes(string):
     """ footnotes """
     p = re.compile("\(\(\((.*?)\)\)\)", re.VERBOSE)
-    string = p.sub(r"\\footnote{\1}", string) 
+    string = p.sub(r"\\footnote{\1}", string)
     return string
 
 def transform_graphics(string):
     """ figures/images """
     p = re.compile("\<\<\<(.*?),(.*?)\>\>\>", re.VERBOSE)
-    string = p.sub(r"\\includegraphics[\2]{\1}", string) 
+    string = p.sub(r"\\includegraphics[\2]{\1}", string)
     p = re.compile("\<\<\<(.*?)\>\>\>", re.VERBOSE)
-    string = p.sub(r"\\includegraphics{\1}", string) 
+    string = p.sub(r"\\includegraphics{\1}", string)
     return string
 
 def transform_substitutions(string):
     """ substitutions """
     p = re.compile("(\s)-->(\s)", re.VERBOSE)
-    string = p.sub(r"\1$\\rightarrow$\2", string) 
+    string = p.sub(r"\1$\\rightarrow$\2", string)
     p = re.compile("(\s)<--(\s)", re.VERBOSE)
-    string = p.sub(r"\1$\\leftarrow$\2", string) 
+    string = p.sub(r"\1$\\leftarrow$\2", string)
     p = re.compile("(\s)==>(\s)", re.VERBOSE)
-    string = p.sub(r"\1$\\Rightarrow$\2", string) 
+    string = p.sub(r"\1$\\Rightarrow$\2", string)
     p = re.compile("(\s)<==(\s)", re.VERBOSE)
-    string = p.sub(r"\1$\\Leftarrow$\2", string) 
+    string = p.sub(r"\1$\\Leftarrow$\2", string)
     p = re.compile("(\s):-\)(\s)", re.VERBOSE)
-    string = p.sub(r"\1\\smiley\2", string) 
+    string = p.sub(r"\1\\smiley\2", string)
     p = re.compile("(\s):-\((\s)", re.VERBOSE)
     string = p.sub(r"\1\\frownie\2", string)
     return string
@@ -481,7 +481,7 @@ def expand_code_tokenize_anims(code):
     p = re.compile(r'\[\[(?:.|\s)*?\]\]|\[(?:.|\s)*?\]')
     non_anim = p.split(code)
     anim = p.findall(code)
-    
+
     #unescape
     anim = [s.replace(esc_open, '\\[').replace(esc_close, '\\]') for s in anim]
     non_anim = [s.replace(esc_open, '[').replace(esc_close, ']') for s in non_anim]
@@ -490,7 +490,7 @@ def expand_code_tokenize_anims(code):
 
 def make_unique(seq):
     '''remove duplicate elements in a list, does not preserve order'''
-    keys = {}  
+    keys = {}
     for elem in seq:
         keys[elem] = 1
     return list(keys.keys())
@@ -519,7 +519,7 @@ def expand_code_parse_overlayspec(overlayspec):
             except ValueError:
                 syntax_error('not an int, overlay specs must be of the form <(%d-%d)|(%d), ...>', overlayspec)
             overlays.append(num)
-    
+
     #make unique
     overlays = make_unique(overlays)
     return overlays
@@ -540,19 +540,19 @@ def expand_code_parse_simpleanimspec(animspec):
 
     #unescape code
     code = code.replace(esc_open, '[').replace(esc_close, ']')
-    
+
     return [(overlay, code) for overlay in overlays]
 
 
 def expand_code_parse_animspec(animspec):
     if len(animspec)<4 or not animspec.startswith('[['):
         return ('simple', expand_code_parse_simpleanimspec(animspec))
-    
+
     #escape
     (esc_open, esc_close) = expand_code_search_escape_sequences(animspec)
     animspec = animspec.replace('\\[', esc_open)
     animspec = animspec.replace('\\]', esc_close)
-    
+
     p = re.compile(r'\[|\]\[|\]')
     simple_specs = ['[%s]'%s for s in [s for s in p.split(animspec) if len(s.strip())>0]]
 
@@ -563,7 +563,7 @@ def expand_code_parse_animspec(animspec):
     for pss in parsed_simple_specs:
         unified_pss.extend(pss)
     return ('double', unified_pss)
-    
+
 
 def expand_code_getmaxoverlay(parsed_anims):
     max_overlay = 0
@@ -591,7 +591,7 @@ def expand_code_genanims(parsed_animspec, minoverlay, maxoverlay, type):
         for simple_animspec in parsed_animspec:
             if maxlen < len(simple_animspec[1]):
                 maxlen = len(simple_animspec[1])
-    
+
     out = []
     fill = ''.join([' ' for i in range(0, maxlen)])
     for x in range(minoverlay,maxoverlay+1):
@@ -607,7 +607,7 @@ def expand_code_getname(code):
         '4':'e', '5':'f', '6':'g', '7':'h', '8':'i', '9':'j', \
         'a':'k', 'b':'l', 'c':'m', 'd':'n', 'e':'o', 'f':'p' \
     }
-    
+
     hexhash = md5hex(code.encode('utf8'))
     alphahash = ''.join(hex2alpha_table[x] for x in hexhash)
     return alphahash
@@ -642,7 +642,7 @@ def expand_code_segment(result, codebuffer, state):
     #treat first line as params for lstlistings
     lstparams = codebuffer[0]
     codebuffer[0] = ''
- 
+
     #join lines into one string
     code = ''.join(codebuffer)
 
@@ -661,21 +661,21 @@ def expand_code_segment(result, codebuffer, state):
         anim_map = {}
         for i in range(0,max_overlay-min_overlay+1):
             anim_map[i+min_overlay] = [x[i] for x in gen_anims]
-    
+
         names = []
         for overlay in make_sorted(anim_map.keys()):
             #combine non_anim and anim parts
             anim_map[overlay].append('')
             zipped = zip(non_anim, anim_map[overlay])
             code = ''.join(x[0] + x[1] for x in zipped)
-            
+
             #generate a collision free entry in the defverbs-map and names-list
             (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
 
             #now we have a collision free entry, append it
             names.append(name)
             state.defverbs[name] = expanded_code
-        
+
         #append overprint area to result
         overprint = expand_code_makeoverprint(names, min_overlay)
         result.append(overprint)
@@ -683,7 +683,7 @@ def expand_code_segment(result, codebuffer, state):
         #we have no animations and can just put the defverbatim in
         #remove escapings
         code = code.replace('\\[', '[').replace('\\]', ']')
-        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)  
+        (name, expanded_code) = expand_code_get_unique_name(state.defverbs, code, lstparams)
         state.defverbs[name] = expanded_code
         result.append('\n\\%s\n' % name)
 
@@ -738,7 +738,7 @@ def parse_usepackage(usepackage):
     @return (tuple)
         (name(str), options(str))
     """
-    
+
     p = re.compile(r'^\s*(\[.*\])?\s*\{(.*)\}\s*$')
     m = p.match(usepackage)
     g = m.groups()
@@ -769,7 +769,7 @@ def unify_autotemplates(autotemplates):
                 documentclass = command[1]
             else:
                 merged.append(command)
-    
+
     autotemplate = []
     autotemplate.append(('documentclass', documentclass))
     for (name, options) in usepackages.items():
@@ -831,7 +831,7 @@ def get_autotemplatemode(line, autotemplatemode):
         return (line, autotemplatemode)
 
 def get_nowikimode(line, nowikimode):
-    
+
     if not nowikimode and nowikistartre.match(line)!=None:
         line = nowikistartre.sub('', line)
         return (line, True)
@@ -937,7 +937,7 @@ def filter_selected_lines(lines):
             selected_frame_opened = False
             frame_closed = True
             frame_manually_closed = True
-        
+
         if selected_frame_opened or (frame_closed and not frame_manually_closed):
             selected_lines.append(line)
 
@@ -1041,7 +1041,7 @@ def convert2beamer_full(lines):
                 elif not _autotemplatemode and autotemplatemode: #autotemplate mode was turned off
                     expand_autotemplate_opening(result, autotemplatebuffer, state)
                 autotemplatemode = _autotemplatemode
-                
+
                 if autotemplatemode:
                     autotemplatebuffer.append(line)
                 else:
@@ -1054,7 +1054,7 @@ def convert2beamer_full(lines):
         result.append(get_frame_closing(state))
     if state.autotemplate_opened:
         result.append(get_autotemplate_closing())
-    
+
     #insert defverbs somewhere at the beginning
     expand_code_defverbs(result, state)
 
