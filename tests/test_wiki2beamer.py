@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 #     This file is part of wiki2beamer.
 # wiki2beamer is free software: you can redistribute it and/or modify
@@ -319,6 +320,11 @@ class TestConvert2Beamer(unittest.TestCase):
         lines = ['<[code]', '\\[11111 10000 9000 code 70000\\]', '[code]>']
         out = convert2beamer(lines)
         self.assertTrue('11111' in '\n'.join(out))
+
+    def test_utf8_in_code(self):
+        lines =['<[code]', 'ä', '[code]>']
+        # this should not raise an exception
+        out = convert2beamer(lines)
 
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
