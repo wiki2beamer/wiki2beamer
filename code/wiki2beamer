@@ -686,7 +686,7 @@ def expand_code_segment(result, codebuffer, state):
     return
 
 def expand_code_defverbs(result, state):
-        result[state.code_pos] = result[state.code_pos] + '\n'.join(list(state.defverbs.values())) + '\n'
+    result[state.code_pos] = result[state.code_pos] + '\n'.join(list(state.defverbs.values())) + '\n'
     state.defverbs.clear()
 
 def get_autotemplate_closing():
