@@ -1,26 +1,29 @@
-wiki2beamer
-http://wiki2beamer.sourceforge.net/
+# wiki2beamer
 
-----------------------------------------------------------------------
 Create latex beamer code from an easy, wiki-like syntax.
 
-Current version: 0.9.5
-Maintainer:
-	Valentin Haenel <valentin.haenel@gmx.de>
-Original Authors:
-	Michael Rentzsch (http://www.repc.de, michael.rentzsch@repc.de)
-	Kai Dietrich (http://www.cleeus.de/, mail@cleeus.de)
-Contributors:
-	Julius Plenz <julius@plenz.com>
-	Volker Mische <volker.mische@gmail.com>
-	Georges Khaznadar <georgesk@ofset.org>
-	Sam Tygier <samtygier@yahoo.co.uk>
-	Moritz 'Morty' Strübe <morty@gmx.net>
-	Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+* [Homepage](http://wiki2beamer.sourceforge.net/)
+* Current version: 0.9.5
 
-License:
-	GNU GPL v2 or later (code)
-	GNU FDL 1.3 or later (documentation)
+## People
+
+* Maintainer:
+    * Valentin Haenel (http://haenel.co <valentin.haenel@gmx.de>)
+* Original Authors:
+    * Michael Rentzsch (http://www.repc.de, <michael.rentzsch@repc.de>)
+    * Kai Dietrich (http://www.cleeus.de/, <mail@cleeus.de>)
+* Contributors:
+    * Julius Plenz <julius@plenz.com>
+    * Volker Mische <volker.mische@gmail.com>
+    * Georges Khaznadar <georgesk@ofset.org>
+    * Sam Tygier <samtygier@yahoo.co.uk>
+    * Moritz 'Morty' Strübe <morty@gmx.net>
+    * Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
+
+## License
+
+* GNU GPL v2 or later (code)
+* GNU FDL 1.3 or later (documentation)
 
 ----------------------------------------------------------------------
 
