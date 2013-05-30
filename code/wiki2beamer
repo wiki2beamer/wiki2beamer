@@ -1014,13 +1014,13 @@ def munge_input_lines(lines):
     new_lines = []
     for line in lines:
         if munge is True:
-            if not line.endswith('\\'):
+            if not line.endswith('\\') and not line.endswith('\\\\'):
                 munge = False
             else:
                 line = line[:-1]
             new_lines[-1] += line
         else:
-            if line.endswith("\\"):
+            if line.endswith("\\") and not line.endswith('\\\\'):
                 munge = True
                 line = line[:-1]
             new_lines.append(line)

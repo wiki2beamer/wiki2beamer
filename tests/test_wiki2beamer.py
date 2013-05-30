@@ -409,6 +409,10 @@ class TestMunge(unittest.TestCase):
         out = munge_input_lines(in_)
         self.assertEqual(out, expected)
 
+    def test_correct_munge_escape(self):
+        in_ = ['* one\\\\', '  two']
+        out = munge_input_lines(in_)
+        self.assertEqual(out, in_)
 
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
