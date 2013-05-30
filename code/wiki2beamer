@@ -1014,15 +1014,16 @@ def munge_input_lines(lines):
     new_lines = []
     for line in lines:
         if munge is True:
-            new_lines[-1] += line
             if not line.endswith('\\'):
                 munge = False
+            else:
+                line = line[:-1]
+            new_lines[-1] += line
         else:
             if line.endswith("\\"):
                 munge = True
-                new_lines.append(line[:-1])
-            else:
-                new_lines.append(line)
+                line = line[:-1]
+            new_lines.append(line)
     return new_lines
 
 def convert2beamer_full(lines):

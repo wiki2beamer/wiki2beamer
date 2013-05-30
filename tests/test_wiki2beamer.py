@@ -403,6 +403,13 @@ class TestMunge(unittest.TestCase):
         out = munge_input_lines(in_)
         self.assertEqual(out, expected)
 
+    def test_multi_munge(self):
+        in_ = ['* one\\', '  two\\', '  three', '* four']
+        expected = ['* one  two  three', '* four']
+        out = munge_input_lines(in_)
+        self.assertEqual(out, expected)
+
+
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
         return
