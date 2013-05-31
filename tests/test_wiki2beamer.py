@@ -395,6 +395,25 @@ class TestFileInclusion(unittest.TestCase):
         out = convert2beamer(out)
         self.assertEqual(out, expected)
 
+class TestMunge(unittest.TestCase):
+
+    def test_basic_munge(self):
+        in_ = ['* one\\', '  two', '* three', '* four']
+        expected = ['* one  two', '* three', '* four']
+        out = munge_input_lines(in_)
+        self.assertEqual(out, expected)
+
+    def test_multi_munge(self):
+        in_ = ['* one\\', '  two\\', '  three', '* four']
+        expected = ['* one  two  three', '* four']
+        out = munge_input_lines(in_)
+        self.assertEqual(out, expected)
+
+    def test_correct_munge_escape(self):
+        in_ = ['* one\\\\', '  two']
+        out = munge_input_lines(in_)
+        self.assertEqual(out, in_)
+
 class TestSelectedFramesMode(unittest.TestCase):
     def setUp(self):
         return

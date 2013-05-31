@@ -1008,6 +1008,24 @@ def include_file_recursive(base):
     recurse(base)
     return output
 
+def munge_input_lines(lines):
+    # join lines if they end with single \
+    munge = False
+    new_lines = []
+    for line in lines:
+        if munge is True:
+            if not line.endswith('\\') and not line.endswith('\\\\'):
+                munge = False
+            else:
+                line = line[:-1]
+            new_lines[-1] += line
+        else:
+            if line.endswith("\\") and not line.endswith('\\\\'):
+                munge = True
+                line = line[:-1]
+            new_lines.append(line)
+    return new_lines
+
 def convert2beamer_full(lines):
     """ convert to LaTeX beamer"""
     state = w2bstate()
@@ -1093,6 +1111,8 @@ def main(argv):
     lines = []
     for file_ in input_files:
         lines += include_file_recursive(file_)
+
+    lines = munge_input_lines(lines)
 
     lines = convert2beamer(lines)
     print_result(lines)
