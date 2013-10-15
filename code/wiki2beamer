@@ -240,6 +240,25 @@ def transform_detect_manual_frameclose(string, state):
 def get_frame_closing(state):
     return " %s \n\\end{frame}\n" % state.frame_footer
 
+def transform_spec_to_title_slide(string, state):
+
+    frame_opening = r"\n\\begin{frame}\n\\frametitle{}\n\\begin{center}\n{\Huge \1}\n\\end{center}\n"
+    frame_closing = escape_resub(get_frame_closing(state))
+
+    p = re.compile("^=!\s*(.*?)\s*!=(.*)", re.VERBOSE)
+
+    if not state.frame_opened:
+        _string = p.sub(frame_opening, string)
+    else:
+        _string = p.sub(frame_closing + frame_opening, string)
+
+    if (string != _string):
+        state.frame_opened = True
+        state.switch_to_next_frame()
+
+
+    return _string
+
 def transform_h4_to_frame(string, state):
     """headings (3) to frames"""
     frame_opening = r"\\begin{frame}\2\n \\frametitle{\1}\n %s \n" % escape_resub(state.next_frame_header)
@@ -444,6 +463,7 @@ def transform(string, state):
     #string = transform_itemenums(string, state)
     string = transform_define_foothead(string, state)
     string = transform_detect_manual_frameclose(string, state)
+    string = transform_spec_to_title_slide(string,state)
     string = transform_h4_to_frame(string, state)
     string = transform_h3_to_subsec(string, state)
     string = transform_h2_to_sec(string, state)
