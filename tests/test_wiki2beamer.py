@@ -51,6 +51,13 @@ class TestBasics(unittest.TestCase):
         self.assertEqual(out, substr)
 
 
+    def test_make_unique(self):
+
+        a = make_unique("foofar")
+        self.assertEqual(sorted(a),['a','f','o','r'])
+
+
+
 class TestTransform(unittest.TestCase):
     def setUp(self):
         self.state = w2bstate()
