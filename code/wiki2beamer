@@ -147,6 +147,7 @@ class w2bstate:
         self.autotemplate_opened = False
         self.defverbs = maybe_odict()
         self.code_pos = 0
+        self.lstset = []
         return
 
     def switch_to_next_frame(self):
@@ -427,10 +428,20 @@ def transform_only(string):
     string = p.sub(r"\only<\1>{\2", string)
     return string
 
+def remember_lstset(string, state):
+    """ lstset """
+    p = re.compile("\\lstset{(.*?)}", re.VERBOSE)
+    r = p.search(string)
+    if r != None:
+        state.lstset.append(r.group(1))
+    return string
+
+
 def transform(string, state):
     """ convert/transform one line in context of state"""
 
     #string = transform_itemenums(string, state)
+    string = remember_lstset(string, state)
     string = transform_define_foothead(string, state)
     string = transform_detect_manual_frameclose(string, state)
     string = transform_h4_to_frame(string, state)
@@ -639,7 +650,15 @@ def make_sorted(seq):
 
 def expand_code_segment(result, codebuffer, state):
     #treat first line as params for lstlistings
-    lstparams = codebuffer[0]
+    #save global state
+    lstparams_arr = list(state.lstset)
+    #get local state
+    p = re.compile("\[(.*?)\]", re.VERBOSE)
+    r = p.search(codebuffer[0])
+    if r != None:
+        lstparams_arr.append(r.group(1))    
+        
+    lstparams = '[' + ','.join(lstparams_arr) + ']\n' 
     codebuffer[0] = ''
 
     #join lines into one string
