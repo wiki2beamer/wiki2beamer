@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf8 -*-
 
 # wiki2beamer
 #
@@ -33,6 +34,7 @@ import os
 import re
 import random
 import optparse
+import codecs
 
 
 VERSIONTAG = "0.9.5"
@@ -62,7 +64,7 @@ def pprint(string, file=sys.stdout, eol=True):
     if file == sys.stderr and _redirected_stderr is not None:
         file = _redirected_stderr
 
-    file.write(string)
+    file.write(string.encode('utf-8'))
     if eol:
         file.write(os.linesep)
     file.flush()
@@ -880,7 +882,7 @@ def joinLines(lines):
 def read_file_to_lines(filename):
     """ read file """
     try:
-        f = open(filename, "r")
+        f = codecs.open(filename, "r", encoding='UTF-8')
         lines = joinLines(f.readlines())
         f.close()
     except:
