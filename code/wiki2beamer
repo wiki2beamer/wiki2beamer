@@ -39,6 +39,8 @@ VERSIONTAG = "0.9.5"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich and others"
 
+linenr = 1
+
 #python 2.4 compatability
 if sys.version_info >= (2, 5):
     import hashlib
@@ -72,7 +74,8 @@ def mydebug(message):
     pprint(message, file=sys.stderr)
 
 def syntax_error(message, code):
-    pprint('syntax error: %s' % message, file=sys.stderr)
+    global linenr
+    pprint('syntax error (line %(l)d): %(m)s' % {"l":linenr, "m":message}, file=sys.stderr)
     pprint('\tcode:\n%s' % code, file=sys.stderr)
     sys.exit(-3)
 
@@ -1028,6 +1031,7 @@ def munge_input_lines(lines):
 
 def convert2beamer_full(lines):
     """ convert to LaTeX beamer"""
+    global linenr
     state = w2bstate()
     result = [''] #start with one empty line as line 0
     codebuffer = []
@@ -1038,6 +1042,7 @@ def convert2beamer_full(lines):
     autotemplatemode = False
 
     for line in lines:
+        linenr += 1
         (line, nowikimode) = get_nowikimode(line, nowikimode)
         if nowikimode:
             result.append(line)
