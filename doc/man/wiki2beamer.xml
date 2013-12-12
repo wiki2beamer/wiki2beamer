@@ -257,10 +257,13 @@ titleframe=True
 			<listitem><para>typeset <replaceable>text</replaceable> italic</para></listitem></varlistentry>
 		<varlistentry><term>@<replaceable>text</replaceable>@</term>
 			<listitem><para>typeset <replaceable>text</replaceable> in typewriter type, to ignore an @, escape it as \@</para></listitem></varlistentry>
+		<varlistentry><term>§<replaceable>inline code</replaceable>§</term>
+			<listitem><para>typeset <replaceable>inline code</replaceable> using lstinline, to ignore an §, escape it as \§</para></listitem></varlistentry>
 		<varlistentry><term>!<replaceable>text</replaceable>!</term>
 			<listitem><para>alert <replaceable>text</replaceable>, to ignore an !, escape it as \!</para></listitem></varlistentry>
 		<varlistentry><term>_ <replaceable>color</replaceable> _ <replaceable>text</replaceable> _</term>
 			<listitem><para>make <replaceable>text</replaceable> appear in <replaceable>color</replaceable></para></listitem></varlistentry>
+
 	</variablelist>
 </refsect2>
 
