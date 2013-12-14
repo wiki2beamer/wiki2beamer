@@ -378,19 +378,19 @@ class TestFileInclusion(unittest.TestCase):
         self.assertRaises(Exception, include_file_recursive, 'test_file_loop')
 
     def test_include_file_disabled_inside_code(self):
-        expected = ['\\defverbatim[colored]\\mfkjiamnpineejahopjoapckhioohfpa{\n\\begin{lstlisting}>>>test_file<<<\\end{lstlisting}\n}\n', '\n\\mfkjiamnpineejahopjoapckhioohfpa\n', '', '']
+        expected = ['\\defverbatim[colored]\\mfkjiamnpineejahopjoapckhioohfpa{\n\\begin{lstlisting}>>>test_file<<<\\end{lstlisting}\n}\n', '\n\\mfkjiamnpineejahopjoapckhioohfpa\n', '']
         out = include_file_recursive('test_file_code')
         out = convert2beamer(out)
         self.assertEqual(out,expected)
 
     def test_include_file_inside_code_inside_nowiki(self):
-        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '', '>>>test_file<<<', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '', '']
+        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '', '>>>test_file<<<', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '']
         out = include_file_recursive('test_file_code_nowiki')
         out = convert2beamer(out)
         self.assertEqual(out,expected)
     
     def test_include_file_after_code(self):
-        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', '', 'test file content', '']
+        expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', 'test file content', '']
         out = include_file_recursive('test_file_include_after_code')
         out = convert2beamer(out)
         self.assertEqual(out, expected)

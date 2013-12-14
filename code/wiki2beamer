@@ -1047,10 +1047,10 @@ def convert2beamer_full(lines):
                 codebuffer = []
             elif not _codemode and codemode: #code mode was turned off
                 expand_code_segment(result, codebuffer, state)
-            codemode = _codemode
 
-            if codemode:
+            if codemode | _codemode:
                 codebuffer.append(line)
+                codemode = _codemode
             else:
                 (line, _autotemplatemode) = get_autotemplatemode(line, autotemplatemode)
                 if _autotemplatemode and not autotemplatemode: #autotemplate mode was turned on
