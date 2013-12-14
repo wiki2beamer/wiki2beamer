@@ -1,0 +1,8 @@
+language: python
+python:
+  - 2.7
+install:
+script:
+  - PYTHONPATH=code python tests/test_wiki2beamer.py
+notifications:
+  email: false
