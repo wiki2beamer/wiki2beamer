@@ -326,6 +326,23 @@ class TestConvert2Beamer(unittest.TestCase):
         # this should not raise an exception
         out = convert2beamer(lines)
 
+    def test_use_code_in_itemenums(self):
+        lines = ["* L1",
+                 "** L2.1",
+                 "<[code]",
+                 "Example",
+                 "[code]>",
+                 "** L2.2",
+                 ]
+        expected = ['\\defverbatim[colored]\\akfchdafjhpleppkabpmbbhnjohbodkj{\n\\begin{lstlisting}Example\\end{lstlisting}\n}\n',
+                    '\\begin{itemize}\n  \\item L1',
+                    '\\begin{itemize}\n  \\item L2.1',
+                    '\n\\akfchdafjhpleppkabpmbbhnjohbodkj\n',
+                    '  \\item L2.2',
+                    '\\end{itemize}\n\\end{itemize}\n']
+        received = convert2beamer(lines)
+        self.assertTrue(expected, received)
+
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
         files = {'test_file': ['test file content'],
