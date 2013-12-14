@@ -1048,7 +1048,7 @@ def convert2beamer_full(lines):
             elif not _codemode and codemode: #code mode was turned off
                 expand_code_segment(result, codebuffer, state)
 
-            if codemode | _codemode:
+            if codemode or _codemode:
                 codebuffer.append(line)
                 codemode = _codemode
             else:
