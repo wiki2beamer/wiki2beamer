@@ -466,13 +466,13 @@ def expand_code_make_lstlisting(content, options):
     return "\\begin{lstlisting}%s%s\\end{lstlisting}" % (options, content)
 
 def expand_code_search_escape_sequences(code):
-    open = '1'
-    close = '2'
-    while code.find(open) != -1 or code.find(close) != -1:
-        open = open + chr(random.randint(48,57))
-        close = close + chr(random.randint(48,57))
+    esc_open = '1'
+    esc_close = '2'
+    while code.find(esc_open) != -1 or code.find(esc_close) != -1:
+        esc_open = esc_open + chr(random.randint(48,57))
+        esc_close = esc_close + chr(random.randint(48,57))
 
-    return (open,close)
+    return (esc_open,esc_close)
 
 def expand_code_tokenize_anims(code):
     #escape
