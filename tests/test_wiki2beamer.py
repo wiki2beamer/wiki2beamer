@@ -66,7 +66,7 @@ class TestTransform(unittest.TestCase):
 
     def test_section(self):
         self.assertEqual(transform('== foo ==', self.state), '\n\\section{foo}\n\n')
-    
+
     def test_subsection(self):
         self.assertEqual(transform('=== foo ===', self.state), '\n\\subsection{foo}\n\n')
 
@@ -123,7 +123,7 @@ class TestTransform(unittest.TestCase):
     def test_only(self):
         self.assertEqual(transform('-<2-> {foo}', self.state), '\only<2->{foo}')
         self.assertEqual(transform(' -<2->{\nfoo', self.state), ' \only<2->{\nfoo')
-    
+
     def test_uncover_intext(self):
         self.assertEqual(transform('foo +<2->{moo} bar', self.state), 'foo \\uncover<2->{moo} bar')
         self.assertEqual(transform(\
@@ -180,7 +180,7 @@ class TestExpandCode(unittest.TestCase):
         for i in range(0, 100):
             code.extend(items)
             random.shuffle(items)
-        
+
         out = expand_code_tokenize_anims(''.join(code))
         self.assert_(len(out[0])>0)
         self.assert_(len(out[1])>0)
@@ -188,7 +188,7 @@ class TestExpandCode(unittest.TestCase):
             self.assert_(item.startswith('[') and item.endswith(']'))
         for item in out[1]: #non-anims
             self.assert_(not (item.startswith('[') and item.endswith(']')))
-    
+
     def test_expand_code_tokenize_anims_empty(self):
         out = expand_code_tokenize_anims('')
         self.assertEqual(out[0], [])
@@ -197,7 +197,7 @@ class TestExpandCode(unittest.TestCase):
 class TestConvert2Beamer(unittest.TestCase):
     def setUp(self):
         return
-    
+
     def tearDown(self):
         return
 
@@ -211,13 +211,13 @@ class TestConvert2Beamer(unittest.TestCase):
                 '']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
-     
+
     def test_not_nowiki(self):
         lines = [' <[nowiki]', '== foo ==']
         expected = ['\n', ' <[nowiki]', '\n\section{foo}\n\n', '']
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
-    
+
     def test_frame_open_close(self):
         lines = ['==== foo ====']
         expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n']
@@ -265,7 +265,7 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
- 
+
     def test_enumerate_marker(self):
         lines = ['#[A]foo', '#[B] bar', '##[C] foobar']
         expected = ['\n', '\\begin{enumerate}\n  \\item[A] foo', '  \\item[B] bar', '\\begin{enumerate}\n  \\item[C] foobar', '\\end{enumerate}\n\\end{enumerate}\n']
@@ -301,7 +301,7 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{frame}\n \\frametitle{foo}\n  \n', '', '  \n\\end{frame}\n\n\\section{foosec}\n\n', '\\begin{frame}\n \\frametitle{bar}\n  \n', '', ' bar \n\\end{frame}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
-    
+
     def test_itemizeclose_column(self):
         lines = ['* foo', '[[[6cm]]]']
         expected = ['\n', '\\begin{itemize}\n  \\item foo', '\\end{itemize}\n\\column{6cm}', '']
@@ -380,7 +380,7 @@ class TestFileInclusion(unittest.TestCase):
         for file_, lines in list(files.items()):
             add_lines_to_cache(file_, lines)
         return
-    
+
     def tearDown(self):
         clear_file_cache()
         return
@@ -417,7 +417,7 @@ class TestFileInclusion(unittest.TestCase):
         out = include_file_recursive('test_file_code_nowiki')
         out = convert2beamer(out)
         self.assertEqual(out,expected)
-    
+
     def test_include_file_after_code(self):
         expected = ['\\defverbatim[colored]\\nebnimnjipaalcaeojiaajjiompiecho{\n\\begin{lstlisting}\\end{lstlisting}\n}\n', '\n\\nebnimnjipaalcaeojiaajjiompiecho\n', 'test file content', '']
         out = include_file_recursive('test_file_include_after_code')
@@ -449,13 +449,13 @@ class TestSelectedFramesMode(unittest.TestCase):
 
     def tearDown(self):
         return
-    
+
     def test_selected_frames_simple(self):
         lines = ['!==== foo ====', 'mooo']
         expected = ['!==== foo ====', 'mooo']
         out = filter_selected_lines(lines)
         self.assertEqual(out,expected)
-    
+
     def test_unselected_frames_simple(self):
         lines = ['==== foo ====', 'moo']
         expected = []
