@@ -248,6 +248,12 @@ class TestConvert2Beamer(unittest.TestCase):
         out = convert2beamer(lines)
         self.assertEqual(out, expected)
 
+    def test_itemize_marker(self):
+        lines = ['*[A]foo', '*[B] bar', '**[C] foobar']
+        expected = ['\n', '\\begin{itemize}\n  \\item[A] foo', '  \\item[B] bar', '\\begin{itemize}\n  \\item[C] foobar', '\\end{itemize}\n\\end{itemize}\n']
+        out = convert2beamer(lines)
+        self.assertEqual(out, expected)
+
     def test_enumerate(self):
         lines = ['# one', '# two', '## onetwo']
         expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
@@ -259,6 +265,12 @@ class TestConvert2Beamer(unittest.TestCase):
         expected = ['\n', '\\begin{enumerate}\n  \\item one', '  \\item two', '\\begin{enumerate}\n  \\item onetwo', '\\end{enumerate}\n\\end{enumerate}\n']
         out = convert2beamer(lines)
         self.assertEqual(out,expected)
+ 
+    def test_enumerate_marker(self):
+        lines = ['#[A]foo', '#[B] bar', '##[C] foobar']
+        expected = ['\n', '\\begin{enumerate}\n  \\item[A] foo', '  \\item[B] bar', '\\begin{enumerate}\n  \\item[C] foobar', '\\end{enumerate}\n\\end{enumerate}\n']
+        out = convert2beamer(lines)
+        self.assertEqual(out, expected)
 
     def test_itemenum(self):
         lines = ['# one', '#* onefoo', '#* onebar', '## oneone', '#*# onefooone']
