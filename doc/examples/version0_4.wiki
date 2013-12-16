@@ -1,3 +1,18 @@
+<[autotemplate]
+usepackage=[utf8]{inputenc}
+usepackage=[T1]{fontenc}
+usepackage={color}
+usepackage={textcomp}
+usepackage={beamerthemesplit}
+
+title={New Features in Version 0.4}
+author={Michael Rentzsch}
+date={\today}
+
+[autotemplate]>
+
+
+
 == Introduction ==[Intro]
 
 ==== Example Version 0.4 ====

@@ -1,3 +1,19 @@
+<[autotemplate]
+usepackage=[utf8]{inputenc}
+usepackage=[T1]{fontenc}
+usepackage={color}
+usepackage={textcomp}
+usepackage={graphics}
+usepackage={wasysym}
+
+usepackage={beamerthemeWarsaw}
+
+title={wiki2beamer: \\ Howto include graphics}
+author={Michael Rentzsch}
+date={\today}
+
+[autotemplate]>
+
 ==== Content ====
 
 <[center]
@@ -15,7 +31,7 @@ As alway, you can use plain \LaTeX\ code to include figures
 \vfill
 
 <[center]
-	\includegraphics[width=4cm]{knot}
+	\includegraphics[width=4cm]{fig/knot}
 [center]>
 
 
@@ -30,7 +46,7 @@ transformed to a \LaTeX\ @includegraphics@-statement:
 
 
 <[center]
-<<<knot>>>
+<<<fig/knot>>>
 [center]>
 
 
@@ -45,5 +61,5 @@ a comma to separate them from the file name:
 
 
 <[center]
-<<<knot,width=4cm,height=3cm>>>
+<<<fig/knot,width=4cm,height=3cm>>>
 [center]>
