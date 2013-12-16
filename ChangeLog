@@ -1,3 +1,28 @@
+Version 0.10.0 (TBA)
+=======================================
+Valitin Haenel is the new maintainer
+
+Valitin Haenel:
+  Code cleanup
+  Add Travis-CI support
+  Additional test cases
+  Munge support
+  Fix UTF-8-issues
+  Fix Typos
+
+Moritz Strübe
+  Code Cleanup
+  Support markers for items (*[C] text)
+  Support code within items
+
+Zbigniew Jędrzejewski-Szmek
+  Code cleanup  
+  Fix hash collision
+
+Sam Tygier
+  Do not require space after start or hash (*item instead of * item)
+
+
 Version 0.9.5 (2012-03-31)
 =======================================
 Added -o,--output option
