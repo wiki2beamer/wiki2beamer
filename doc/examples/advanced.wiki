@@ -1,3 +1,19 @@
+<[autotemplate]
+usepackage=[utf8]{inputenc}
+usepackage=[T1]{fontenc}
+usepackage={color}
+usepackage={textcomp}
+usepackage={graphics}
+usepackage={wasysym}
+
+usepackage={beamerthemeWarsaw}
+
+title={wiki2beamer: \\ An advanced example}
+author={Michael Rentzsch}
+date={\today}
+
+[autotemplate]>
+
 ==== Content ====
 
 This example introduces further (and new) concepts of '''wiki2beamer''' (and \LaTeX\ Beamer):
@@ -21,7 +37,7 @@ Flushright, \ldots
 *<3-> They can be used for list items
 *<4-> Or for any other type of content \\[4mm]
 
-\only<4->{\includegraphics[width=6cm]{rainbow}}
+\only<4->{\includegraphics[width=6cm]{fig/rainbow}}
 
 
 ==== Overlays in wiki2beamer ====
@@ -34,7 +50,7 @@ Here is the source code for the preceding slide -- I guess it should be very muc
   *<3-> They can be used for list items \\
   *<4-> Or for any other type of content $\backslash$$\backslash$[4mm] \\
 \ \\
-  $\backslash$only$<$4-$>\{$$\backslash$includegraphics[width=6cm]$\{$rainbow$\}\}$
+  $\backslash$only$<$4-$>\{$$\backslash$includegraphics[width=6cm]$\{$fig/rainbow$\}\}$
 }
 
 
@@ -122,7 +138,7 @@ They can be used to place the slide content in a number of different columns. Fo
 left side, as it is the case on this page. And the right side could be used to show an image.
 
 [[[5cm]]]
-\includegraphics[width=4.5cm]{rainbow}
+\includegraphics[width=4.5cm]{fig/rainbow}
 [columns]>
 
 
@@ -136,7 +152,7 @@ Use this syntax to create columns in '''wiki2beamer''': \\[4mm]
   Text \ldots \\
 \ \\ {}
   [[[5cm]]] \\
-  $\backslash$includegraphics[width=4.5cm]$\{$rainbow$\}$ \\{}
+  $\backslash$includegraphics[width=4.5cm]$\{$fig/rainbow$\}$ \\{}
   [columns]$>$ \\[4mm]
 }
 
