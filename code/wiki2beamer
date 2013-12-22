@@ -49,7 +49,11 @@ else:
 #python 2.4 compatability
 def md5hex(string):
     if sys.version_info >= (2, 5):
-        return hashlib.md5(string).hexdigest()
+        # presume that this is valid for all pythin versions after 3
+        if sys.version_info >= (3, 0):
+            return hashlib.md5(string.encode('utf-8')).hexdigest()
+        else:
+            return hashlib.md5(string).hexdigest()
     else:
         dg = md5.md5()
         dg.update(string)

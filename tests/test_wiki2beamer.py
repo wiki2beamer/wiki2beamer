@@ -182,12 +182,12 @@ class TestExpandCode(unittest.TestCase):
             random.shuffle(items)
 
         out = expand_code_tokenize_anims(''.join(code))
-        self.assert_(len(out[0])>0)
-        self.assert_(len(out[1])>0)
+        self.assertTrue(len(out[0])>0)
+        self.assertTrue(len(out[1])>0)
         for item in out[0]: #anims
-            self.assert_(item.startswith('[') and item.endswith(']'))
+            self.assertTrue(item.startswith('[') and item.endswith(']'))
         for item in out[1]: #non-anims
-            self.assert_(not (item.startswith('[') and item.endswith(']')))
+            self.assertTrue(not (item.startswith('[') and item.endswith(']')))
 
     def test_expand_code_tokenize_anims_empty(self):
         out = expand_code_tokenize_anims('')
