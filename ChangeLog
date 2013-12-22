@@ -1,3 +1,15 @@
+Version 0.10.0 (2012-03-31)
+=======================================
+* Allow '\' to be used as line continuation
+* Travis-CI support
+* Fix Python 3.3 compatibility
+* Support code within items
+* Support markers for items (*[C] text)
+* Many many bugfixes, code cleanups and typo fixes
+
+Thanks to Sam Tygier, Zbigniew Jędrzejewski-Szmek and Moritz Strübe for their
+work leading to this release.
+
 Version 0.9.5 (2012-03-31)
 =======================================
 Added -o,--output option
