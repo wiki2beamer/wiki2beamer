@@ -130,6 +130,8 @@
 	<variablelist>
 		<varlistentry><term>* <replaceable>text</replaceable></term>
 			<listitem><para>create a bullet (itemize) with <replaceable>text</replaceable></para></listitem></varlistentry>
+		<varlistentry><term>*[<replaceable>marker</replaceable>] <replaceable>text</replaceable></term>
+			<listitem><para>Setting <replaceable>marker</replaceable>s works like in tex.
 		<varlistentry><term>*&lt;<replaceable>onslide</replaceable>&gt; <replaceable>text</replaceable></term>
 			<listitem><para>create a bullet (itemize) with <replaceable>text</replaceable> that only
 			appears on the specified slides (<replaceable>onslide</replaceable>)</para></listitem></varlistentry>
