@@ -51,6 +51,13 @@ class TestBasics(unittest.TestCase):
         self.assertEqual(out, substr)
 
 
+    def test_make_unique(self):
+
+        a = make_unique("foofar")
+        self.assertEqual(sorted(a),['a','f','o','r'])
+
+
+
 class TestTransform(unittest.TestCase):
     def setUp(self):
         self.state = w2bstate()
@@ -69,6 +76,9 @@ class TestTransform(unittest.TestCase):
 
     def test_subsection(self):
         self.assertEqual(transform('=== foo ===', self.state), '\n\\subsection{foo}\n\n')
+
+    def test_titleslide(self):
+        self.assertEqual(transform('=! Title of the Slide? !=', self.state), "\n\\begin{frame}\n\\frametitle{}\n\\begin{center}\n{\\Huge Title of the Slide?}\n\\end{center}\n")
 
     def test_footnote(self):
         self.assertEqual(transform('(((foo)))', self.state), '\\footnote{foo}')
