@@ -48,6 +48,11 @@ else:
     import md5
 #python 2.4 compatability
 def md5hex(string):
+    '''
+    Compute MD5 hash
+    @param string: input string
+    @return: md5hash
+    '''
     if sys.version_info >= (2, 5):
         # presume that this is valid for all pythin versions after 3
         if sys.version_info >= (3, 0):
@@ -55,9 +60,9 @@ def md5hex(string):
         else:
             return hashlib.md5(string).hexdigest()
     else:
-        dg = md5.md5()
-        dg.update(string)
-        return dg.hexdigest()
+        digest = md5.md5()
+        digest.update(string)
+        return digest.hexdigest()
 
 _redirected_stdout = None
 _redirected_stderr = None
