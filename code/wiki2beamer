@@ -83,6 +83,11 @@ def mydebug(message):
     pprint(message, file=sys.stderr)
 
 def syntax_error(message, code):
+    """
+    Print information about syntax error to stderr and exit
+    @param message: message detail
+    @param code: numeric code
+    """
     pprint('syntax error: %s' % message, file=sys.stderr)
     pprint('\tcode:\n%s' % code, file=sys.stderr)
     sys.exit(-3)
@@ -90,7 +95,7 @@ def syntax_error(message, code):
 class IncludeLoopException(Exception):
     pass
 
-lstbasicstyle=\
+lstbasicstyle = \
 r"""{basic}{
     captionpos=t,%
     basicstyle=\footnotesize\ttfamily,%
@@ -131,6 +136,12 @@ def add_lines_to_cache(filename, lines):
         _file_cache[filename] = lines
 
 def get_lines_from_cache(filename):
+    """
+    Retrieve file lines from cache, if file is not cached read it and
+    place the contents into the cache.
+    @param filename:  file name
+    @return: file contents
+    """
     if filename in _file_cache:
         return _file_cache[filename]
     else:
@@ -161,13 +172,16 @@ class w2bstate:
         return
 
     def switch_to_next_frame(self):
+        """
+        Switch to next frame
+        """
         self.frame_header = self.next_frame_header
         self.frame_footer = self.next_frame_footer
         return
 
 def escape_resub(string):
-    p = re.compile(r"\\")
-    return p.sub(r"\\\\", string)
+    pattern = re.compile(r"\\")
+    return pattern.sub(r"\\\\", string)
 
 
 def transform_itemenums(string, state):
@@ -175,8 +189,8 @@ def transform_itemenums(string, state):
     preamble = ""   # for enumeration/itemize environment commands
 
     # handle itemizing/enumerations
-    p = re.compile("^([\*\#]+).*$")
-    m = p.match(string)
+    pattern = re.compile("^([\*\#]+).*$")
+    m = pattern.match(string)
     if m is None:
         my_enum_item_level = ""
     else:
@@ -209,8 +223,8 @@ def transform_itemenums(string, state):
     state.enum_item_level = my_enum_item_level
 
     # now, substitute item markers
-    p = re.compile("^([\*\#]+)((?:\[[^\]*]\])?)\s*(.*)$")
-    _string = p.sub(r"  \\item\2 \3", string)
+    pattern = re.compile("^([\*\#]+)((?:\[[^\]*]\])?)\s*(.*)$")
+    _string = pattern.sub(r"  \\item\2 \3", string)
     string = preamble + _string
 
     return string
