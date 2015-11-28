@@ -68,7 +68,7 @@ def pprint(string, file=sys.stdout, eol=True):
     if file == sys.stderr and _redirected_stderr is not None:
         file = _redirected_stderr
 
-    file.write(string.encode('utf-8'))
+    file.write(string)
     if eol:
         file.write(os.linesep)
     file.flush()
