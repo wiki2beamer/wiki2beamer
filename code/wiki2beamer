@@ -73,8 +73,6 @@ def pprint(string, file=sys.stdout, eol=True):
     else:
         file.write(string.encode('utf-8'))
     
-    
-    
     if eol:
         file.write(os.linesep)
     file.flush()
