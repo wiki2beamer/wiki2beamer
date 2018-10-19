@@ -6,6 +6,8 @@ Version 0.10.0 (2012-03-31)
 * Fix Python 3.3 compatibility
 * Support code within items
 * Support markers for items (*[C] text)
+* Add titleframeopts
+* Fix regex issues for python 3.7
 * Many many bugfixes, code cleanups and typo fixes
 
 Thanks to Sam Tygier, Zbigniew Jędrzejewski-Szmek, Michael Adam, Michael
