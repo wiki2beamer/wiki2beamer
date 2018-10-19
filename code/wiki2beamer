@@ -797,16 +797,19 @@ def expand_autotemplate_gen_opening(autotemplate):
         the string the with generated latex code
     """
     titleframe = False
+    titleframeopts = ''
     out = []
     for item in autotemplate:
-        if item[0]!='titleframe':
-            out.append('\\%s%s' % item)
-        else:
+        if item[0] == 'titleframe':
             titleframe = parse_bool(item[1])
+        elif item[0] == 'titleframeopts':
+            titleframeopts = item[1]
+        else:
+            out.append('\\%s%s' % item)
 
     out.append('\n\\begin{document}\n')
     if titleframe:
-        out.append('\n\\frame{\\titlepage}\n')
+        out.append('\n\\frame%s{\\titlepage}\n' % titleframeopts)
 
     return '\n'.join(out)
 

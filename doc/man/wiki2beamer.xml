@@ -197,7 +197,10 @@ lstdefinestyle={basic}{....}
 titleframe=True
 [autotemplate]&gt;</programlisting>
 				titleframe is a special key that tells wiki2beamer to create a title frame. To set the title, subtitle and author of the presentation
-				use the keys title, subtitle and author. Overriding of the default options works on</para>
+				use the keys title, subtitle and author.
+				Another special key related to the titleframe key is the titleframeopts key: If set, the value will be passed to
+				the titleframe as options. A commonly useful setting is titleframeopts=[plain].
+				Overriding of the default options works on</para>
 				<itemizedlist>
 					<listitem>per-key level for: documentclass, titleframe</listitem>
 					<listitem>per-package level for: usepackage</listitem>
