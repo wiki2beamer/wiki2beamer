@@ -1,5 +1,6 @@
 Version 0.10.0 (2012-03-31)
 =======================================
+* Fix hash collisions in code include
 * Allow '\' to be used as line continuation
 * Travis-CI support
 * Fix Python 3.3 compatibility
@@ -7,8 +8,8 @@ Version 0.10.0 (2012-03-31)
 * Support markers for items (*[C] text)
 * Many many bugfixes, code cleanups and typo fixes
 
-Thanks to Sam Tygier, Zbigniew Jędrzejewski-Szmek and Moritz Strübe for their
-work leading to this release.
+Thanks to Sam Tygier, Zbigniew Jędrzejewski-Szmek, Michael Adam, Michael
+Legrin and Moritz Strübe for their work leading to this release.
 
 Version 0.9.5 (2012-03-31)
 =======================================
