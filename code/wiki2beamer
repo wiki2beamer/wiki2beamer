@@ -68,7 +68,11 @@ def pprint(string, file=sys.stdout, eol=True):
     if file == sys.stderr and _redirected_stderr is not None:
         file = _redirected_stderr
 
-    file.write(string.encode('utf-8'))
+    if file == sys.stderr or file == sys.stdout:
+        file.write(string)
+    else:
+        file.write(string.encode('utf-8'))
+    
     if eol:
         file.write(os.linesep)
     file.flush()
@@ -424,13 +428,13 @@ def transform_vspacestar(string):
 def transform_uncover(string):
     """uncover"""
     p = re.compile("\+<(.*)>\s*{(.*)") # +<1-2>{.... -> \uncover<1-2>{....
-    string = p.sub(r"\uncover<\1>{\2", string)
+    string = p.sub(r"\\uncover<\1>{\2", string)
     return string
 
 def transform_only(string):
     """only"""
     p = re.compile("-<(.*)>\s*{(.*)") # -<1-2>{.... -> \only<1-2>{....
-    string = p.sub(r"\only<\1>{\2", string)
+    string = p.sub(r"\\only<\1>{\2", string)
     return string
 
 def transform(string, state):
