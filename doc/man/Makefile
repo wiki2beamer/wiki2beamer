@@ -9,7 +9,7 @@ man:  wiki2beamer.xml man1
 	@man -D -M '.' wiki2beamer
 
 html: wiki2beamer.xml wiki2beamer.1
-	man2html wiki2beamer.1 | sed 's/Manpage of wiki2beamer/Manpage of wiki2beamer (man wiki2beamer)/' | sed 's/Content-type: text\/html//' > wiki2beamer.html
+	asciidoctor -b html5 wiki2beamer.adoc
 
 clean:
 	rm wiki2beamer.1
