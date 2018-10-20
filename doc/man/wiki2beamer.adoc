@@ -1,0 +1,326 @@
+= wiki2beamer(1)
+wiki2beamer developers
+v0.9.5
+:doctype: manpage
+:manmanual: WIKI2BEAMER
+:mansource: WIKI2BEAMER
+:man-linkstyle: pass:[blue R < >]
+
+== Name
+
+wiki2beamer - convert wiki-formatted text to latex-beamer code
+
+== Synopsis
+
+wiki2beamer [OPTION...] [FILE...]
+
+== Description
+
+_FILE_::
+    the text-file(s) to be processed
+*-h, --help*::
+    show a short usage help
+*--version*::
+    show version information
+*-o,--output*  _FILE_::
+    write output to FILE instead of stdout
+
+== Usage
+
+Usually you want to pipe the output of wiki2beamer into a file:
+
+wiki2beamer footalk.txt > footalk.tex
+
+If called with multiple input files, wiki2beamer processes them in order with
+their content being simply concatenated. If called without any input file,
+wiki2beamer will attempt to read input from STDIN. If no input files are
+supplied and nothing is available on STDIN, wiki2beamer prints its usage
+message and exits.
+
+If an error occurs, wiki2beamer returns a return code other then 0.
+
+== Syntax
+
+Wiki2beamer has it's own wiki-syntax which (evolved without much of a concept
+;) and) is described below. Everything that is unknown to wiki2beamer will be
+passed through to the LaTeX output (unless inside special environments).
+
+=== Overall Structure
+
+A wiki2beamer txt file can consist of two sections: the head and the body. The
+head is optional and is an autotemplate environment. The body contains the
+content of the document. If the head (autotemplate) is not given, then only the
+code for the body will be generated and can be included into a manually crafted
+LaTeX template file.
+
+=== Managing Input
+
+You can split input to wiki2beamer into multiple files. This helps to keep
+things apart and avoids conflicts. There are two ways to split input. The first
+is to use multiple input files which wiki2beamer will read and process in order
+as if they were one concatenated file. The second is to use the >>>include<<<
+syntax.
+
+>>>_includefile_<<<::
+    Include the file named _includefile_ at this line. Works recursively. Endless
+    recursion will be detected and treated as an error. Including files doesn't
+    work inside [nowiki] and [code] environments (see below).
+
+
+=== Structuring the Presentation
+
++==+ _sectionname_ ==::
+    opens a section called _sectionname_
+== _longsectionname_ ==[_shortname_]::
+    opens a section called _longsectionname_, passing the parameter
+    _shortname_ to latex
+=== _subsectname_ ===::
+    opens a subsection called _subsectname_
+=== _longsubsectname_ ===[_shortname_]::
+    opens a subsection called _longsubsectname_, passing the parameter
+    _shortname_ to latex
+==== _frametitle_ ====_::
+    opens a frame with the title _frametitle_
+==== _frametitle_ ====[_param_]::
+    opens a frame with the title _frametitle_, passes frame _parameters_ like t,
+    fragile, verbatim etc. to latex
++!+==== _frametitle_ ====[_param_]::
+    the ! added in front of a frame, selects a frame for exclusive generation.
+    It makes wiki2beamer skip all frames that are not selected. You can select
+    multiple frames. This can speed up the edit-compile-view cycle massively.
+
+Sectioning commands work only at the beginning of a line.
+
+=== Lists (Bullets/Enumerations)
+
++*+ _text_::
+    create a bullet (itemize) with _text_
+*<onslide> _text_::
+    create a bullet (itemize) with _text_ that only appears on the specified
+    slides (_onslide_)
+# _text_::
+    create a numbered item (enumerate) with _text_
+#<onslide> _text_::
+    create a numbered item (enumerate) with _text_ that only appears on the
+    specified slides (_onslide_)
+
+Cascaded lists, mixed ordered and unordered items:
+
+....
+ * This is a crazy list.
+ *# It contains different items.
+ *# In different formats.
+ *** On different levels.
+ ***<2-> which are animated
+ *<3-> Quite a lot of fun.
+ **<4-> Isn't it?
+....
+
+=== Environments
+
+LaTeX knows many environments, some of which are as simple as \begin{center}
+\end{center}, others are more complicated. To use these in a more wiki-like
+fashion, use <[name] to open and [name]> to close environments. It will be
+simply converted to \begin{name} and end{name}.
+
+    *Warning*
+
+    No parsing is done. The user is responsible for closing any opened
+    environment. Environment-tags are only recognized at the beginning of a
+    line.
+
+=== Special Environments
+
+Unlike standard environments, some environment names are recognized by
+wiki2beamer. These are: nowiki, code, autotemplate and frame. If wiki2beamer
+detects one of these it will do some advanced parsing, which can even fail with
+a syntax error.
+
+=== Autotemplate
+
+Autotemplate can be used at the beginning of a beamer .txt file. It will create
+the required LaTeX headers to compile the content.
+
+<[autotemplate]::
+    opens the autotemplate environment
+[autotemplate]>::
+    close the autotemplate environment
+_key=value_ (inside [autotemplate])_::
+    insert a template command _\keyvalue_
+
+key=value pairs are converted to \keyvalue in the output (except special keys)
+-- everything after = is just appended to \key.
+
+    <[autotemplate]
+    usepackage=[utf8]{inputenc}
+    [autotemplate]>
+
+will be converted to \usepackage[utf8]{inputenc}.
+
+There is a built-in set of options:
+
+    <[autotemplate]
+    documentclass={beamer}
+    usepackage={listings}
+    usepackage={wasysym}
+    usepackage={graphicx}
+    date={\today}
+    lstdefinestyle={basic}{....}
+    titleframe=True
+    [autotemplate]>
+
+titleframe is a special key that tells wiki2beamer to create a title frame. To
+set the title, subtitle and author of the presentation use the keys title,
+subtitle and author. Overriding of the default options works on:
+
+* per-key level for: documentclass, titleframe
+* per-package level for: usepackage
+* no overriding for: everything else
+
+
+=== Code
+
+Use code-environments to display animated code listings.
+
+<[code]::
+    open a code environment
+<[code][_param_]::
+    open a code environment passing _parameters_ to the latex lstlisting environment.
+[code]>::
+    close the code environment
+
+
+    <[code][key=value,...]
+    ...
+    [code]>
+
+
+<[code] opens the environment, [code]> closes it, everything after <[code] is
+passed to the LaTeX listings package as options for this listing. Inside the
+code environment, [ and ] must be escaped as \[ and \]. Things between [ and ]
+are animations. There are two kinds of animations:
+
+* [<slidespec>some code] - show "some code" only on specified slides
+* [[<slidespec>some code][<slidespec>some other code]] - show "some code" on
+  the slides in the first spec, show "some other code" on the slides in the
+  second spec, fill up space on slides without content with spaces
+
+Slide-specs can be of the form:
+
+* n - one single frame n
+* n-m - sequence of frames n to m
+* spec,spec,... - combine multiple specs into on (e.g. <1-3,5>)
+
+
+=== Nowiki
+
+Nowiki-Environments completely escape from wiki2beamer replacements. <[nowiki]
+opens the environment, [nowiki]> closes it.
+
+
+=== Frame
+
+The LaTeX-frame environment is where the content of a slide goes. You can
+manually close a frame-environment which was opened with ==== Frametitle ====
+with [frame]>. Wiki2beamer is then aware that the last frame is already closed
+and doesn't try to close it again.
+
+
+=== Text Formatting
+
+'''_text_'''::
+    typeset _text_ bold
+''_text_''::
+    typeset _text_ italic
+@_text_@::
+    typeset _text_ in typewriter type, to ignore an @, escape it as \@
+!_text_!::
+    alert _text_, to ignore an !, escape it as \!
+_ color _ _text_ _::
+    make _text_ appear in color
+
+
+=== Columns
+
+<[columns]::
+    opens the column environment
+[[[ _width_ ]]]::
+    creates a column of _width_, everything below goes into this column
+[columns]>::
+    closes the column environment
+
+
+=== Graphics
+
+<<<_pathtofile_>>>::
+    include image from _pathtofile_
+<<<_pathtofile_,_key=value_>>>::
+    include image from _pathtofile_ passing _key=value_ parameters to latex
+
+
+=== Footnotes
+
+(((_text_)))::
+    create a footnote containing _text_
+
+=== Layout
+
+--_length_--::
+    when found at start of line, with nothing afterwards, insert a
+    \vspace{_length_} (vertical space of length _length_)
+--*_length_--::
+    same as above, but insert a \vspace* (a forced vspace)
++<_overlay_>{_content_}::
+    \uncover the _content_ on the given _overlay_ subframes. They will already
+    take up the space, they need to be displayed, so the geometry of the frame
+    doesn't change when the element pops up.
+-<_overlay_>{_content_}::
+    \only show the _content_ on the given _overlay_ subframes. They will not take
+    up the space they need to be displayed, so the geometry of the frame
+    changes when the element pops up.
+
+
+=== Substitutions
+
++-->+::
+    becomes $\rightarrow$
++==>+::
+    becomes $\Rightarrow$
++<--+::
+    becomes $\leftarrow$
++<==+::
+    becomes $\Leftarrow$
++:-)+::
+    becomes \smiley (requires package wasysym)
++:-(+::
+    becomes \frownie (requires package wasysym)
+
+
+=== Frame Headers/Footers
+
+There are two variables, FRAMEHEADER and FRAMEFOOTER. The content of these will
+be inserted at the beginning/end of all following slides.
+
+@FRAMEHEADER=_text_::
+    set frameheader to _text_
+@FRAMEFOOTER=_text_::
+    set framefooter to _text_
+
+Leave text empty to reset frame headers and footers.
+
+== License
+
+Copyright (C) 2009 Kai Dietrich, Michael Rentzsch and others.
+
+=== Documentation License
+
+Permission is granted to copy, distribute and/or modify this document under the
+terms of the GNU Free Documentation License, Version 1.3 or any later version
+published by the Free Software Foundation;
+
+=== Code License
+
+wiki2beamer is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 2 of the License, or (at your option) any later
+version.
