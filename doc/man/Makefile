@@ -4,12 +4,12 @@ man1:
 	mkdir man1
 
 man:  wiki2beamer.xml man1
-	@asciidoctor -b manpage wiki2beamer.adoc
+	@asciidoctor -b manpage -d manpage wiki2beamer.adoc
 	@bzip2 --keep --stdout wiki2beamer.1 > man1/wiki2beamer.1.bz2
 	@man -D -M '.' wiki2beamer
 
 html: wiki2beamer.xml wiki2beamer.1
-	asciidoctor -b html5 wiki2beamer.adoc
+	asciidoctor -b html5 -d manpage wiki2beamer.adoc
 
 clean:
 	rm wiki2beamer.1
