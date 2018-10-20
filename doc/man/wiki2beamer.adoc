@@ -61,7 +61,7 @@ is to use multiple input files which wiki2beamer will read and process in order
 as if they were one concatenated file. The second is to use the >>>include<<<
 syntax.
 
->>>_includefile_<<<::
+>>>includefile<<<::
     Include the file named _includefile_ at this line. Works recursively. Endless
     recursion will be detected and treated as an error. Including files doesn't
     work inside [nowiki] and [code] environments (see below).
@@ -123,11 +123,11 @@ LaTeX knows many environments, some of which are as simple as \begin{center}
 fashion, use <[name] to open and [name]> to close environments. It will be
 simply converted to \begin{name} and end{name}.
 
-    *Warning*
+*Warning*
 
-    No parsing is done. The user is responsible for closing any opened
-    environment. Environment-tags are only recognized at the beginning of a
-    line.
+No parsing is done. The user is responsible for closing any opened
+environment. Environment-tags are only recognized at the beginning of a
+line.
 
 === Special Environments
 
@@ -252,9 +252,9 @@ _ color _ _text_ _::
 
 === Graphics
 
-<<<_pathtofile_>>>::
++<<<pathtofile>>>+::
     include image from _pathtofile_
-<<<_pathtofile_,_key=value_>>>::
++<<<pathtofile,_key=value_>>>+::
     include image from _pathtofile_ passing _key=value_ parameters to latex
 
 
