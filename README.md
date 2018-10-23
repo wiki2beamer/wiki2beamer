@@ -2,6 +2,10 @@
 
 Create latex beamer code from an easy, wiki-like syntax.
 
+Wiki2Beamer is a small tool to create LaTeX Beamer presentations from text
+files with a wiki-like syntax. Thus, it enables the user to create beamer
+presentations in a less time-consuming way.
+
 * [Homepage](http://wiki2beamer.sourceforge.net/)
 * Current version: 0.9.5
 * [![Build Status](https://travis-ci.org/esc/wiki2beamer.png)](https://travis-ci.org/esc/wiki2beamer)
