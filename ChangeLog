@@ -1,3 +1,18 @@
+Version 0.10.0 (2012-03-31)
+=======================================
+* Fix hash collisions in code include
+* Allow '\' to be used as line continuation
+* Travis-CI support
+* Fix Python 3.3 compatibility
+* Support code within items
+* Support markers for items (*[C] text)
+* Add titleframeopts
+* Fix regex issues for python 3.7
+* Many many bugfixes, code cleanups and typo fixes
+
+Thanks to Sam Tygier, Zbigniew Jędrzejewski-Szmek, Michael Adam, Gregory
+Legrin and Moritz Strübe for their work leading to this release.
+
 Version 0.9.5 (2012-03-31)
 =======================================
 Added -o,--output option
