@@ -7,7 +7,7 @@ files with a wiki-like syntax. Thus, it enables the user to create beamer
 presentations in a less time-consuming way.
 
 * [Homepage](https://wiki2beamer.github.io)
-* Current version: 0.9.5
+* Current version: 0.10.0
 * [![Build Status](https://travis-ci.org/wiki2beamer/wiki2beamer.png)](https://travis-ci.org/wiki2beamer/wiki2beamer)
 
 ## People

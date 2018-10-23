@@ -1,6 +1,6 @@
 = wiki2beamer(1)
 wiki2beamer developers
-v0.9.5
+v0.10.0
 :doctype: manpage
 :manmanual: WIKI2BEAMER
 :mansource: WIKI2BEAMER

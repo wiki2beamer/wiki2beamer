@@ -38,7 +38,7 @@ import optparse
 import codecs
 
 
-VERSIONTAG = "0.9.5"
+VERSIONTAG = "0.10.0"
 __version__= VERSIONTAG
 __author__= "Michael Rentzsch, Kai Dietrich and others"
 
