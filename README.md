@@ -6,14 +6,14 @@ Wiki2Beamer is a small tool to create LaTeX Beamer presentations from text
 files with a wiki-like syntax. Thus, it enables the user to create beamer
 presentations in a less time-consuming way.
 
-* [Homepage](http://wiki2beamer.sourceforge.net/)
+* [Homepage](https://wiki2beamer.github.io)
 * Current version: 0.9.5
-* [![Build Status](https://travis-ci.org/esc/wiki2beamer.png)](https://travis-ci.org/esc/wiki2beamer)
+* [![Build Status](https://travis-ci.org/wiki2beamer/wiki2beamer.png)](https://travis-ci.org/wiki2beamer/wiki2beamer)
 
 ## People
 
 * Maintainer:
-    * Valentin Haenel (http://haenel.co <valentin.haenel@gmx.de>)
+    * Valentin Haenel (http://haenel.co <valentin@haenel.co>)
 * Original Authors:
     * Michael Rentzsch (http://www.repc.de, <michael.rentzsch@repc.de>)
     * Kai Dietrich (http://www.cleeus.de/, <mail@cleeus.de>)
