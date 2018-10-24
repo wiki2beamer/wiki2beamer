@@ -185,6 +185,31 @@ created like this: \\[6mm]
 }
 
 
+=! Exuberant Title Top !=
+
+
+==== Exuberant Title Top ====
+
+Exuberant title top(((http://presentationpatterns.com/glossary/\#exuberanttitletop))) is a popular presentation technique.
+A technique that allows you to place a core idea on the center of the slide and then add supporting
+elements underneath as the main idea migrates to the top of the slide.
+
+This techniques is a good way
+to grab viewers attention that a transition of topic is about
+to occur.
+
+The slide before was created using the code below:
+<[block]{Example}
+{\tt
+   {=\! Exuberant Title Top \!=}
+}
+[block]>
+
+
+
+
+
+
 ==== Manual Frame Closing ====
 
 If you want to write \LaTeX\ code outside of the frame environment

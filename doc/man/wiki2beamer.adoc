@@ -81,6 +81,9 @@ syntax.
     _shortname_ to latex
 ==== _frametitle_ ====_::
     opens a frame with the title _frametitle_
+=! _frametitle_ !=::
+    opens a frame with the title _frametitle_ where _frametitle_ is centerd on
+    the slide and featured in an exuberant way.
 ==== _frametitle_ ====[_param_]::
     opens a frame with the title _frametitle_, passes frame _parameters_ like t,
     fragile, verbatim etc. to latex
