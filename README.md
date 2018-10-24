@@ -23,6 +23,7 @@ presentations in a less time-consuming way.
     * Georges Khaznadar <georgesk@ofset.org>
     * Sam Tygier <samtygier@yahoo.co.uk>
     * Moritz 'Morty' Strübe <morty@gmx.net>
+    * Vlad Korolev <http://blog.v-lad.org/>
     * Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
 
 ## License
