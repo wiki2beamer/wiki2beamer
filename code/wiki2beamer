@@ -346,6 +346,12 @@ def transform_italicfont(string):
     string = p.sub(r"\\emph{\1}", string)
     return string
 
+def transform_note(string):
+    """ note """
+    p = re.compile("''(.*?)''", re.VERBOSE)
+    string = p.sub(r"\\note{\1}", string)
+    return string
+
 def _transform_mini_parser(character, replacement, string):
     # implemented as a state-machine
     output, typewriter = [], []
@@ -483,6 +489,7 @@ def transform(string, state):
     string = transform_vspace(string)
     string = transform_uncover(string)
     string = transform_only(string)
+    string = transform_note(string)
 
     string = transform_itemenums(string, state)
 
