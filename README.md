@@ -9,6 +9,7 @@ presentations in a less time-consuming way.
 * [Homepage](https://wiki2beamer.github.io)
 * Current version: 0.10.0
 * [![Build Status](https://travis-ci.org/wiki2beamer/wiki2beamer.png)](https://travis-ci.org/wiki2beamer/wiki2beamer)
+* [![Coverage Status](https://coveralls.io/repos/github/vladistan/wiki2beamer/badge.svg?branch=exhuberant-title-pr)](https://coveralls.io/github/vladistan/wiki2beamer?branch=exhuberant-title-pr)
 
 ## People
 
