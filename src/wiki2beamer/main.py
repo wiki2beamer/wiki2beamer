@@ -39,7 +39,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Match, Optional, Pattern, Tuple, Type, TypeVar
 
-VERSIONTAG = "0.10.0"
+VERSIONTAG = "0.11.1"
 __version__ = VERSIONTAG
 __author__ = "Michael Rentzsch, Kai Dietrich and others"
 
@@ -216,6 +216,7 @@ class w2bstate:  # noqa: N801 # TODO: Fix this
         self.autotemplate_opened = False
         self.defverbs: Dict[str, str] = maybe_odict()
         self.code_pos = 0
+        self.math_mode = 0
         self.active_envs: Dict[str, int] = dict()
 
     def switch_to_next_frame(self) -> None:
@@ -472,7 +473,7 @@ def transform_colors(string: str, state: w2bstate) -> str:
 
         return "\\textcolor{" + m.group(1) + "}{" + m.group(2) + "}"
 
-    if "equation" in state.active_envs:
+    if state.math_mode or "equation" in state.active_envs:
         return string
 
     p = re.compile(r"(\<\<\<)(.*?)\>\>\>", re.VERBOSE)
@@ -535,10 +536,18 @@ def transform_only(string: str) -> str:
     return p.sub(r"\\only<\1>{\2", string)
 
 
+def transform_detect_display_math(string: str, state: w2bstate) -> str:
+    if "$$" in string:
+        state.math_mode = not state.math_mode
+
+    return string
+
+
 def transform(string: str, state: w2bstate) -> str:
     """convert/transform one line in context of state"""
 
     # string = transform_itemenums(string, state)
+    string = transform_detect_display_math(string, state)
     string = transform_define_foothead(string, state)
     string = transform_detect_manual_frameclose(string, state)
     string = transform_spec_to_title_slide(string, state)
@@ -1187,7 +1196,7 @@ def redirect_stdout(outfilename: str) -> None:
 def main(argv: List[str]) -> None:  # noqa: ARG001
     """check parameters, start file processing"""
     usage = "%prog [options] [input1.txt [input2.txt ...]] > output.tex"
-    version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
+    version = "%prog (https://wiki2beamer.github.io/), version: " + VERSIONTAG
 
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
     parser.add_option(
