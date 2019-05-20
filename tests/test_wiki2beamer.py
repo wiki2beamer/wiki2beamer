@@ -365,6 +365,22 @@ class TestConvert2Beamer(unittest.TestCase):
         received = convert2beamer(lines)
         self.assertTrue(expected, received)
 
+class TestFileCache(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        clear_file_cache()
+        return
+
+    def test_file_cache_works(self):
+        local_path = os.path.dirname(os.path.abspath(__file__))
+        source_file = os.path.join(local_path, 'example/includefile.txt')
+        out = get_lines_from_cache(source_file)
+        expected = "Multiple inputs"
+        self.assertIn(expected, out[0])
+
+
 class TestFileInclusion(unittest.TestCase):
     def setUp(self):
         files = {'test_file': ['test file content'],
