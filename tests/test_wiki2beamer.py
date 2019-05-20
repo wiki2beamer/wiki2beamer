@@ -183,6 +183,25 @@ class TestTransform(unittest.TestCase):
             == r"\textcolor{blue}{make me blue} \includegraphics{file/foo_bar_/baz_fasel.svg}"
         )
 
+    @unittest.skip("skip this for now")
+    def test_color_interferes_with_math(self):
+        text = """==== Title ====
+$$
+A := {a_1, a_2, ..., a_i}
+$$
+"""
+
+        expected = r"""\begin{frame}
+ \frametitle{Title}
+
+
+$$
+A := {a_1, a_2, ..., a_i}
+$$
+"""
+
+        assert transform(text, self.state) == expected
+
     def test_color_interferes_with_equation(self):
         text = r"""A := {a_1, a_2, ..., a_i}"""
 

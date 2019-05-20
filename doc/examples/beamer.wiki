@@ -138,7 +138,7 @@ Wiki2Beamer includes some simple formatting commands: \\[4mm]
 * ''Italic Text:'' enclose text in @\textquotesingle\textquotesingle@
 * @Typewriter:@ enclose text in @
 * !Alerts:! enclose text in !
-* _blue_Colors:_ use \_ notation, see project home page \\[4mm]
+* use \_ notation, see project home page \\[4mm]
 
 This example presentation can not show all features that '''wiki2beamer''' offers, have a look at the project website for more information.
 
