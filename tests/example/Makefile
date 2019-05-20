@@ -11,7 +11,7 @@ view: example.pdf
 
 example.tex: example.txt Makefile
 	../../code/wiki2beamer example.txt > example.tex
-	
+
 example.pdf: example.tex Makefile
 	pdflatex example.tex
 
