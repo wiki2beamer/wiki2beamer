@@ -242,7 +242,7 @@ def get_frame_closing(state):
 
 def transform_spec_to_title_slide(string, state):
 
-    frame_opening = r"\n\\begin{frame}\n\\frametitle{}\n\\begin{center}\n{\Huge \1}\n\\end{center}\n"
+    frame_opening = r"\n\\begin{frame}\n\\frametitle{}\n\\begin{center}\n{\\Huge \1}\n\\end{center}\n"
     frame_closing = escape_resub(get_frame_closing(state))
 
     p = re.compile("^=!\s*(.*?)\s*!=(.*)", re.VERBOSE)
