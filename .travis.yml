@@ -12,6 +12,12 @@ matrix:
     - python: 3.7
       dist: xenial
       sudo: true
+      install:
+        - pip install coverage
+        - pip install coveralls
+      script:
+        - PYTHONPATH=code coverage run tests/test_wiki2beamer.py
+        - coveralls
 install:
 script:
   - PYTHONPATH=code python tests/test_wiki2beamer.py
