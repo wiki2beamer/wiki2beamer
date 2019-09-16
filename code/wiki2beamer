@@ -382,6 +382,10 @@ def transform_typewriterfont(string):
     """ typewriter font """
     return _transform_mini_parser('@', 'texttt', string)
 
+def transform_inlinecode(string):
+    """ inline code """
+    return _transform_mini_parser(u'§', 'lstinline[]', string)
+
 def transform_alerts(string):
     """ alerts """
     return _transform_mini_parser('!', 'alert', string)
@@ -469,6 +473,7 @@ def transform(string, state):
     string = transform_h2_to_sec(string, state)
     string = transform_replace_headfoot(string, state)
 
+    string = transform_inlinecode(string)
     string = transform_environments(string)
     string = transform_columns(string)
     string = transform_boldfont(string)
