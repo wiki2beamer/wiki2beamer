@@ -130,6 +130,10 @@ class TestTransform(unittest.TestCase):
         self.assertEqual(transform('+<2-> {foo}', self.state), '\\uncover<2->{foo}')
         self.assertEqual(transform(' +<2->{\nfoo', self.state), ' \\uncover<2->{\nfoo')
 
+    def test_note(self):
+        self.assertEqual(transform('\note{foo is now bar}', self.state),
+        '\note{foo is now bar}')
+
     def test_only(self):
         self.assertEqual(transform('-<2-> {foo}', self.state), '\only<2->{foo}')
         self.assertEqual(transform(' -<2->{\nfoo', self.state), ' \only<2->{\nfoo')
