@@ -35,7 +35,7 @@ jobs:
 
       - name: Build package
         run: |
-          uv pip build .
+          uv build
 
       - name: Get version from tag
         id: get_version
