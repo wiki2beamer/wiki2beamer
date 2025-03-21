@@ -39,7 +39,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Match, Optional, Pattern, Tuple, Type, TypeVar
 
-VERSIONTAG = "0.10.0"
+VERSIONTAG = "0.11.1"
 __version__ = VERSIONTAG
 __author__ = "Michael Rentzsch, Kai Dietrich and others"
 
@@ -1196,7 +1196,7 @@ def redirect_stdout(outfilename: str) -> None:
 def main(argv: List[str]) -> None:  # noqa: ARG001
     """check parameters, start file processing"""
     usage = "%prog [options] [input1.txt [input2.txt ...]] > output.tex"
-    version = "%prog (http://wiki2beamer.sf.net), version: " + VERSIONTAG
+    version = "%prog (https://wiki2beamer.github.io/), version: " + VERSIONTAG
 
     parser = optparse.OptionParser(usage="\n  " + usage, version=version)
     parser.add_option(
