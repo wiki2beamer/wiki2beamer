@@ -29,6 +29,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
+          uv venv create
           uv pip install build twine
 
       - name: Build package
