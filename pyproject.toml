@@ -8,7 +8,7 @@ version = "0.10.0"
 description = "Create LaTeX-beamer presentations with a wiki syntax"
 readme = "README.md"
 license = {text = "GPL-2.0-or-later"}
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 authors = [
     {name = "Michael Rentzsch", email = "michael.rentzsch@repc.de"},
     {name = "Kai Dietrich", email = "mail@cleeus.de"},
@@ -24,11 +24,11 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Text Processing :: Markup",
     "Topic :: Utilities",
 ]
@@ -96,7 +96,6 @@ ignore = [
     "S108",
 ]
 
-
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
@@ -104,7 +103,6 @@ line-ending = "lf"
 
 [tool.ruff.lint.isort]
 known-first-party = ["wiki2beamer"]
-
 
 [tool.coverage.report]
 exclude_lines = [
@@ -119,10 +117,10 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_functions = "test_*"
 
-
 [tool.coverage.run]
 source = ["wiki2beamer"]
 omit = ["tests/*"]
+
 [tool.mypy]
 python_version = "3.7"
 warn_return_any = true
@@ -134,7 +132,6 @@ pretty = true
 show_column_numbers = true
 warn_unused_ignores = true
 enable_error_code = ["ignore-without-code", "truthy-bool"]
-
 
 [[tool.mypy.overrides]]
 module = "tests.*"

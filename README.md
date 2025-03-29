@@ -8,7 +8,6 @@ presentations in a less time-consuming way.
 
 * [Homepage](https://wiki2beamer.github.io)
 * Current version: 0.10.0
-* [![Build Status](https://travis-ci.org/wiki2beamer/wiki2beamer.png)](https://travis-ci.org/wiki2beamer/wiki2beamer)
 * [![Coverage Status](https://coveralls.io/repos/github/wiki2beamer/wiki2beamer/badge.svg?branch=master)](https://coveralls.io/github/wiki2beamer/wiki2beamer?branch=master)
 
 ## People
