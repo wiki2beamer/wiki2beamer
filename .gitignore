@@ -1,3 +1,53 @@
-/htmlcov
-/.coverage
-/.python-version
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Coverage
+.coverage
+htmlcov/
+.coverage.*
+coverage.xml
+*.cover
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Project specific
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+/doc/examples/advanced.tex
+/doc/examples/beamer.tex
+/doc/examples/graphics.tex
+/doc/examples/version0_4.tex
+/doc/examples/version0_7.tex
