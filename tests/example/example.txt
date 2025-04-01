@@ -178,7 +178,7 @@ The same works for numbered lists
 # third item
 [code]>
 
-==== Numbered Lists (output) ==== 
+==== Numbered Lists (output) ====
 
 # first item
 # second item
@@ -823,7 +823,3 @@ wiki2beamer header.txt dave.txt debby.txt > talk.tex
 
 
 >>>includefile.txt<<<
-
-
-
-

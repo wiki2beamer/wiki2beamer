@@ -140,7 +140,7 @@ So here's how you create animated listings:
 <\[code\]\[style=basic,language=java,title=HelloWorld.java\]
 class HelloWorld {
     public static void main(String args\\[\\]) {
-        System.out.println("Hello World!");	
+        System.out.println("Hello World!");
     }
 }
 \[code\]>
@@ -278,4 +278,3 @@ Latin1 will be the option passed to inputenc in the \LaTeX{} output.
 \centering\huge
 
 Please spread the word! :-) %
-

@@ -43,7 +43,6 @@ debian:
 	cp -Rp ../doc/examples ./debian/usr/share/doc/wiki2beamer/
 	fakeroot dpkg-deb --build ./debian/ wiki2beamer_x.x-x_all.deb
 
-clean:	
+clean:
 	rm -Rf ./debian/usr
 	rm -Rf $(ZIPSUBDIR)
-

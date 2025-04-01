@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        pip install -e '.[dev]'
+
+    - name: Test with pytest
+      if: matrix.python-version == '3.12'
+      run: |
+        pytest --cov=wiki2beamer tests/
+
+    - name: Test with pytest
+      if: matrix.python-version != '3.12'
+      run: |
+        pytest tests/
+
+    - name: Upload coverage to Coveralls
+      if: matrix.python-version == '3.12'
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        file: .coverage

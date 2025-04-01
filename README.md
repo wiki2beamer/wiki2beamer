@@ -8,7 +8,6 @@ presentations in a less time-consuming way.
 
 * [Homepage](https://wiki2beamer.github.io)
 * Current version: 0.10.0
-* [![Build Status](https://travis-ci.org/wiki2beamer/wiki2beamer.png)](https://travis-ci.org/wiki2beamer/wiki2beamer)
 * [![Coverage Status](https://coveralls.io/repos/github/wiki2beamer/wiki2beamer/badge.svg?branch=master)](https://coveralls.io/github/wiki2beamer/wiki2beamer?branch=master)
 
 ## People
@@ -46,4 +45,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-

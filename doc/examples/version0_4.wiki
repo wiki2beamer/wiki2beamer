@@ -74,4 +74,3 @@ To delete your header and footer definitions, write: % just a comment
  @FRAMEHEADER=
  @FRAMEFOOTER=
 [verbatim]>
-
