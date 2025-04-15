@@ -1,7 +1,12 @@
 version: 2
 updates:
-  - directory: .
-    package-ecosystem: pip
+  - package-ecosystem: pip
+    directory: "/"
     schedule:
       interval: weekly
-    rebase-strategy: "auto"
+    rebase-strategy: auto
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    rebase-strategy: auto
